@@ -102,7 +102,7 @@ public sealed class AuditProxyTests : IAsyncLifetime
     public async Task RequestLimit_RefusesExtraHttp2Streams_From_OneAddress()
     {
         // One connection per address allowed, so four requests in flight; HTTP/2 would otherwise carry 32.
-        await using var proxy = await StartProxyAsync(s => s.Advanced.MaxConnectionsPerIp = 1).ConfigureAwait(false);
+        await using var proxy = await StartProxyAsync(s => s.Advanced.MaxConnectionsPerIp = 1);
         using var client = Client(proxy.HttpsPort, http2: true);
         var url = new Uri($"https://{Host}:{proxy.HttpsPort}/slow");
         var requests = Enumerable.Range(0, 6).Select(_ => client.GetAsync(url)).ToList();
@@ -111,9 +111,9 @@ public sealed class AuditProxyTests : IAsyncLifetime
         var deadline = DateTime.UtcNow.AddSeconds(10);
         while (refused.Count < 2 && DateTime.UtcNow < deadline)
         {
-            var done = await Task.WhenAny(requests).ConfigureAwait(false);
+            var done = await Task.WhenAny(requests);
             requests.Remove(done);
-            refused.Add(await done.ConfigureAwait(false));
+            refused.Add(await done);
         }
 
         Assert.All(refused, r => Assert.Equal(HttpStatusCode.TooManyRequests, r.StatusCode));
@@ -122,14 +122,14 @@ public sealed class AuditProxyTests : IAsyncLifetime
         // The four let through reach Jellyfin and wait there.
         while (Volatile.Read(ref _slowHits) < 4 && DateTime.UtcNow < deadline)
         {
-            await Task.Delay(20).ConfigureAwait(false);
+            await Task.Delay(20);
         }
 
         Assert.Equal(4, Volatile.Read(ref _slowHits));
         Assert.All(requests, r => Assert.False(r.IsCompleted));
 
         _release.SetResult();
-        foreach (var response in await Task.WhenAll(requests).ConfigureAwait(false))
+        foreach (var response in await Task.WhenAll(requests))
         {
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             response.Dispose();
