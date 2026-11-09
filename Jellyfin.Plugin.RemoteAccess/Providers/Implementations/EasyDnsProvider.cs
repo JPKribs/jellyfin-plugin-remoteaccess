@@ -19,13 +19,10 @@ namespace Jellyfin.Plugin.DynamicDns.Providers.Implementations;
 /// <see cref="DNSRecord.Server"/> overrides the API host. The HTML reply is stripped of tags and scanned
 /// for a status token. <c>NOERROR</c> or <c>OK</c> mean success.
 /// </summary>
-public sealed class EasyDnsProvider : DNSProviderBase
+public sealed partial class EasyDnsProvider : DNSProviderBase
 {
     private const string DefaultServer = "api.cp.easydns.com";
     private const string Script = "/dyn/generic.php";
-
-    private static readonly Regex TagRegex = new("<[^>]*>", RegexOptions.Compiled);
-    private static readonly Regex WhitespaceRegex = new(@"\s+", RegexOptions.Compiled);
 
     private static readonly Dictionary<string, string> Errors = new(StringComparer.Ordinal)
     {
@@ -118,7 +115,7 @@ public sealed class EasyDnsProvider : DNSProviderBase
             return (false, "HTTP " + result.Status + ".");
         }
 
-        var body = WhitespaceRegex.Replace(TagRegex.Replace(result.Body ?? string.Empty, " "), " ").Trim();
+        var body = WhitespaceRegex().Replace(TagRegex().Replace(result.Body ?? string.Empty, " "), " ").Trim();
         var status = ExtractStatus(body);
 
         if (string.Equals(status, "NOERROR", StringComparison.Ordinal)
@@ -155,4 +152,10 @@ public sealed class EasyDnsProvider : DNSProviderBase
 
         return string.Empty;
     }
+
+    [GeneratedRegex("<[^>]*>")]
+    private static partial Regex TagRegex();
+
+    [GeneratedRegex(@"\s+")]
+    private static partial Regex WhitespaceRegex();
 }
