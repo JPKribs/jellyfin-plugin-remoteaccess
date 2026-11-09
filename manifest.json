@@ -9,6 +9,14 @@
     "category": "Administration",
     "versions": [
       {
+        "version": "12.2.4.5",
+        "changelog": "\n## Developer\n- Built with JPKribs.Jellyfin.Base 2026.10.28.\n- EasyDNS replies are parsed with source generated patterns, and the test build has no warnings.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/JPKribs/jellyfin-plugin-remoteaccess/releases/download/v12.2.4.5/jellyfin-plugin-remoteaccess-12.2.4.5.zip",
+        "checksum": "f3054944f525ffddfb6a87e2efdc76a6",
+        "timestamp": "2026-11-09T16:04:16Z"
+      },
+      {
         "version": "12.2.4.4",
         "changelog": "## Added\r\n- A Verify External Access scheduled task runs the outside check every hour and writes an error to the activity log when no place on the internet can connect to port 443, with an entry when it works again.\r\n\r\n## Developer\r\n- The docs list the new task and its activity log entries.",
         "targetAbi": "12.2.0.0",
