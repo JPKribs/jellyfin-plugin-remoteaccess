@@ -1,7 +1,7 @@
 ---
 name: "Dynamic DNS"
 guid: "8150dce5-6153-4924-a985-a6927be95baa"
-version: "12.2.4.4"
+version: "12.2.4.5"
 targetAbi: "12.2.0.0"
 framework: "net10.0"
 overview: "Reach your server from anywhere: Dynamic DNS and a secure HTTPS proxy, inside Jellyfin."
@@ -22,7 +22,6 @@ artifacts:
 - "BouncyCastle.Cryptography.dll"
 - "QRCoder.dll"
 changelog:
-  added:
-  - A Verify External Access scheduled task runs the outside check every hour and writes an error to the activity log when no place on the internet can connect to port 443, with an entry when it works again.
   developer:
-  - The docs list the new task and its activity log entries.
+  - Built with JPKribs.Jellyfin.Base 2026.10.28.
+  - EasyDNS replies are parsed with source generated patterns, and the test build has no warnings.
