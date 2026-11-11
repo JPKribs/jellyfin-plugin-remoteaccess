@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 
 /// <summary>
 /// Refuses internet connections before TLS starts, for example a banned or blocked address. Local clients

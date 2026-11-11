@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Network;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Network;
 
 /// <summary>
 /// The Jellyfin network settings trusting the proxy changes, captured before it changes them. Restoring

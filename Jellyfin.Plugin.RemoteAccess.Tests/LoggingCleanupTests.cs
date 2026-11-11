@@ -4,16 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.People;
-using Jellyfin.Plugin.DynamicDns.Providers.Implementations;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// How failures are logged: once for a fault that repeats, by how much it matters, and with a line when it
@@ -60,7 +60,7 @@ public class LoggingCleanupTests
     {
         using var h = ForcedRefresh(succeed: false);
         await h.RunAsync();
-        var entry = Assert.Single(h.Activity, a => a.Type == "DynamicDNS.RecordFailed");
+        var entry = Assert.Single(h.Activity, a => a.Type == "RemoteAccess.RecordFailed");
         Assert.Equal(LogLevel.Warning, entry.LogSeverity);
     }
 
@@ -69,7 +69,7 @@ public class LoggingCleanupTests
     {
         using var h = ForcedRefresh(succeed: true);
         await h.RunAsync();
-        Assert.Contains(h.Activity, a => a.Type == "DynamicDNS.RecordRecovered");
+        Assert.Contains(h.Activity, a => a.Type == "RemoteAccess.RecordRecovered");
     }
 
     [Theory]

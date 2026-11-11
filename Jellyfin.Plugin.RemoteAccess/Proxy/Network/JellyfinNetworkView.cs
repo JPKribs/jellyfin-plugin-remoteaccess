@@ -1,7 +1,7 @@
 using System;
 using MediaBrowser.Common.Net;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Network;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Network;
 
 /// <summary>
 /// Jellyfin's network setup as it is running now. Jellyfin reads its ports, bind addresses, base URL and

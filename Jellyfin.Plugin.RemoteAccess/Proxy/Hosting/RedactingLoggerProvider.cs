@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 
 /// <summary>
 /// Sends the proxy host's logs to Jellyfin's log with credentials masked, so a URL carrying a login token

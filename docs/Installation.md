@@ -10,8 +10,7 @@ without Remote Access.
     https://raw.githubusercontent.com/JPKribs/jellyfin-plugin-remoteaccess/master/manifest.json
     ```
 
-2. Open the **Catalog** tab, find **Dynamic DNS** and select **Install**. The catalog still lists it under its
-   original name.
+2. Open the **Catalog** tab, find **Remote Access** and select **Install**.
 3. Restart Jellyfin when it asks, and wait until it is fully back up.
 
 The plugin then has a **Remote Access** entry in the dashboard's side menu, with the tabs **Dashboard**,

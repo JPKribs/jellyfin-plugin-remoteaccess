@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
 using Microsoft.Net.Http.Headers;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 
 /// <summary>
 /// The first stop for every request: classifies the client, applies <see cref="RequestPolicy"/>, sets

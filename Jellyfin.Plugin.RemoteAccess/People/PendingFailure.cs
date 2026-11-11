@@ -1,6 +1,6 @@
 using System;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// A refused sign-in the proxy saw, waiting for Jellyfin's own failure event.

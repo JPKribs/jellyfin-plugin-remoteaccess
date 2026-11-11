@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 
 /// <summary>
 /// Where the proxy reports which address each client used, for the history. Kept to plain values so the

@@ -5,14 +5,14 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Providers;
+using Jellyfin.Plugin.RemoteAccess.Providers;
 using MediaBrowser.Controller;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Provider requests carry API keys in headers that .NET keeps across a redirect. A redirect to another server is

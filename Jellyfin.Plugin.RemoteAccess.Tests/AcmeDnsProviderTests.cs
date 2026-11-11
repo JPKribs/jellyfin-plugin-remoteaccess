@@ -3,12 +3,12 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Providers.Implementations;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// The TXT records the Cloudflare and Duck DNS providers publish and remove for DNS-01.

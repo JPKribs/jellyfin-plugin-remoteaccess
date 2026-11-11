@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Jellyfin.Plugin.DynamicDns.Models;
+using Jellyfin.Plugin.RemoteAccess.Models;
 using JPKribs.Jellyfin.Base;
 
-namespace Jellyfin.Plugin.DynamicDns.Utilities;
+namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
 /// Diffs the stored records against a saved set and writes additions, removals, and credential changes
@@ -41,7 +41,7 @@ public static class ConfigurationAudit
             {
                 activity.Log(
                     "Dynamic DNS record " + record.DisplayName() + " was added",
-                    "DynamicDNS.RecordAdded",
+                    "RemoteAccess.RecordAdded",
                     "Provider: " + record.Provider + ", hostname: " + record.Hostname + ".",
                     userId: userId);
                 continue;
@@ -52,7 +52,7 @@ public static class ConfigurationAudit
             {
                 activity.Log(
                     "Dynamic DNS record " + record.DisplayName() + " was changed",
-                    "DynamicDNS.RecordChanged",
+                    "RemoteAccess.RecordChanged",
                     (record.Enabled ? "Enabled" : "Disabled") + ". Provider: " + record.Provider + ", hostname: " + record.Hostname + ".",
                     userId: userId);
             }
@@ -62,7 +62,7 @@ public static class ConfigurationAudit
             {
                 activity.Log(
                     "Dynamic DNS credentials for " + record.DisplayName() + " were changed",
-                    "DynamicDNS.RecordCredentialsChanged",
+                    "RemoteAccess.RecordCredentialsChanged",
                     userId: userId);
             }
         }
@@ -71,7 +71,7 @@ public static class ConfigurationAudit
         {
             activity.Log(
                 "Dynamic DNS record " + old.DisplayName() + " was removed",
-                "DynamicDNS.RecordRemoved",
+                "RemoteAccess.RecordRemoved",
                 "Provider: " + old.Provider + ", hostname: " + old.Hostname + ".",
                 userId: userId);
         }

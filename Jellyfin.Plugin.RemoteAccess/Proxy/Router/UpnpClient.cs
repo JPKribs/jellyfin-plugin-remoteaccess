@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Router;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Router;
 
 /// <summary>
 /// Forwards ports with UPnP Internet Gateway Device: an SSDP search finds the router, its description names the

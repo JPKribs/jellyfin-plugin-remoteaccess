@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Jellyfin.Plugin.DynamicDns.Models;
+namespace Jellyfin.Plugin.RemoteAccess.Models;
 
 /// <summary>
 /// The result of a per-record update, surfaced to the dashboard.

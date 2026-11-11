@@ -2,11 +2,11 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Providers;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Providers.Implementations;
+namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
 
 /// <summary>
 /// Domeneshop (port of ddclient's <c>nic_domeneshop_update</c>). Basic-auth GET to

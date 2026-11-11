@@ -1,7 +1,7 @@
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// What the People side needs to know about the proxy's settings.

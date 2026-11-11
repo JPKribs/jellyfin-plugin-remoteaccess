@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Models;
+namespace Jellyfin.Plugin.RemoteAccess.Models;
 
 /// <summary>
 /// Small derived values for a <see cref="DNSRecord"/>, kept on the model so callers read intent

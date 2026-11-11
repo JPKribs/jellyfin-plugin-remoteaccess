@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Connections;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 
 /// <summary>
 /// Runs on every new connection before TLS: caps open internet connections per address, per /56 and /48 and in

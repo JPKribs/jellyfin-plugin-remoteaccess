@@ -3,14 +3,14 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Services;
-using Jellyfin.Plugin.DynamicDns.Configuration;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Services;
+using Jellyfin.Plugin.RemoteAccess.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Covers the multi-endpoint failover in <see cref="IPDetectionService"/>. A configured endpoint that

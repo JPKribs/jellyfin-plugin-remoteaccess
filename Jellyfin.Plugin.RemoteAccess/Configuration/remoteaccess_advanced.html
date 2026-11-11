@@ -1,10 +1,10 @@
-<div id="DynamicDnsAdvancedPage" data-role="page"
+<div id="RemoteAccessAdvancedPage" data-role="page"
      class="page type-interior pluginConfigurationPage withTabs"
      data-require="emby-input,emby-button,emby-select,emby-checkbox"
-     data-controller="__plugin/ddns_advanced.js">
+     data-controller="__plugin/remoteaccess_advanced.js">
     <div data-role="content">
         <div class="content-primary">
-            <form id="DynamicDnsAdvancedForm">
+            <form id="RemoteAccessAdvancedForm">
                 <div class="verticalSection verticalSection-extrabottompadding">
 
                     <div class="sectionTitleContainer flex align-items-center">
@@ -18,7 +18,7 @@
                         </button>
                         <div id="advDynamicDns" class="jpk-collapsible-content collapsed">
                             <div class="fieldDescription">How the DDNS records find this server's public IP and when they send it. Set how often updates run in <strong>Scheduled Tasks</strong> under <strong>Update DDNS</strong>.</div>
-                            <div id="ddnsLoadError" class="jpk-error hidden"></div>
+                            <div id="raLoadError" class="jpk-error hidden"></div>
                             <div class="inputContainer">
                                 <label for="ipv4Url">IPv4 Detection URLs</label>
                                 <textarea id="ipv4Url" class="emby-input" autocomplete="off" rows="4"></textarea>
@@ -81,7 +81,7 @@
 
                             <h3>Record</h3>
                             <div id="recordIntro" class="fieldDescription"></div>
-                            <div id="recordEmpty" class="jpk-info hidden">No record yet. Add one in step 2, Address, on <a href="#/configurationpage?name=ddns_configuration" class="button-link">Configuration</a>.</div>
+                            <div id="recordEmpty" class="jpk-info hidden">No record yet. Add one in step 2, Address, on <a href="#/configurationpage?name=remoteaccess_configuration" class="button-link">Configuration</a>.</div>
                             <div id="extraRecords" class="jpk-warn hidden"></div>
                             <div id="recordFields" class="hidden">
                                 <div class="checkboxContainer checkboxContainer-withDescription">
@@ -143,7 +143,7 @@
                                         <span class="checkboxLabel">Backup MX</span>
                                     </label>
                                 </div>
-                                <div class="ddns-button-row">
+                                <div class="ra-button-row">
                                     <button is="emby-button" type="button" id="btnRemoveRecord" class="raised jpk-button-destructive jpk-button-small">
                                         <span>Remove Record</span>
                                     </button>
@@ -216,7 +216,7 @@
                                 <div class="fieldDescription">Addresses or ranges treated like your own network, such as a VPN, one per line.</div>
                             </div>
                             <div id="certRequestDescription" class="fieldDescription">Renewal is automatic, so use this only to replace a Let's Encrypt certificate now, such as after its key leaked. It works while the proxy runs with Let's Encrypt as the source.</div>
-                            <div class="ddns-button-row">
+                            <div class="ra-button-row">
                                 <button is="emby-button" type="button" id="btnRequestCert" class="raised jpk-secondary jpk-button-small">
                                     <span>Request a New Certificate</span>
                                 </button>
@@ -315,7 +315,7 @@
                                 <div id="locationDescription" class="fieldDescription"></div>
                             </div>
                             <div id="locationStatus" class="jpk-info"></div>
-                            <div class="ddns-button-row">
+                            <div class="ra-button-row">
                                 <button is="emby-button" type="button" id="btnUpdateLocation" class="raised jpk-secondary">
                                     <span>Refresh Locations</span>
                                 </button>
@@ -404,7 +404,7 @@
                         </button>
                         <span id="advancedStatus" class="jpk-status-text" aria-live="polite"></span>
                     </div>
-                    <div class="ddns-button-row">
+                    <div class="ra-button-row">
                         <button is="emby-button" type="button" id="btnResetAdvanced" class="raised jpk-secondary">
                             <span>Reset to Defaults</span>
                         </button>
@@ -419,6 +419,6 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="configurationpage?name=ddns_jpkribs_shared.css">
-    <link rel="stylesheet" href="configurationpage?name=ddns_common.css">
+    <link rel="stylesheet" href="configurationpage?name=remoteaccess_jpkribs_shared.css">
+    <link rel="stylesheet" href="configurationpage?name=remoteaccess_common.css">
 </div>

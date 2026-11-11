@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// The defaults the dashboard shows: the ones in effect, and both sets the server's memory chooses between.

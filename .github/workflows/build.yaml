@@ -56,7 +56,7 @@ jobs:
           set -euo pipefail
           ZIP=$(ls dist/jellyfin-plugin-remoteaccess-*.zip)
           unzip -l "$ZIP"
-          unzip -l "$ZIP" | grep -q 'Jellyfin.Plugin.DynamicDns.dll'
+          unzip -l "$ZIP" | grep -q 'Jellyfin.Plugin.RemoteAccess.dll'
           unzip -l "$ZIP" | grep -q 'meta.json'
 
       - name: Upload package artifact

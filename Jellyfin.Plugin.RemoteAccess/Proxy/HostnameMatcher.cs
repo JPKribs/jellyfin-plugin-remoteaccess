@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// Normalizes and matches hostnames. A pattern is either an exact name or a single-label wildcard

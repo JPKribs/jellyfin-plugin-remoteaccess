@@ -1,9 +1,9 @@
 using System.Linq;
-using Jellyfin.Plugin.DynamicDns.People;
-using Jellyfin.Plugin.DynamicDns.Providers;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Network;
-using Jellyfin.Plugin.DynamicDns.Services;
+using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Providers;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Services;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller;
@@ -12,7 +12,7 @@ using MediaBrowser.Controller.Events.Authentication;
 using MediaBrowser.Controller.Plugins;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Jellyfin.Plugin.DynamicDns;
+namespace Jellyfin.Plugin.RemoteAccess;
 
 /// <summary>
 /// Registers plugin services with the Jellyfin DI container. Every concrete <see cref="IDNSProvider"/>

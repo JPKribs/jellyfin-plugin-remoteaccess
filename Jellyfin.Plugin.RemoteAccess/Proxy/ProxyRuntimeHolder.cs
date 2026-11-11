@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// The current runtime snapshot, shared between the plugin and the proxy host. Swapping the reference is

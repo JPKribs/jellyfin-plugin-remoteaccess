@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Network;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Network;
 
 /// <summary>
 /// The outcome of applying or restoring the port takeover.

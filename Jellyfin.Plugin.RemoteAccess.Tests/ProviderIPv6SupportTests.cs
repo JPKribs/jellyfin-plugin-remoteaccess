@@ -1,11 +1,11 @@
 using System.Linq;
 using System.Net;
-using Jellyfin.Plugin.DynamicDns.Providers;
-using Jellyfin.Plugin.DynamicDns.Providers.Implementations;
+using Jellyfin.Plugin.RemoteAccess.Providers;
+using Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Pins which providers declare themselves IPv4-only. The update cycle clears the record's IPv6 flag

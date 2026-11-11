@@ -1,7 +1,7 @@
 using System;
 using System.Security.Claims;
 
-namespace Jellyfin.Plugin.DynamicDns.Api;
+namespace Jellyfin.Plugin.RemoteAccess.Api;
 
 /// <summary>
 /// The Jellyfin user behind a request, so an activity entry for an administrator's change says who made it.

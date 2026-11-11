@@ -1,6 +1,6 @@
 using System;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// The public part of the self-signed option's root, which devices install to trust the proxy's certificate.

@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// A hostname a DDNS record keeps pointed at this server, offered as a choice for the proxy's hostnames.

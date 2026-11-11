@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Models;
+namespace Jellyfin.Plugin.RemoteAccess.Models;
 
 /// <summary>
 /// The outcome of a single provider update attempt.

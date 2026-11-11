@@ -1,10 +1,10 @@
 using System.Net;
 using System.Net.Sockets;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Services;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Services;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// What counts as a public address worth publishing, and which detection replies are taken as addresses.

@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Jellyfin.Plugin.DynamicDns.Api;
-using Jellyfin.Plugin.DynamicDns.Configuration;
-using Jellyfin.Plugin.DynamicDns.Models;
+using Jellyfin.Plugin.RemoteAccess.Api;
+using Jellyfin.Plugin.RemoteAccess.Configuration;
+using Jellyfin.Plugin.RemoteAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Covers the dashboard save endpoint: an edit that retargets a record starts its runtime status over

@@ -1,16 +1,16 @@
 using System;
 using System.IO;
-using Jellyfin.Plugin.DynamicDns.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Key and certificate files are replaced whole and readable by the owner only.
 /// </summary>
 public sealed class SecretFileTests : IDisposable
 {
-    private readonly string _dir = Path.Join(Path.GetTempPath(), "ddns-secret-tests-" + Guid.NewGuid().ToString("N"));
+    private readonly string _dir = Path.Join(Path.GetTempPath(), "remoteaccess-secret-tests-" + Guid.NewGuid().ToString("N"));
 
     public SecretFileTests() => Directory.CreateDirectory(_dir);
 

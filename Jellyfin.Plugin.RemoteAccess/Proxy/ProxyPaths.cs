@@ -1,8 +1,9 @@
 using System;
 using System.IO;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using MediaBrowser.Common.Configuration;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// Where the proxy keeps its files, beside the plugin's configuration.
@@ -14,7 +15,7 @@ public sealed class ProxyPaths
     /// </summary>
     /// <param name="paths">The application paths.</param>
     public ProxyPaths(IApplicationPaths paths)
-        : this(Path.Join(paths?.PluginConfigurationsPath ?? throw new ArgumentNullException(nameof(paths)), "Jellyfin.Plugin.DynamicDns.Proxy"))
+        : this(Root(paths))
     {
     }
 
@@ -25,6 +26,14 @@ public sealed class ProxyPaths
     public ProxyPaths(string dataDirectory)
     {
         DataDirectory = dataDirectory;
+    }
+
+    // The folder under the plugin configurations folder, after moving one saved under the plugin's earlier name.
+    private static string Root(IApplicationPaths paths)
+    {
+        ArgumentNullException.ThrowIfNull(paths);
+        LegacyDataMigration.Run(paths.PluginConfigurationsPath);
+        return Path.Join(paths.PluginConfigurationsPath, LegacyDataMigration.NewName + ".Proxy");
     }
 
     /// <summary>Gets the proxy's data directory.</summary>

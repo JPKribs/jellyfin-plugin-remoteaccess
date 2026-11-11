@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 
 /// <summary>
 /// How the proxy treats internet connections by country.

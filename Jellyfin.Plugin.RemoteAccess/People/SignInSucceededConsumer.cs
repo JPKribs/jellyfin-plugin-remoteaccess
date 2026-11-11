@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MediaBrowser.Controller.Events;
 using MediaBrowser.Controller.Events.Authentication;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// Records successful sign-ins.

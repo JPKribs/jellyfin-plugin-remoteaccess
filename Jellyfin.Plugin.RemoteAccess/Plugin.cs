@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Jellyfin.Plugin.DynamicDns.Api;
-using Jellyfin.Plugin.DynamicDns.Configuration;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Providers;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Network;
-using Jellyfin.Plugin.DynamicDns.Services;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Api;
+using Jellyfin.Plugin.RemoteAccess.Configuration;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Providers;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Services;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Model.Plugins;
@@ -18,16 +18,16 @@ using MediaBrowser.Model.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Jellyfin.Plugin.DynamicDns;
+namespace Jellyfin.Plugin.RemoteAccess;
 
 /// <summary>
-/// Main plugin entry point for Dynamic DNS.
+/// Main plugin entry point for Remote Access.
 /// </summary>
 public class Plugin : PluginBase<Plugin, PluginConfiguration>
 {
     /// <summary>
-    /// The stable name the secret key folder, Data Protection application name, and purpose derive from.
-    /// Changing it makes every stored credential unreadable.
+    /// The stable name the secret key folder, Data Protection application name, and purpose derive from. It is the
+    /// plugin's earlier assembly name, kept because changing it makes every stored credential unreadable.
     /// </summary>
     internal const string SecretsName = "Jellyfin.Plugin.DynamicDns";
 
@@ -57,6 +57,9 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
     {
         ArgumentNullException.ThrowIfNull(applicationPaths);
         ArgumentNullException.ThrowIfNull(logger);
+
+        // Before the settings are first read, so an install saved under the earlier name keeps them.
+        LegacyDataMigration.Run(applicationPaths.PluginConfigurationsPath, logger);
         _configurationManager = configurationManager;
         _logger = logger;
         _secrets = new Lazy<SecretProtector>(() => StableSecretProtection.CreateProtector(applicationPaths, SecretsName, logger));
@@ -65,7 +68,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
         // shared store normally arrives here. A store of its own over the same file is the fallback.
         _statusStore = new Lazy<StatusStoreService>(() => statusStore ?? new StatusStoreService(applicationPaths, NullLogger<StatusStoreService>.Instance));
         ProtectFolders(applicationPaths, logger);
-        logger.LogInformation("Dynamic DNS plugin initialized");
+        logger.LogInformation("Remote Access plugin initialized");
     }
 
     // The key ring that encrypts saved credentials, and the folder with the certificate keys, Let's Encrypt
@@ -116,7 +119,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
     public bool SecretsPlaintext => !Secrets.IsAvailable;
 
     /// <inheritdoc />
-    public override string Name => "Dynamic DNS";
+    public override string Name => "Remote Access";
 
     /// <inheritdoc />
     public override Guid Id => Guid.Parse("8150dce5-6153-4924-a985-a6927be95baa");
@@ -323,8 +326,8 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
         // page opens the sidebar page too, so every way in lands here, and the tabs lead to the settings.
         yield return new PluginPageInfo
         {
-            Name = "ddns_dashboard",
-            EmbeddedResourcePath = $"{ns}.Configuration.ddns_dashboard.html",
+            Name = "remoteaccess_dashboard",
+            EmbeddedResourcePath = $"{ns}.Configuration.remoteaccess_dashboard.html",
             MenuSection = "server",
             DisplayName = "Remote Access",
             EnableInMainMenu = true,
@@ -333,13 +336,13 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
 
         yield return new PluginPageInfo
         {
-            Name = "ddns_dashboard.js",
-            EmbeddedResourcePath = $"{ns}.Configuration.ddns_dashboard.js"
+            Name = "remoteaccess_dashboard.js",
+            EmbeddedResourcePath = $"{ns}.Configuration.remoteaccess_dashboard.js"
         };
 
         // Tabs 2 and 3: Configuration, the numbered steps holding every setting needed to reach Jellyfin from
         // outside, from the DDNS record to the proxy, and Advanced, the fine-tuning.
-        foreach (var name in new[] { "ddns_configuration", "ddns_advanced" })
+        foreach (var name in new[] { "remoteaccess_configuration", "remoteaccess_advanced" })
         {
             yield return new PluginPageInfo
             {
@@ -355,7 +358,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
         }
 
         // Modules the pages import: the shared page helpers, the world map and the shared page styles.
-        foreach (var module in new[] { "ddns_tabs.js", "ddns_worldmap.js", "ddns_common.css" })
+        foreach (var module in new[] { "remoteaccess_tabs.js", "remoteaccess_worldmap.js", "remoteaccess_common.css" })
         {
             yield return new PluginPageInfo
             {
@@ -364,7 +367,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
             };
         }
 
-        foreach (var page in GetSharedPages("ddns"))
+        foreach (var page in GetSharedPages("remoteaccess"))
         {
             yield return page;
         }

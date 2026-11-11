@@ -1,12 +1,12 @@
 using System;
 using System.IO;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Tests for the shared credential encryption pass that guards every configuration write path,
@@ -15,12 +15,12 @@ namespace Jellyfin.Plugin.DynamicDns.Tests;
 public class CredentialEncryptionTests
 {
     private static string TempKeyDir() =>
-        Path.Join(Path.GetTempPath(), "ddns-keys-" + Guid.NewGuid().ToString("N"));
+        Path.Join(Path.GetTempPath(), "remoteaccess-keys-" + Guid.NewGuid().ToString("N"));
 
     private static SecretProtector Protector(string dir) => new(
         "Jellyfin.Plugin.DynamicDns.Secrets.v1",
         NullLogger.Instance,
-        StableSecretProtection.Build(dir, "Jellyfin.Plugin.DynamicDns", NullLogger.Instance));
+        StableSecretProtection.Build(dir, "Jellyfin.Plugin.RemoteAccess", NullLogger.Instance));
 
     [Fact]
     public void ProtectAll_EncryptsPlaintextCredentials()

@@ -1,10 +1,10 @@
-<div id="DynamicDnsConfigurationPage" data-role="page"
+<div id="RemoteAccessConfigurationPage" data-role="page"
      class="page type-interior pluginConfigurationPage withTabs"
      data-require="emby-input,emby-button,emby-select,emby-checkbox"
-     data-controller="__plugin/ddns_configuration.js">
+     data-controller="__plugin/remoteaccess_configuration.js">
     <div data-role="content">
         <div class="content-primary">
-            <form id="DynamicDnsConfigurationForm">
+            <form id="RemoteAccessConfigurationForm">
                 <div class="verticalSection verticalSection-extrabottompadding">
 
                     <div class="sectionTitleContainer flex align-items-center">
@@ -12,29 +12,29 @@
                     </div>
 
                     <!-- Where the setup stands: steps done, one bar segment per step, and what to do next. -->
-                    <div id="summary" class="ddns-summary" aria-live="polite">
-                        <div class="ddns-summary-head">
-                            <span id="summaryTitle" class="ddns-summary-title">Checking...</span>
+                    <div id="summary" class="ra-summary" aria-live="polite">
+                        <div class="ra-summary-head">
+                            <span id="summaryTitle" class="ra-summary-title">Checking...</span>
                             <span id="summaryBadge" class="jpk-badge gray hidden"></span>
                         </div>
-                        <div id="summaryBar" class="ddns-summary-bar" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-                        <div class="ddns-summary-text"><span id="summaryText"></span> <button type="button" id="summaryOpen" class="ddns-summary-link hidden"></button></div>
+                        <div id="summaryBar" class="ra-summary-bar" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                        <div class="ra-summary-text"><span id="summaryText"></span> <button type="button" id="summaryOpen" class="ra-summary-link hidden"></button></div>
                     </div>
                     <div id="folderProblem" class="jpk-error hidden"></div>
                     <div id="everyoneLocal" class="jpk-warn hidden"></div>
                     <div id="countryNote" class="jpk-info hidden"></div>
 
-                    <div class="ddns-steps">
+                    <div class="ra-steps">
 
                         <!-- Step 1: the proxy itself -->
-                        <div class="jpk-collapsible-section ddns-step" id="stepPower" data-state="gray">
+                        <div class="jpk-collapsible-section ra-step" id="stepPower" data-state="gray">
                             <button type="button" class="jpk-collapsible-header" data-target="bodyPower" aria-expanded="true" aria-controls="bodyPower">
                                 <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconPower" aria-hidden="true">1</span>Proxy on</span>
                                 <span class="jpk-badge gray" id="statePower"></span>
                                 <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
                             </button>
                             <div class="jpk-collapsible-content" id="bodyPower">
-                                <div class="ddns-step-text" id="textPower" aria-live="polite"></div>
+                                <div class="ra-step-text" id="textPower" aria-live="polite"></div>
                                 <div class="checkboxContainer checkboxContainer-withDescription">
                                     <label class="emby-checkbox-label">
                                         <input type="checkbox" is="emby-checkbox" id="enabled" />
@@ -46,14 +46,14 @@
                         </div>
 
                         <!-- Step 2: the address, with the DDNS record that keeps it current -->
-                        <div class="jpk-collapsible-section ddns-step" id="stepAddress" data-state="gray">
+                        <div class="jpk-collapsible-section ra-step" id="stepAddress" data-state="gray">
                             <button type="button" class="jpk-collapsible-header" data-target="bodyAddress" aria-expanded="true" aria-controls="bodyAddress">
                                 <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconAddress" aria-hidden="true">2</span>Address</span>
                                 <span class="jpk-badge gray" id="stateAddress"></span>
                                 <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
                             </button>
                             <div class="jpk-collapsible-content" id="bodyAddress">
-                                <div class="ddns-step-text" id="textAddress" aria-live="polite"></div>
+                                <div class="ra-step-text" id="textAddress" aria-live="polite"></div>
                                 <div id="nameDetails" class="jpk-record-card hidden">
                                     <div class="jpk-record-row"><span class="jpk-record-label">Name</span><span id="nameHostname" class="jpk-mono"></span></div>
                                     <div class="jpk-record-row"><span class="jpk-record-label">Points to</span><span id="nameAddresses" class="jpk-mono"></span></div>
@@ -62,7 +62,7 @@
 
                                 <div id="extraRecords" class="jpk-warn hidden"></div>
                                 <div id="loadError" class="jpk-error hidden"></div>
-                                <div class="ddns-step-text"><strong>Use the most limited token your provider allows.</strong></div>
+                                <div class="ra-step-text"><strong>Use the most limited token your provider allows.</strong></div>
 
                                 <div class="selectContainer">
                                     <label class="selectLabel" for="recProvider">Provider</label>
@@ -100,7 +100,7 @@
                                     <div class="jpk-record-row"><span class="jpk-record-label">Result</span><span id="stResult" class="jpk-mono"></span></div>
                                 </div>
                                 <div id="detectionWarning" class="jpk-warn hidden"></div>
-                                <div class="ddns-button-row">
+                                <div class="ra-button-row">
                                     <button is="emby-button" type="button" id="btnRunNow" class="raised jpk-icon-btn jpk-secondary jpk-button-small" title="Update Now">
                                         <span class="material-icons" aria-hidden="true">sync</span>
                                         <span>Update Now</span>
@@ -111,14 +111,14 @@
                         </div>
 
                         <!-- Step 3: the certificate -->
-                        <div class="jpk-collapsible-section ddns-step" id="stepCertificate" data-state="gray">
+                        <div class="jpk-collapsible-section ra-step" id="stepCertificate" data-state="gray">
                             <button type="button" class="jpk-collapsible-header" data-target="bodyCertificate" aria-expanded="true" aria-controls="bodyCertificate">
                                 <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconCertificate" aria-hidden="true">3</span>Certificate</span>
                                 <span class="jpk-badge gray" id="stateCertificate"></span>
                                 <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
                             </button>
                             <div class="jpk-collapsible-content" id="bodyCertificate">
-                                <div class="ddns-step-text" id="textCertificate" aria-live="polite"></div>
+                                <div class="ra-step-text" id="textCertificate" aria-live="polite"></div>
                                 <div class="selectContainer">
                                     <label class="selectLabel" for="certMode">Source</label>
                                     <select id="certMode" class="jpk-selector-dropdown">
@@ -160,12 +160,12 @@
                                     <div class="jpk-record-row"><span class="jpk-record-label">Expires</span><span id="certExpires" class="jpk-mono"></span></div>
                                     <div class="jpk-record-row"><span class="jpk-record-label">Issued by</span><span id="certIssuer" class="jpk-mono"></span></div>
                                     <div id="certRootExpiresRow" class="jpk-record-row hidden"><span class="jpk-record-label">Root expires</span><span id="certRootExpires" class="jpk-mono"></span></div>
-                                    <div id="certRootFingerprintRow" class="jpk-record-row hidden"><span class="jpk-record-label">Root SHA-256</span><span id="certRootFingerprint" class="jpk-mono ddns-fingerprint"></span></div>
+                                    <div id="certRootFingerprintRow" class="jpk-record-row hidden"><span class="jpk-record-label">Root SHA-256</span><span id="certRootFingerprint" class="jpk-mono ra-fingerprint"></span></div>
                                 </div>
                                 <div id="certProblem" class="jpk-warn hidden"></div>
                                 <div id="certRootField" class="hidden">
                                     <div class="fieldDescription">Install it on each device that should trust this server.</div>
-                                    <div class="ddns-button-row">
+                                    <div class="ra-button-row">
                                         <button is="emby-button" type="button" id="btnDownloadRoot" class="raised jpk-secondary jpk-button-small">
                                             <span>Download Root Certificate</span>
                                         </button>
@@ -175,19 +175,19 @@
                         </div>
 
                         <!-- Step 4: the router -->
-                        <div class="jpk-collapsible-section ddns-step" id="stepRouter" data-state="gray">
+                        <div class="jpk-collapsible-section ra-step" id="stepRouter" data-state="gray">
                             <button type="button" class="jpk-collapsible-header" data-target="bodyRouter" aria-expanded="true" aria-controls="bodyRouter">
                                 <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconRouter" aria-hidden="true">4</span>Router</span>
                                 <span class="jpk-badge gray" id="stateRouter"></span>
                                 <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
                             </button>
                             <div class="jpk-collapsible-content" id="bodyRouter">
-                                <div class="ddns-step-text" id="textRouter" aria-live="polite"></div>
+                                <div class="ra-step-text" id="textRouter" aria-live="polite"></div>
                                 <div id="routerError" class="jpk-error hidden"></div>
                                 <div id="routerManual" class="hidden">
                                     <div id="routerInstruction" class="jpk-record-card"></div>
                                 </div>
-                                <div class="ddns-button-row">
+                                <div class="ra-button-row">
                                     <button is="emby-button" type="button" id="btnRouterRetry" class="raised jpk-secondary jpk-button-small">
                                         <span>Try Again</span>
                                     </button>
@@ -197,18 +197,18 @@
                         </div>
 
                         <!-- Step 5: Jellyfin trusts the proxy -->
-                        <div class="jpk-collapsible-section ddns-step" id="stepTrust" data-state="gray">
+                        <div class="jpk-collapsible-section ra-step" id="stepTrust" data-state="gray">
                             <button type="button" class="jpk-collapsible-header" data-target="bodyTrust" aria-expanded="true" aria-controls="bodyTrust">
                                 <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconTrust" aria-hidden="true">5</span>Trust the Proxy</span>
                                 <span class="jpk-badge gray" id="stateTrust"></span>
                                 <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
                             </button>
                             <div class="jpk-collapsible-content" id="bodyTrust">
-                                <div class="ddns-step-text" id="textTrust" aria-live="polite"></div>
+                                <div class="ra-step-text" id="textTrust" aria-live="polite"></div>
                                 <div class="fieldDescription">Restarts Jellyfin once.</div>
                                 <div id="trustError" class="jpk-error hidden"></div>
                                 <div id="jellyfinExposed" class="jpk-warn hidden"></div>
-                                <div class="ddns-button-row">
+                                <div class="ra-button-row">
                                     <button is="emby-button" type="button" id="btnTrust" class="raised jpk-button-submit jpk-button-small">
                                         <span>Trust the Proxy</span>
                                     </button>
@@ -221,17 +221,17 @@
                         </div>
 
                         <!-- Step 6: a test from outside -->
-                        <div class="jpk-collapsible-section ddns-step" id="stepReach" data-state="gray">
+                        <div class="jpk-collapsible-section ra-step" id="stepReach" data-state="gray">
                             <button type="button" class="jpk-collapsible-header" data-target="bodyReach" aria-expanded="true" aria-controls="bodyReach">
                                 <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconReach" aria-hidden="true">6</span>Reachable from outside</span>
                                 <span class="jpk-badge gray" id="stateReach"></span>
                                 <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
                             </button>
                             <div class="jpk-collapsible-content" id="bodyReach">
-                                <div class="ddns-step-text" id="textReach" aria-live="polite"></div>
+                                <div class="ra-step-text" id="textReach" aria-live="polite"></div>
                                 <div id="reachNodes" class="jpk-record-card hidden"></div>
                                 <div class="fieldDescription">Sends your address to check-host.net, which tries it from other countries.</div>
-                                <div class="ddns-button-row">
+                                <div class="ra-button-row">
                                     <button is="emby-button" type="button" id="btnReach" class="raised jpk-secondary jpk-button-small">
                                         <span>Test from Outside</span>
                                     </button>
@@ -255,29 +255,29 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="configurationpage?name=ddns_jpkribs_shared.css">
-    <link rel="stylesheet" href="configurationpage?name=ddns_common.css">
+    <link rel="stylesheet" href="configurationpage?name=remoteaccess_jpkribs_shared.css">
+    <link rel="stylesheet" href="configurationpage?name=remoteaccess_common.css">
     <style>
-        #DynamicDnsConfigurationPage #summary { font-size: 1.05em; }
-        #DynamicDnsConfigurationPage .ddns-summary { margin: 1em 0 var(--jpk-field-gap); padding: 1em 1.1em; background: var(--jpk-surface); border: 1px solid var(--jpk-border); border-radius: 8px; }
-        #DynamicDnsConfigurationPage .ddns-summary-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75em; flex-wrap: wrap; }
-        #DynamicDnsConfigurationPage .ddns-summary-title { font-size: 1.15em; font-weight: 500; }
-        #DynamicDnsConfigurationPage .ddns-summary-bar { display: flex; gap: 4px; margin: 0.8em 0; }
-        #DynamicDnsConfigurationPage .ddns-summary-bar > span { flex: 1 1 0; height: 6px; border-radius: 3px; background: var(--jpk-gray-bg); }
-        #DynamicDnsConfigurationPage .ddns-summary-bar > span[data-state="green"] { background: var(--jpk-green-fg); }
-        #DynamicDnsConfigurationPage .ddns-summary-bar > span[data-state="amber"] { background: var(--jpk-orange-fg); }
-        #DynamicDnsConfigurationPage .ddns-summary-bar > span[data-state="red"] { background: var(--jpk-red-fg); }
-        #DynamicDnsConfigurationPage .ddns-summary-text { line-height: 1.5; opacity: 0.9; }
-        #DynamicDnsConfigurationPage .ddns-summary-link { background: none; border: 0; padding: 0; font: inherit; color: var(--jpk-accent); cursor: pointer; }
-        #DynamicDnsConfigurationPage .ddns-summary-link:hover { text-decoration: underline; }
-        #DynamicDnsConfigurationPage .ddns-steps { margin-top: 1em; }
+        #RemoteAccessConfigurationPage #summary { font-size: 1.05em; }
+        #RemoteAccessConfigurationPage .ra-summary { margin: 1em 0 var(--jpk-field-gap); padding: 1em 1.1em; background: var(--jpk-surface); border: 1px solid var(--jpk-border); border-radius: 8px; }
+        #RemoteAccessConfigurationPage .ra-summary-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75em; flex-wrap: wrap; }
+        #RemoteAccessConfigurationPage .ra-summary-title { font-size: 1.15em; font-weight: 500; }
+        #RemoteAccessConfigurationPage .ra-summary-bar { display: flex; gap: 4px; margin: 0.8em 0; }
+        #RemoteAccessConfigurationPage .ra-summary-bar > span { flex: 1 1 0; height: 6px; border-radius: 3px; background: var(--jpk-gray-bg); }
+        #RemoteAccessConfigurationPage .ra-summary-bar > span[data-state="green"] { background: var(--jpk-green-fg); }
+        #RemoteAccessConfigurationPage .ra-summary-bar > span[data-state="amber"] { background: var(--jpk-orange-fg); }
+        #RemoteAccessConfigurationPage .ra-summary-bar > span[data-state="red"] { background: var(--jpk-red-fg); }
+        #RemoteAccessConfigurationPage .ra-summary-text { line-height: 1.5; opacity: 0.9; }
+        #RemoteAccessConfigurationPage .ra-summary-link { background: none; border: 0; padding: 0; font: inherit; color: var(--jpk-accent); cursor: pointer; }
+        #RemoteAccessConfigurationPage .ra-summary-link:hover { text-decoration: underline; }
+        #RemoteAccessConfigurationPage .ra-steps { margin-top: 1em; }
         /* The step header carries its state as a badge before the fold arrow, and its number takes the state's colour. */
-        #DynamicDnsConfigurationPage .ddns-step .jpk-collapsible-header .jpk-badge { margin-right: 0.8em; }
-        #DynamicDnsConfigurationPage .ddns-step .jpk-step-number { flex: 0 0 auto; }
-        #DynamicDnsConfigurationPage .ddns-step[data-state="green"] .jpk-step-number { color: var(--jpk-green-fg); background: var(--jpk-green-bg); }
-        #DynamicDnsConfigurationPage .ddns-step[data-state="amber"] .jpk-step-number { color: var(--jpk-orange-fg); background: var(--jpk-orange-bg); }
-        #DynamicDnsConfigurationPage .ddns-step[data-state="red"] .jpk-step-number { color: var(--jpk-red-fg); background: var(--jpk-red-bg); }
-        #DynamicDnsConfigurationPage .ddns-step-text { margin: 0 0 1em; line-height: 1.5; }
-        #DynamicDnsConfigurationPage #routerInstruction { line-height: 1.6; }
+        #RemoteAccessConfigurationPage .ra-step .jpk-collapsible-header .jpk-badge { margin-right: 0.8em; }
+        #RemoteAccessConfigurationPage .ra-step .jpk-step-number { flex: 0 0 auto; }
+        #RemoteAccessConfigurationPage .ra-step[data-state="green"] .jpk-step-number { color: var(--jpk-green-fg); background: var(--jpk-green-bg); }
+        #RemoteAccessConfigurationPage .ra-step[data-state="amber"] .jpk-step-number { color: var(--jpk-orange-fg); background: var(--jpk-orange-bg); }
+        #RemoteAccessConfigurationPage .ra-step[data-state="red"] .jpk-step-number { color: var(--jpk-red-fg); background: var(--jpk-red-bg); }
+        #RemoteAccessConfigurationPage .ra-step-text { margin: 0 0 1em; line-height: 1.5; }
+        #RemoteAccessConfigurationPage #routerInstruction { line-height: 1.6; }
     </style>
 </div>

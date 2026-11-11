@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Acme;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Acme;
 
 /// <summary>
 /// What the dashboard shows about automatic certificates.

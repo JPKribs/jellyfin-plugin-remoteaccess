@@ -2,11 +2,11 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Providers;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Providers.Implementations;
+namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
 
 /// <summary>
 /// DonDominio (port of ddclient's <c>nic_dondominio_update</c>). Issues a GET per record type to

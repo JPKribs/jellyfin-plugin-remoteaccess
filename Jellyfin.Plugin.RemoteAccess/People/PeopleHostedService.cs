@@ -2,13 +2,13 @@ using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// Keeps People history current: opens or downloads the location database at startup, records open sessions,
@@ -68,7 +68,7 @@ public sealed class PeopleHostedService : BackgroundService
         // Found at startup, before the activity log was ready; it is written there once now.
         if (FolderAccess.Problem.Length > 0)
         {
-            _activity.Log("Remote Access cannot use its own files", "DynamicDNS.FolderAccess", FolderAccess.Problem, LogLevel.Error);
+            _activity.Log("Remote Access cannot use its own files", "RemoteAccess.FolderAccess", FolderAccess.Problem, LogLevel.Error);
         }
 
         // The database loads in the background, so a slow or stalled download never holds up history.
@@ -98,7 +98,7 @@ public sealed class PeopleHostedService : BackgroundService
                         _logger.LogInformation("Refused {Count} internet connections in the last hour: {Detail}", refused.Total, refused.Describe());
                         _activity.Log(
                             $"Remote Access refused {refused.Total} internet connections in the last hour",
-                            "DynamicDNS.ConnectionsRefused",
+                            "RemoteAccess.ConnectionsRefused",
                             "Refused " + refused.Describe() + ". The Remote Access page lists the addresses.");
                     }
 

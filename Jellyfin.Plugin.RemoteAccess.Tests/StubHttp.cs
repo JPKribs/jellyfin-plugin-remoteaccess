@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Test helper that builds an <see cref="IHttpClientFactory"/> whose clients answer with canned

@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Providers;
+using Jellyfin.Plugin.RemoteAccess.Providers;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Covers how one update attempt's HTTP responses classify its failure: the final response decides

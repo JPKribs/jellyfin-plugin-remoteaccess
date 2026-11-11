@@ -6,13 +6,13 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.People;
-using Jellyfin.Plugin.DynamicDns.Proxy;
+using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// The location database is only ever replaced by one that works. A failed download keeps the one in use, and a

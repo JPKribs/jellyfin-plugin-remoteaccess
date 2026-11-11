@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using Jellyfin.Plugin.DynamicDns.People;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Network;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using Jellyfin.Database.Implementations.Entities;
-using Jellyfin.Plugin.DynamicDns.Services;
+using Jellyfin.Plugin.RemoteAccess.Services;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Activity;
 using Microsoft.Extensions.Logging;
@@ -17,14 +17,14 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// The block list and the server-country rule: what is refused, and what is buffered for the history.
 /// </summary>
 public sealed class BlockingTests : IDisposable
 {
-    private readonly string _dir = Path.Join(Path.GetTempPath(), "ddns-block-" + Guid.NewGuid().ToString("N"));
+    private readonly string _dir = Path.Join(Path.GetTempPath(), "remoteaccess-block-" + Guid.NewGuid().ToString("N"));
     private readonly BlockFilter _filter;
     private readonly BanList _bans;
     private readonly PeopleStore _store;
@@ -151,7 +151,7 @@ public sealed class BlockingTests : IDisposable
 
         var entry = Assert.Single(entries);
         Assert.Equal("Remote Access banned 203.0.113.70", entry.Name);
-        Assert.Equal("DynamicDNS.AddressBanned", entry.Type);
+        Assert.Equal("RemoteAccess.AddressBanned", entry.Type);
         Assert.Equal("2 failed sign-ins from an unknown country. Banned for 30 minutes.", entry.ShortOverview);
     }
 
@@ -253,7 +253,7 @@ public sealed class BlockingTests : IDisposable
     [InlineData("2001:db8::/64", "2001:db8::1", false)]
     [InlineData("203.0.113.8", "203.0.113.7", false)]
     public void BlockGuard_NamesOnlyOneAddress(string entry, string ip, bool expected)
-        => Assert.Equal(expected, Jellyfin.Plugin.DynamicDns.Api.BlockGuard.NamesOnly(entry, IPAddress.Parse(ip)));
+        => Assert.Equal(expected, Jellyfin.Plugin.RemoteAccess.Api.BlockGuard.NamesOnly(entry, IPAddress.Parse(ip)));
 
     [Fact]
     public void FullTracker_StillCountsANewAddress()

@@ -8,17 +8,17 @@ using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
-using Jellyfin.Plugin.DynamicDns.Proxy.Network;
-using Jellyfin.Plugin.DynamicDns.Proxy.Router;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Router;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// Owns the running proxy: starts it from the saved settings, applies changes live when it can and
@@ -742,7 +742,7 @@ public sealed class ProxyManager : IAsyncDisposable
         _logger.LogWarning("Most visitors in the last hour came from one local address. {Why}", Why);
         _activity?.Log(
             "Remote Access sees most visitors as local",
-            "DynamicDNS.EveryoneLooksLocal",
+            "RemoteAccess.EveryoneLooksLocal",
             $"Most of the last hour's requests for your public names, at least {LocalTrafficWatch.Threshold}, came from one local address. " + Why + " See the Configuration tab.",
             LogLevel.Warning);
     }
@@ -769,7 +769,7 @@ public sealed class ProxyManager : IAsyncDisposable
             if (_reportedError.Length > 0)
             {
                 _reportedError = string.Empty;
-                _activity?.Log("Remote Access started its proxy", "DynamicDNS.ProxyStarted", "It is listening on " + addresses + ".");
+                _activity?.Log("Remote Access started its proxy", "RemoteAccess.ProxyStarted", "It is listening on " + addresses + ".");
             }
         }
         catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
@@ -781,7 +781,7 @@ public sealed class ProxyManager : IAsyncDisposable
             if (!string.Equals(_error, _reportedError, StringComparison.Ordinal))
             {
                 _reportedError = _error;
-                _activity?.Log("Remote Access could not start its proxy", "DynamicDNS.ProxyStartFailed", _error, LogLevel.Error);
+                _activity?.Log("Remote Access could not start its proxy", "RemoteAccess.ProxyStartFailed", _error, LogLevel.Error);
             }
         }
     }

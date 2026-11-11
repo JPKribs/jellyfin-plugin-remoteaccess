@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.People;
+using Jellyfin.Plugin.RemoteAccess.People;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Tasks;
 
-namespace Jellyfin.Plugin.DynamicDns.Tasks;
+namespace Jellyfin.Plugin.RemoteAccess.Tasks;
 
 /// <summary>
 /// Downloads the newest location database for the Dashboard's map and the country rules. DB-IP publishes a new one each month.
@@ -28,7 +28,7 @@ public sealed class LocationDatabaseTask : PluginScheduledTask
     public override string Name => "Refresh Locations";
 
     /// <inheritdoc />
-    public override string Key => "DynamicDNSLocationDatabase";
+    public override string Key => "RemoteAccessLocationDatabase";
 
     /// <inheritdoc />
     public override string Description => "Downloads the newest DB-IP location database, used for the Dashboard's map and the country rules.";

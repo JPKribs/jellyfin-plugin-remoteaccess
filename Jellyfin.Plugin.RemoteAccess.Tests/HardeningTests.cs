@@ -5,14 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.People;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Acme;
-using Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
-using Jellyfin.Plugin.DynamicDns.Proxy.Network;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Acme;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using MediaBrowser.Common.Net;
 using Microsoft.AspNetCore.DataProtection;
 using JPKribs.Jellyfin.Base;
@@ -21,7 +21,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Protections added after the adversarial audit: wider bans, the connection gate, Service targets, kept
@@ -29,7 +29,7 @@ namespace Jellyfin.Plugin.DynamicDns.Tests;
 /// </summary>
 public sealed class HardeningTests : IDisposable
 {
-    private readonly string _dir = Path.Join(Path.GetTempPath(), "ddns-hardening-" + Guid.NewGuid().ToString("N"));
+    private readonly string _dir = Path.Join(Path.GetTempPath(), "remoteaccess-hardening-" + Guid.NewGuid().ToString("N"));
     private readonly BanList _bans;
 
     public HardeningTests()
@@ -376,7 +376,7 @@ public sealed class HardeningTests : IDisposable
     [Fact]
     public void Settings_WithCharactersXmlCannotHold_AreFound()
     {
-        var config = new Jellyfin.Plugin.DynamicDns.Configuration.PluginConfiguration();
+        var config = new Jellyfin.Plugin.RemoteAccess.Configuration.PluginConfiguration();
         config.Records.Add(new DNSRecord { Hostname = "ok.example.com" });
         Assert.Null(XmlText.FindInvalid(config));
         config.Records.Add(new DNSRecord { Hostname = "bad\u0001.example.com" });
@@ -447,8 +447,8 @@ public sealed class HardeningTests : IDisposable
     {
         var geo = new GeoIpService(new ProxyPaths(_dir), Substitute.For<IHttpClientFactory>(), NullLogger<GeoIpService>.Instance);
         var server = new ServerLocation(
-            new Jellyfin.Plugin.DynamicDns.Services.IPDetectionService(Substitute.For<IHttpClientFactory>(), NullLogger<Jellyfin.Plugin.DynamicDns.Services.IPDetectionService>.Instance),
-            new Jellyfin.Plugin.DynamicDns.Services.StatusStoreService(AppPaths(), NullLogger<Jellyfin.Plugin.DynamicDns.Services.StatusStoreService>.Instance),
+            new Jellyfin.Plugin.RemoteAccess.Services.IPDetectionService(Substitute.For<IHttpClientFactory>(), NullLogger<Jellyfin.Plugin.RemoteAccess.Services.IPDetectionService>.Instance),
+            new Jellyfin.Plugin.RemoteAccess.Services.StatusStoreService(AppPaths(), NullLogger<Jellyfin.Plugin.RemoteAccess.Services.StatusStoreService>.Instance),
             geo,
             NullLogger<ServerLocation>.Instance);
         var filter = new BlockFilter(geo, server, _bans, NullLogger<BlockFilter>.Instance);
@@ -486,9 +486,9 @@ public sealed class HardeningTests : IDisposable
         // Encrypted under one key ring, read with another: the credentials no longer decrypt.
         static SecretProtector Ring(string dir) => new("t", NullLogger.Instance, StableSecretProtection.Build(dir, "t", NullLogger.Instance));
         var sealedPassword = Ring(Path.Join(_dir, "ring1")).Protect("hunter2");
-        var provider = Substitute.For<Jellyfin.Plugin.DynamicDns.Providers.IDNSProvider, Jellyfin.Plugin.DynamicDns.Providers.IAcmeDnsProvider>();
+        var provider = Substitute.For<Jellyfin.Plugin.RemoteAccess.Providers.IDNSProvider, Jellyfin.Plugin.RemoteAccess.Providers.IAcmeDnsProvider>();
         provider.Kind.Returns(DNSProviderKind.Cloudflare);
-        var acme = (Jellyfin.Plugin.DynamicDns.Providers.IAcmeDnsProvider)provider;
+        var acme = (Jellyfin.Plugin.RemoteAccess.Providers.IAcmeDnsProvider)provider;
         acme.RemoveTxtAsync(Arg.Any<DNSRecord>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<System.Threading.CancellationToken>()).Returns(Task.FromResult(true));
         var service = new AcmeCertificateService(paths, new Http01ChallengeStore(), Substitute.For<IHttpClientFactory>(), NullLogger<AcmeCertificateService>.Instance, new[] { provider }, Ring(Path.Join(_dir, "ring2")));
         var records = new[]
@@ -573,9 +573,9 @@ public sealed class HardeningTests : IDisposable
         {
             Records = { new PendingTxt { RecordId = "r1", Name = "_acme-challenge.media.example.com", Value = "v", PublishedUtc = DateTime.UtcNow } }
         });
-        var provider = Substitute.For<Jellyfin.Plugin.DynamicDns.Providers.IDNSProvider, Jellyfin.Plugin.DynamicDns.Providers.IAcmeDnsProvider>();
+        var provider = Substitute.For<Jellyfin.Plugin.RemoteAccess.Providers.IDNSProvider, Jellyfin.Plugin.RemoteAccess.Providers.IAcmeDnsProvider>();
         provider.Kind.Returns(DNSProviderKind.Cloudflare);
-        ((Jellyfin.Plugin.DynamicDns.Providers.IAcmeDnsProvider)provider)
+        ((Jellyfin.Plugin.RemoteAccess.Providers.IAcmeDnsProvider)provider)
             .RemoveTxtAsync(Arg.Any<DNSRecord>(), "_acme-challenge.media.example.com", "v", Arg.Any<System.Threading.CancellationToken>())
             .Returns(Task.FromResult(false), Task.FromResult(true));
         var service = new AcmeCertificateService(paths, new Http01ChallengeStore(), Substitute.For<IHttpClientFactory>(), NullLogger<AcmeCertificateService>.Instance, new[] { provider });
@@ -595,12 +595,12 @@ public sealed class HardeningTests : IDisposable
     [InlineData("nonsense", null)]
     public void BlockTarget_AddressOrSlash64(string text, string? written)
     {
-        var parsed = Jellyfin.Plugin.DynamicDns.Api.BlockGuard.TryParseTarget(text, out var target);
+        var parsed = Jellyfin.Plugin.RemoteAccess.Api.BlockGuard.TryParseTarget(text, out var target);
         Assert.Equal(written is not null, parsed);
         if (parsed)
         {
-            Assert.Equal(written, Jellyfin.Plugin.DynamicDns.Api.BlockGuard.Text(target));
-            Assert.True(Jellyfin.Plugin.DynamicDns.Api.BlockGuard.NamesOnly(written!, target));
+            Assert.Equal(written, Jellyfin.Plugin.RemoteAccess.Api.BlockGuard.Text(target));
+            Assert.True(Jellyfin.Plugin.RemoteAccess.Api.BlockGuard.NamesOnly(written!, target));
         }
     }
 

@@ -1,6 +1,6 @@
 using System;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// An internet address the block list or country rules refused, with how often and when.

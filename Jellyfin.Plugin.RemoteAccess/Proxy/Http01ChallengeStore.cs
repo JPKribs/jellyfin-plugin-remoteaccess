@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// Pending ACME HTTP-01 challenges, answered by the proxy's HTTP listener while Let's Encrypt checks an

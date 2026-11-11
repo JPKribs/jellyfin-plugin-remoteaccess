@@ -1,8 +1,8 @@
 using System;
 using System.Net.Sockets;
-using Jellyfin.Plugin.DynamicDns.Models;
+using Jellyfin.Plugin.RemoteAccess.Models;
 
-namespace Jellyfin.Plugin.DynamicDns.Utilities;
+namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
 /// Decides whether a record should be updated, so we never re-push an address a provider already holds.

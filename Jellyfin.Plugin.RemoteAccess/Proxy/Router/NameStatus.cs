@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Router;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Router;
 
 /// <summary>
 /// Whether the public name people use points at this server.

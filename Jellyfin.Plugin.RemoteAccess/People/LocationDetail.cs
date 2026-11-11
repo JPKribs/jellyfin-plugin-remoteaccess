@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// How much location the history shows for an internet address.

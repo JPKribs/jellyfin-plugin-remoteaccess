@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Router;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Router;
 
 /// <summary>
 /// Checks that the public name people use resolves to this server. The dashboard polls status, so an answer is

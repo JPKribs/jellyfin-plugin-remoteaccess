@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// Bans internet addresses that fail to sign in too often, for a set time. Failures are counted in memory over
@@ -280,12 +280,12 @@ public sealed class BanList : IFailureTracker
         if (suppressed > 0)
         {
             _logger.LogWarning("Banned {Count} more addresses in the last minute", suppressed);
-            _activity?.Log($"Remote Access banned {suppressed} more addresses", "DynamicDNS.AddressBanned", "Too many bans to list one by one. The Remote Access page shows them all.", LogLevel.Warning);
+            _activity?.Log($"Remote Access banned {suppressed} more addresses", "RemoteAccess.AddressBanned", "Too many bans to list one by one. The Remote Access page shows them all.", LogLevel.Warning);
         }
 
         if (log)
         {
-            _activity?.Log(name!, "DynamicDNS.AddressBanned", overview ?? string.Empty, LogLevel.Warning);
+            _activity?.Log(name!, "RemoteAccess.AddressBanned", overview ?? string.Empty, LogLevel.Warning);
         }
 
         return log;

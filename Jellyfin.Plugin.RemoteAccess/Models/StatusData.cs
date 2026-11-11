@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Jellyfin.Plugin.DynamicDns.Models;
+namespace Jellyfin.Plugin.RemoteAccess.Models;
 
 /// <summary>
 /// All runtime status the plugin keeps outside its configuration: the most recent detected public IP, the

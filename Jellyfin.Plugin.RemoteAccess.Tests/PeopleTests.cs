@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using Jellyfin.Plugin.DynamicDns.People;
-using Jellyfin.Plugin.DynamicDns.Proxy;
+using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// The People history store, the proxy's access recorder, and location parsing.
 /// </summary>
 public sealed class PeopleTests : IDisposable
 {
-    private readonly string _dir = Path.Join(Path.GetTempPath(), "ddns-people-tests-" + Guid.NewGuid().ToString("N"));
+    private readonly string _dir = Path.Join(Path.GetTempPath(), "remoteaccess-people-tests-" + Guid.NewGuid().ToString("N"));
     private readonly PeopleStore _store;
 
     public PeopleTests()

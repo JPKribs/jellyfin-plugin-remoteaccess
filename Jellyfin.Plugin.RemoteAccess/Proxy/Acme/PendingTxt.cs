@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Acme;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Acme;
 
 /// <summary>
 /// A DNS-01 TXT record this plugin published and has not yet removed, kept on disk so one left behind by a

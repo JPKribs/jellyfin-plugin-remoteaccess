@@ -1,10 +1,10 @@
 using System.Linq;
 using System.Net;
-using Jellyfin.Plugin.DynamicDns.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
 using Microsoft.AspNetCore.Http;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// The pure building blocks of the proxy: hostname matching, LAN classification, credential masking and

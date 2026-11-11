@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 
-namespace Jellyfin.Plugin.DynamicDns.Utilities;
+namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
 /// Finds text XML cannot hold. Jellyfin saves the configuration as XML and writes such a character as an

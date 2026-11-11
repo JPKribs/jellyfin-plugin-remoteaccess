@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 
 /// <summary>
 /// Where the proxy's TLS certificate comes from.

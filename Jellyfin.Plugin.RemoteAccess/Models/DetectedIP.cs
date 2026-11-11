@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Models;
+namespace Jellyfin.Plugin.RemoteAccess.Models;
 
 /// <summary>
 /// The public IP addresses discovered for the server, plus a note for any family that was wanted but

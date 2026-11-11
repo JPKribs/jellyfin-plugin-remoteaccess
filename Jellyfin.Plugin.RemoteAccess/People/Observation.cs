@@ -1,6 +1,6 @@
 using System;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// One user seen from one address with one device, and the address they used to reach the server.

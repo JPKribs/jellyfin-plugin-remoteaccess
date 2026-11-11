@@ -1,13 +1,13 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Services;
-using Jellyfin.Plugin.DynamicDns.Configuration;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Services;
+using Jellyfin.Plugin.RemoteAccess.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Covers the public-address filter in <see cref="IPDetectionService"/>: a detection endpoint that

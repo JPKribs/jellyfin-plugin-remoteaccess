@@ -1,6 +1,6 @@
-import { createConfigPage, confirmDialog } from './configurationpage?name=ddns_jpkribs_shared.js';
-import { WORLD, WORLD_VIEWBOX } from './configurationpage?name=ddns_worldmap.js';
-import { PLUGIN_ID, TABS, errorText, showText } from './configurationpage?name=ddns_tabs.js';
+import { createConfigPage, confirmDialog } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { WORLD, WORLD_VIEWBOX } from './configurationpage?name=remoteaccess_worldmap.js';
+import { PLUGIN_ID, TABS, errorText, showText } from './configurationpage?name=remoteaccess_tabs.js';
 
 export default function (view) {
     'use strict';
@@ -100,11 +100,11 @@ export default function (view) {
         var bans = (data && data.Banned) || [];
         var box = Shared.getEl('banned');
         if (!bans.length) {
-            box.innerHTML = '<div class="ddns-table-wrap ddns-empty">No banned addresses.</div>';
+            box.innerHTML = '<div class="ra-table-wrap ra-empty">No banned addresses.</div>';
             return;
         }
 
-        box.innerHTML = '<div class="ddns-table-wrap"><table class="ddns-table ddns-activity"><thead><tr>' +
+        box.innerHTML = '<div class="ra-table-wrap"><table class="ra-table ra-activity"><thead><tr>' +
             '<th>IP</th><th>Country</th><th>Failures</th><th>Banned</th><th>Ends</th><th><span class="sr-only">Action</span></th>' +
             '</tr></thead><tbody>' +
             bans.map(function (b) {
@@ -113,7 +113,7 @@ export default function (view) {
                     '<td>' + esc(b.Failures) + '</td>' +
                     '<td>' + esc(agoShort(b.BannedUtc)) + '</td>' +
                     '<td>' + esc(untilText(b.UntilUtc)) + '</td>' +
-                    '<td class="ddns-action">' + button('Unban', 'jpk-secondary', 'data-unban="' + esc(b.Ip) + '"', '', 'Unban ' + b.Ip) + '</td></tr>';
+                    '<td class="ra-action">' + button('Unban', 'jpk-secondary', 'data-unban="' + esc(b.Ip) + '"', '', 'Unban ' + b.Ip) + '</td></tr>';
             }).join('') + '</tbody></table></div>';
     }
 
@@ -142,12 +142,12 @@ export default function (view) {
         var rows = (data && data.Activity) || [];
         var box = Shared.getEl('activity');
         if (!rows.length) {
-            box.innerHTML = '<div class="ddns-table-wrap ddns-empty">' + (filterType || filterCountry ? 'Nothing matches these filters.' : 'Nothing recorded yet.') + '</div>';
+            box.innerHTML = '<div class="ra-table-wrap ra-empty">' + (filterType || filterCountry ? 'Nothing matches these filters.' : 'Nothing recorded yet.') + '</div>';
             return;
         }
 
         var area = showsArea();
-        box.innerHTML = '<div class="ddns-table-wrap"><table class="ddns-table ddns-activity"><thead><tr>' +
+        box.innerHTML = '<div class="ra-table-wrap"><table class="ra-table ra-activity"><thead><tr>' +
             '<th>Type</th><th>User</th><th>IP</th><th>Device</th><th>Address</th><th>Country</th>' + (area ? '<th>Area</th>' : '') + '<th>Last Seen</th>' +
             '<th><span class="sr-only">Action</span></th>' +
             '</tr></thead><tbody>' +
@@ -161,7 +161,7 @@ export default function (view) {
                     '<td>' + esc(place(r)) + '</td>' +
                     (area ? '<td>' + esc(r.IsLocal ? '' : r.City || '') + '</td>' : '') +
                     '<td>' + esc(agoShort(r.LastUtc)) + '</td>' +
-                    '<td class="ddns-action">' + action(r) + '</td></tr>';
+                    '<td class="ra-action">' + action(r) + '</td></tr>';
             }).join('') + '</tbody></table></div>';
     }
 
@@ -203,8 +203,8 @@ export default function (view) {
     // A count column's heading: the word, or an icon on a narrow screen. The word stays as the tooltip and the
     // accessible name.
     function countHeading(word, icon) {
-        return '<th class="ddns-num" title="' + word + '" aria-label="' + word + '"><span class="ddns-word">' + word +
-            '</span><span class="ddns-icon material-icons" aria-hidden="true">' + icon + '</span></th>';
+        return '<th class="ra-num" title="' + word + '" aria-label="' + word + '"><span class="ra-word">' + word +
+            '</span><span class="ra-icon material-icons" aria-hidden="true">' + icon + '</span></th>';
     }
 
     function countLabel(r) {
@@ -234,7 +234,7 @@ export default function (view) {
             var count = total(r);
             var strength = 0.35 + 0.65 * (max > 1 ? (count - 1) / (max - 1) : 1);
             var color = r.users ? MAP_COLORS.people : r.failures ? MAP_COLORS.failed : MAP_COLORS.blocked;
-            return '<path class="ddns-hit" style="fill: rgba(' + color + ', ' + strength.toFixed(2) + ')" d="' + shape.d + '">' +
+            return '<path class="ra-hit" style="fill: rgba(' + color + ', ' + strength.toFixed(2) + ')" d="' + shape.d + '">' +
                 '<title>' + esc(r.name + ', ' + countLabel(r)) + '</title></path>';
         }).join('');
         Shared.getEl('worldMap').innerHTML = '<svg viewBox="' + WORLD_VIEWBOX + '" role="img" aria-label="World map">' + paths + '</svg>';
@@ -246,18 +246,18 @@ export default function (view) {
             var empty = picked.length === 3 ? 'Nothing from the internet yet.'
                 : picked.length > 1 ? 'Nothing from the internet for these yet.'
                 : { people: 'No users from the internet yet.', failed: 'No failed sign-ins.', blocked: 'Nothing blocked yet.' }[picked[0]];
-            legend.innerHTML = '<div class="ddns-table-wrap ddns-empty">' + esc(empty) + '</div>';
+            legend.innerHTML = '<div class="ra-table-wrap ra-empty">' + esc(empty) + '</div>';
         } else {
-            legend.innerHTML = '<div class="ddns-table-wrap"><table class="ddns-table"><thead><tr><th>Country</th>' +
+            legend.innerHTML = '<div class="ra-table-wrap"><table class="ra-table"><thead><tr><th>Country</th>' +
                 (mapShown.people ? countHeading('Users', 'person') : '') +
                 (mapShown.failed ? countHeading('Failures', 'warning') : '') +
                 (mapShown.blocked ? countHeading('Blocked', 'block') : '') +
                 '<th>Last</th></tr></thead><tbody>' +
                 rows.map(function (r) {
                     return '<tr><td>' + esc(r.name) + '</td>' +
-                        (mapShown.people ? '<td class="ddns-num">' + r.users + '</td>' : '') +
-                        (mapShown.failed ? '<td class="ddns-num">' + r.failures + '</td>' : '') +
-                        (mapShown.blocked ? '<td class="ddns-num">' + r.blocked + '</td>' : '') +
+                        (mapShown.people ? '<td class="ra-num">' + r.users + '</td>' : '') +
+                        (mapShown.failed ? '<td class="ra-num">' + r.failures + '</td>' : '') +
+                        (mapShown.blocked ? '<td class="ra-num">' + r.blocked + '</td>' : '') +
                         '<td>' + esc(agoShort(r.last)) + '</td></tr>';
                 }).join('') + '</tbody></table></div>';
         }
@@ -283,7 +283,7 @@ export default function (view) {
             else if (data.Recording === false) note = 'History is recorded while remote access is on.';
             showText(Shared, 'peopleOff', note);
         }).catch(function () {
-            Shared.getEl('activity').innerHTML = '<div class="ddns-table-wrap ddns-empty">Could not load Remote Access.</div>';
+            Shared.getEl('activity').innerHTML = '<div class="ra-table-wrap ra-empty">Could not load Remote Access.</div>';
         });
     }
 
@@ -448,8 +448,8 @@ export default function (view) {
 
     Shared = createConfigPage(view, {
         pluginId: PLUGIN_ID,
-        apiPrefix: 'DynamicDns',
-        tabsKey: 'ddns',
+        apiPrefix: 'RemoteAccess',
+        tabsKey: 'remoteaccess',
         tabIndex: 0,
         tabs: TABS,
         bind: bind,

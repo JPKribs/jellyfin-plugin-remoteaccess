@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Router;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Router;
 
 /// <summary>
 /// The last check of whether this server's HTTPS port can be reached from outside the network.

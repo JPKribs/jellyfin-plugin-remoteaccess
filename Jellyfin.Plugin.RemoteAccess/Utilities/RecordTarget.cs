@@ -1,8 +1,8 @@
 using System;
 using System.Net;
-using Jellyfin.Plugin.DynamicDns.Models;
+using Jellyfin.Plugin.RemoteAccess.Models;
 
-namespace Jellyfin.Plugin.DynamicDns.Utilities;
+namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
 /// Works out what a record points at: the fully qualified name its live DNS can be checked against, and

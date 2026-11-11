@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Router;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Router;
 
 /// <summary>
 /// Forwards ports with NAT-PMP (RFC 6886): small UDP messages to the default gateway on port 5351. Apple routers

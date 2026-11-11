@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using Certes;
 using Certes.Acme;
 using Certes.Acme.Resource;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Providers;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Providers;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Acme;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Acme;
 
 /// <summary>
 /// Gets and renews the proxy's certificate from Let's Encrypt. When every name falls under a DDNS record whose
@@ -192,11 +192,11 @@ public sealed class AcmeCertificateService : IDisposable
                 _logger.LogInformation("Let's Encrypt issued a certificate for {Names}", list);
                 if (decision.Action == AcmeAction.Renew)
                 {
-                    _activity?.Log("Remote Access renewed its certificate", "DynamicDNS.CertificateRenewed", "Let's Encrypt renewed the certificate for " + list + ".");
+                    _activity?.Log("Remote Access renewed its certificate", "RemoteAccess.CertificateRenewed", "Let's Encrypt renewed the certificate for " + list + ".");
                 }
                 else
                 {
-                    _activity?.Log("Remote Access got a certificate for " + list, "DynamicDNS.CertificateIssued", "Issued by Let's Encrypt.");
+                    _activity?.Log("Remote Access got a certificate for " + list, "RemoteAccess.CertificateIssued", "Issued by Let's Encrypt.");
                 }
 
                 return true;
@@ -212,7 +212,7 @@ public sealed class AcmeCertificateService : IDisposable
                 _logger.Log(level, "Let's Encrypt did not issue a certificate for {Names}: {Error}", string.Join(", ", names), error);
                 _activity?.Log(
                     decision.Action == AcmeAction.Renew ? "Remote Access could not renew its certificate" : "Remote Access could not get a certificate",
-                    decision.Action == AcmeAction.Renew ? "DynamicDNS.CertificateRenewFailed" : "DynamicDNS.CertificateIssueFailed",
+                    decision.Action == AcmeAction.Renew ? "RemoteAccess.CertificateRenewFailed" : "RemoteAccess.CertificateIssueFailed",
                     error + " The next try is after " + next.ToString("u", System.Globalization.CultureInfo.InvariantCulture) + ".",
                     level);
                 return false;
@@ -432,7 +432,7 @@ public sealed class AcmeCertificateService : IDisposable
                 _logger.LogWarning("Gave up removing the TXT record {Name}; remove it at your DNS provider", item.Name);
                 _activity?.Log(
                     "Remote Access could not remove a Let's Encrypt TXT record",
-                    "DynamicDNS.AcmeTxtLeftOver",
+                    "RemoteAccess.AcmeTxtLeftOver",
                     item.Name + " is still published at the DNS provider. It does no harm, but you can delete it there.",
                     LogLevel.Warning);
             }

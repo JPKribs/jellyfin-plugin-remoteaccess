@@ -4,8 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <!-- The assembly keeps its old name: Jellyfin names the plugin's settings file after it, so renaming it would
          leave every existing install without its records and settings. -->
-    <AssemblyName>Jellyfin.Plugin.DynamicDns</AssemblyName>
-    <RootNamespace>Jellyfin.Plugin.DynamicDns</RootNamespace>
+    <AssemblyName>Jellyfin.Plugin.RemoteAccess</AssemblyName>
+    <RootNamespace>Jellyfin.Plugin.RemoteAccess</RootNamespace>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Nullable>enable</Nullable>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
@@ -46,7 +46,7 @@
 
   <ItemGroup>
     <!-- Admin dashboard pages (tabs) -->
-    <EmbeddedResource Include="Configuration\ddns_*.html;Configuration\ddns_*.js;Configuration\ddns_*.css" />
+    <EmbeddedResource Include="Configuration\remoteaccess_*.html;Configuration\remoteaccess_*.js;Configuration\remoteaccess_*.css" />
   </ItemGroup>
 
 </Project>

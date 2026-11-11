@@ -2,7 +2,7 @@ using System;
 using System.Net.Http;
 using Yarp.ReverseProxy.Forwarder;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 
 /// <summary>
 /// Builds the HTTP clients YARP forwards to Jellyfin with, with a short connect timeout.

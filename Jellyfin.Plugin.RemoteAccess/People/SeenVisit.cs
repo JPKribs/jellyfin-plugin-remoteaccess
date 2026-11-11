@@ -1,6 +1,6 @@
 using System;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// An internet address that reached Jellyfin through the proxy, whether or not it went on to sign in.

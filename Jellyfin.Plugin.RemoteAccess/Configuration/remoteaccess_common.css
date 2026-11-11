@@ -1,11 +1,11 @@
 /* Rules shared by this plugin's own pages, on top of the JPKribs shared style sheet. */
-.ddns-button-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; margin: 1em 0 0; }
+.ra-button-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; margin: 1em 0 0; }
 /* Every action row is spaced the same way: its description sits above it, 1em of space separates them, and its
    status line follows with a field's gap before whatever comes next. */
-.ddns-button-row + .jpk-status-text, .ddns-button-row:last-child { margin-bottom: var(--jpk-field-gap); }
-.ddns-button-row > button { flex: 1 1 200px; margin: 0; justify-content: center; text-align: center; }
+.ra-button-row + .jpk-status-text, .ra-button-row:last-child { margin-bottom: var(--jpk-field-gap); }
+.ra-button-row > button { flex: 1 1 200px; margin: 0; justify-content: center; text-align: center; }
 /* A small action keeps the base size for its words and never stretches across the row. */
-.ddns-button-row > button.jpk-button-small { flex: 0 0 auto; }
+.ra-button-row > button.jpk-button-small { flex: 0 0 auto; }
 
 /* The shared dialog builds plain buttons, which otherwise keep the browser's own font and bevelled border. */
 .jpk-dialog .jpk-modal-button-row { gap: 12px; margin-top: 1.2em; }
@@ -15,14 +15,14 @@
 /* The root certificate's fingerprint, in short lines a person compares against their device. The button after
    the certificate card sits a field's gap below it. */
 #certRootField { margin-top: 1em; }
-.ddns-fingerprint { white-space: pre-line; line-height: 1.5; }
+.ra-fingerprint { white-space: pre-line; line-height: 1.5; }
 
 /* Clear saved value sits under its credential field with the same gap as an action row's description. The shared
    sheet zeroes every margin inside a field, so this has to win over its !important. */
 .pluginConfigurationPage .inputContainer > button.jpk-button-small { margin-top: 0.6em !important; }
 
 /* Countries named in the country rule: green when let in, red when refused, yellow while the server's own is unknown. */
-.ddns-country-known { color: var(--jpk-green-fg); }
-.ddns-country-unknown { color: var(--jpk-orange-fg); }
-.ddns-country-blocked { color: var(--jpk-red-fg); }
+.ra-country-known { color: var(--jpk-green-fg); }
+.ra-country-unknown { color: var(--jpk-orange-fg); }
+.ra-country-blocked { color: var(--jpk-red-fg); }
 .jpk-info a, .jpk-warn a { color: inherit; font-weight: 600; }

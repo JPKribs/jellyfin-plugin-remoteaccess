@@ -2,11 +2,11 @@ using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Configuration;
-using Jellyfin.Plugin.DynamicDns.Services;
+using Jellyfin.Plugin.RemoteAccess.Configuration;
+using Jellyfin.Plugin.RemoteAccess.Services;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// The country this server is in, from its public address and the location database. The address comes from

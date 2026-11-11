@@ -1,5 +1,5 @@
-import { createConfigPage, confirmDialog } from './configurationpage?name=ddns_jpkribs_shared.js';
-import { PLUGIN_ID, TABS, errorText, showText, trustTheProxy, routerInstructionHtml, routerStateText, loadProviders, primaryRecord, readDdnsSecret, recordNames, saveProxyHostnames } from './configurationpage?name=ddns_tabs.js';
+import { createConfigPage, confirmDialog } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { PLUGIN_ID, TABS, errorText, showText, trustTheProxy, routerInstructionHtml, routerStateText, loadProviders, primaryRecord, readDdnsSecret, recordNames, saveProxyHostnames } from './configurationpage?name=remoteaccess_tabs.js';
 
 // The Configuration tab: a checklist from turning the proxy on to a test from outside. Each step holds only what
 // most people need: the proxy switch, the one DDNS record whose name is the proxy's address, the certificate, the
@@ -902,15 +902,15 @@ export default function (view) {
         var html = '';
         if (st.Enabled && mode === 'ServerCountry') {
             html = st.ServerCountry
-                ? 'Only visitors from ' + countryList([st.ServerCountry].concat(chosen), 'ddns-country-known') + ' can connect from the internet.'
-                : '<strong class="ddns-country-unknown">This server\'s country is not known yet</strong>, so everyone can connect until it is. Then only visitors from its country' + (chosen.length ? ' and ' + countryList(chosen, 'ddns-country-known') : '') + ' can.';
+                ? 'Only visitors from ' + countryList([st.ServerCountry].concat(chosen), 'ra-country-known') + ' can connect from the internet.'
+                : '<strong class="ra-country-unknown">This server\'s country is not known yet</strong>, so everyone can connect until it is. Then only visitors from its country' + (chosen.length ? ' and ' + countryList(chosen, 'ra-country-known') : '') + ' can.';
         } else if (st.Enabled && mode === 'AllowOnly' && chosen.length) {
-            html = 'Only visitors from ' + countryList(chosen, 'ddns-country-known') + ' can connect from the internet.';
+            html = 'Only visitors from ' + countryList(chosen, 'ra-country-known') + ' can connect from the internet.';
         } else if (st.Enabled && mode === 'Block' && chosen.length) {
-            html = 'Visitors from ' + countryList(chosen, 'ddns-country-blocked') + ' are refused.';
+            html = 'Visitors from ' + countryList(chosen, 'ra-country-blocked') + ' are refused.';
         }
         Shared.setVisible('countryNote', !!html);
-        if (html) box.innerHTML = html + ' Change this in <a href="#/configurationpage?name=ddns_advanced">Advanced &gt; Blocking</a>.';
+        if (html) box.innerHTML = html + ' Change this in <a href="#/configurationpage?name=remoteaccess_advanced">Advanced &gt; Blocking</a>.';
     }
 
     function testReach() {
@@ -984,8 +984,8 @@ export default function (view) {
 
     Shared = createConfigPage(view, {
         pluginId: PLUGIN_ID,
-        apiPrefix: 'DynamicDns',
-        tabsKey: 'ddns',
+        apiPrefix: 'RemoteAccess',
+        tabsKey: 'remoteaccess',
         tabIndex: 1,
         tabs: TABS,
         bind: bind,

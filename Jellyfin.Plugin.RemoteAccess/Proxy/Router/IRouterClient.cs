@@ -2,7 +2,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Router;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Router;
 
 /// <summary>
 /// One way of asking the router to forward a port, such as NAT-PMP or UPnP. Behind an interface so the port

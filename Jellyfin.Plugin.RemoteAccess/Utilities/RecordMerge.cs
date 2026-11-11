@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Jellyfin.Plugin.DynamicDns.Models;
+using Jellyfin.Plugin.RemoteAccess.Models;
 
-namespace Jellyfin.Plugin.DynamicDns.Utilities;
+namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
 /// Merges the records submitted by the dashboard onto the stored ones. Each incoming record keeps its

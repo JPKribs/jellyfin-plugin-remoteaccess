@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 
 /// <summary>
 /// Advanced proxy values, stored only when the administrator changes them. A null value means "use the

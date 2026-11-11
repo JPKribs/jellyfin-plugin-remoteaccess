@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Jellyfin.Plugin.DynamicDns.Api;
-using Jellyfin.Plugin.DynamicDns.Configuration;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Api;
+using Jellyfin.Plugin.RemoteAccess.Configuration;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// What the save endpoints and the block list refuse or tidy up before anything is stored.

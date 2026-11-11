@@ -5,10 +5,10 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using MediaBrowser.Common.Net;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Network;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Network;
 
 /// <summary>
 /// The pure parts of trusting the proxy: what to capture, what to write, and what to put back. Jellyfin keeps its

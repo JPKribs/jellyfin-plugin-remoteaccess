@@ -42,7 +42,7 @@ provider for a public IP first. Later, Configuration step 4 checks this for you.
     https://raw.githubusercontent.com/JPKribs/jellyfin-plugin-remoteaccess/master/manifest.json
     ```
 
-2. In **Catalog**, install **Dynamic DNS**. The catalog still uses the plugin's original name.
+2. In **Catalog**, install **Remote Access**.
 3. Restart Jellyfin when it asks.
 
 A **Remote Access** entry now sits in the dashboard's side menu.

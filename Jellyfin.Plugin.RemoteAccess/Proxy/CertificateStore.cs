@@ -6,11 +6,11 @@ using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// Loads the proxy's certificate, keeps it current when its files change, and picks it for each TLS
@@ -363,7 +363,7 @@ public sealed class CertificateStore : IDisposable
             _logger.LogInformation("Created a root certificate for self-signed HTTPS that only vouches for {Names} and private addresses. Install it on each device from step 3, Certificate, on the Configuration tab", limits);
             _activity?.Log(
                 "Remote Access created a root certificate",
-                "DynamicDNS.RootCertificateCreated",
+                "RemoteAccess.RootCertificateCreated",
                 "It only vouches for " + limits + " and private addresses. Devices that should trust the self-signed certificate need this root installed, replacing any earlier one. Download it from step 3, Certificate, on the Configuration tab.");
         }
 

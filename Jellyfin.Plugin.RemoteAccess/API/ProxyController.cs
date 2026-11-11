@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.People;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Network;
-using Jellyfin.Plugin.DynamicDns.Proxy.Router;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Router;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Jellyfin.Plugin.DynamicDns.Api;
+namespace Jellyfin.Plugin.RemoteAccess.Api;
 
 /// <summary>
 /// Administrative endpoints backing the Remote Access and Advanced tabs.
 /// </summary>
 [ApiController]
 [Authorize(Policy = "RequiresElevation")]
-[Route("DynamicDns/Proxy")]
+[Route("RemoteAccess/Proxy")]
 [Produces("application/json")]
 public class ProxyController : ControllerBase
 {
@@ -196,7 +196,7 @@ public class ProxyController : ControllerBase
         {
             _activity.Log(
                 "Remote Access settings were changed",
-                "DynamicDNS.ProxySettingsChanged",
+                "RemoteAccess.ProxySettingsChanged",
                 "Changed: " + string.Join(", ", changed) + ". The proxy is " + (incoming.Enabled ? "on." : "off."),
                 userId: user);
         }
@@ -315,7 +315,7 @@ public class ProxyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> RequestCertificate()
     {
-        _activity.Log("Remote Access was asked for a new certificate", "DynamicDNS.CertificateRequested", "Requested from the Remote Access page.", userId: ActivityUser.Of(User));
+        _activity.Log("Remote Access was asked for a new certificate", "RemoteAccess.CertificateRequested", "Requested from the Remote Access page.", userId: ActivityUser.Of(User));
         var (ok, message) = await _proxy.RequestCertificateAsync(CancellationToken.None).ConfigureAwait(false);
         return Ok(new { Ok = ok, Message = message, Status = _proxy.GetStatus(_orchestrator.State) });
     }

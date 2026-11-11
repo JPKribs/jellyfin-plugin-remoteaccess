@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Normalization and validation of proxy settings, and how unset advanced values resolve to defaults.
@@ -151,9 +151,9 @@ public class ProxySettingsTests
               </Proxy>
             </PluginConfiguration>
             """;
-        var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Jellyfin.Plugin.DynamicDns.Configuration.PluginConfiguration));
+        var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Jellyfin.Plugin.RemoteAccess.Configuration.PluginConfiguration));
         using var reader = new System.IO.StringReader(Xml);
-        var config = (Jellyfin.Plugin.DynamicDns.Configuration.PluginConfiguration)serializer.Deserialize(reader)!;
+        var config = (Jellyfin.Plugin.RemoteAccess.Configuration.PluginConfiguration)serializer.Deserialize(reader)!;
         Assert.True(config.Proxy.Enabled);
         Assert.Equal(new[] { "media.example.com" }, config.Proxy.Hostnames);
         Assert.Equal(8443, config.Proxy.Advanced.HttpsPort);

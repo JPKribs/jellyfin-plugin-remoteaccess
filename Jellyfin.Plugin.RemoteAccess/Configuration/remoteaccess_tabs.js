@@ -1,13 +1,13 @@
-import { confirmDialog, SECRET_KEPT } from './configurationpage?name=ddns_jpkribs_shared.js';
+import { confirmDialog, SECRET_KEPT } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
 
 // What every Dynamic DNS page shares, kept in one place so the pages never disagree.
 export const PLUGIN_ID = '8150dce5-6153-4924-a985-a6927be95baa';
 
 // The tab bar. Each page passes its own position here as its tabIndex.
 export const TABS = [
-    { href: 'configurationpage?name=ddns_dashboard', name: 'Dashboard' },
-    { href: 'configurationpage?name=ddns_configuration', name: 'Configuration' },
-    { href: 'configurationpage?name=ddns_advanced', name: 'Advanced' }
+    { href: 'configurationpage?name=remoteaccess_dashboard', name: 'Dashboard' },
+    { href: 'configurationpage?name=remoteaccess_configuration', name: 'Configuration' },
+    { href: 'configurationpage?name=remoteaccess_advanced', name: 'Advanced' }
 ];
 
 // Reads the problems out of a failed save, or falls back to a generic message.
@@ -96,7 +96,7 @@ export function primaryRecord(records) {
 // Every field a provider can use, for a provider this page does not know.
 var DEFAULT_FIELDS = { h: 'Hostname', l: 'Login', p: 'Password', z: 'Zone', s: true, t: true, v6: true, a: ['wildcard', 'static', 'mx', 'backupmx'] };
 
-// The provider list, hints and the fields each provider uses, from GET DynamicDns/Providers, so each provider's
+// The provider list, hints and the fields each provider uses, from GET RemoteAccess/Providers, so each provider's
 // fields are defined once, in its C# class. Resolves to { options, hints, specFor, normalize }.
 export function loadProviders(shared) {
     return shared.apiRequest('Providers', 'GET').then(function (list) {

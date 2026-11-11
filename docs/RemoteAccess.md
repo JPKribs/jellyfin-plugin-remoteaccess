@@ -268,7 +268,7 @@ Jellyfin stays on this server alone. It is never opened up on its own, since on 
 address that would put it on the internet with none of the proxy's protection. The server log and the activity
 log say what failed and how to turn the proxy off by hand:
 
-1. Create an empty file named `DISABLE` in `plugins/configurations/Jellyfin.Plugin.DynamicDns.Proxy/` under
+1. Create an empty file named `DISABLE` in `plugins/configurations/Jellyfin.Plugin.RemoteAccess.Proxy/` under
    Jellyfin's data folder.
 2. Restart Jellyfin. The proxy stays off and Jellyfin's network settings go back to how they were before **Trust
    the Proxy**. Jellyfin may restart once more on its own.
@@ -309,7 +309,7 @@ requests for your public names, all from one local address and none from the int
 
 * **Undo** in step 5, **Trust the Proxy**, puts Jellyfin's network settings back as they were before **Trust the Proxy**.
 * **Locked out of the dashboard?** Create an empty file named `DISABLE` in
-  `plugins/configurations/Jellyfin.Plugin.DynamicDns.Proxy/` under Jellyfin's data folder, and restart
+  `plugins/configurations/Jellyfin.Plugin.RemoteAccess.Proxy/` under Jellyfin's data folder, and restart
   Jellyfin. The proxy stays off and Jellyfin's network settings go back as they were. Putting them back may
   restart Jellyfin a second time. Delete the file to turn the proxy on again.
 * **Files the plugin cannot open?** Jellyfin is running as a different account than the one that made them. Run

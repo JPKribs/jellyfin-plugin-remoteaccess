@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Jellyfin.Plugin.DynamicDns.Models;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Services;
+namespace Jellyfin.Plugin.RemoteAccess.Services;
 
 /// <summary>
 /// Persists runtime status to a JSON file beside the encryption keys in the plugin configuration folder.
@@ -28,7 +29,8 @@ public sealed class StatusStoreService
     {
         ArgumentNullException.ThrowIfNull(paths);
         _logger = logger;
-        _store = new JsonFileStore<StatusData>(Path.Join(paths.PluginConfigurationsPath, "Jellyfin.Plugin.DynamicDns.Status.json"), logger);
+        LegacyDataMigration.Run(paths.PluginConfigurationsPath, logger);
+        _store = new JsonFileStore<StatusData>(Path.Join(paths.PluginConfigurationsPath, LegacyDataMigration.NewName + ".Status.json"), logger);
     }
 
     /// <summary>

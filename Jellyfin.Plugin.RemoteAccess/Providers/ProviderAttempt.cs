@@ -1,6 +1,6 @@
 using System.Threading;
 
-namespace Jellyfin.Plugin.DynamicDns.Providers;
+namespace Jellyfin.Plugin.RemoteAccess.Providers;
 
 /// <summary>
 /// Watches the HTTP responses a provider receives during one update attempt, so the update cycle can tell

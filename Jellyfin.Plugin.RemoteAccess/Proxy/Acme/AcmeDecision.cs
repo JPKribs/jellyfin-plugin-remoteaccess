@@ -1,6 +1,6 @@
 using System;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Acme;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Acme;
 
 /// <summary>
 /// The planner's verdict.

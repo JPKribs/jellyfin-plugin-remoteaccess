@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 
 /// <summary>
 /// A failure tracker that bans nothing, for proxies started without one (probes and tests).

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Router;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Router;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Tasks;
+namespace Jellyfin.Plugin.RemoteAccess.Tasks;
 
 /// <summary>
 /// Runs the same outside check as step 6's Test from Outside on a schedule, so a router or provider change that
@@ -41,7 +41,7 @@ public sealed class ExternalAccessTask : PluginScheduledTask
     public override string Name => "Verify External Access";
 
     /// <inheritdoc />
-    public override string Key => "DynamicDNSVerifyExternalAccess";
+    public override string Key => "RemoteAccessVerifyExternalAccess";
 
     /// <inheritdoc />
     public override string Description => "Asks a few places on the internet to connect to your public address on port 443, and writes an error to the activity log when none can.";
@@ -72,13 +72,13 @@ public sealed class ExternalAccessTask : PluginScheduledTask
             if (!_failing)
             {
                 _failing = true;
-                _activity.Log("Remote Access cannot be reached from outside", "DynamicDNS.ExternalAccessFailed", ActivityLogger.Trim(message), LogLevel.Error);
+                _activity.Log("Remote Access cannot be reached from outside", "RemoteAccess.ExternalAccessFailed", ActivityLogger.Trim(message), LogLevel.Error);
             }
         }
         else if (_failing)
         {
             _failing = false;
-            _activity.Log("Remote Access can be reached from outside again", "DynamicDNS.ExternalAccessRestored", $"An outside location connected to port {ReachabilityChecker.Port}.");
+            _activity.Log("Remote Access can be reached from outside again", "RemoteAccess.ExternalAccessRestored", $"An outside location connected to port {ReachabilityChecker.Port}.");
         }
 
         progress.Report(100);

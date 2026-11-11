@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MediaBrowser.Controller.Events;
 using MediaBrowser.Controller.Events.Authentication;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// Records failed sign-ins Jellyfin reports. Jellyfin only reports them for usernames that exist; the proxy

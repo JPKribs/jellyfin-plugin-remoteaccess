@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Services;
+using Jellyfin.Plugin.RemoteAccess.Services;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Tasks;
 
-namespace Jellyfin.Plugin.DynamicDns.Tasks;
+namespace Jellyfin.Plugin.RemoteAccess.Tasks;
 
 /// <summary>
 /// The recurring task that checks the public IP and updates records on change.
@@ -28,7 +28,7 @@ public sealed class DNSUpdateTask : PluginScheduledTask
     public override string Name => "Update DDNS";
 
     /// <inheritdoc />
-    public override string Key => "DynamicDNSUpdate";
+    public override string Key => "RemoteAccessUpdate";
 
     /// <inheritdoc />
     public override string Description => "Finds the server's public IP and updates each DDNS record that points somewhere else.";

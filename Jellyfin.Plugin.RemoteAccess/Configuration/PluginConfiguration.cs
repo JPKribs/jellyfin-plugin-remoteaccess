@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.People;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using MediaBrowser.Model.Plugins;
 
-namespace Jellyfin.Plugin.DynamicDns.Configuration;
+namespace Jellyfin.Plugin.RemoteAccess.Configuration;
 
 /// <summary>
 /// Single configuration object for the plugin. XML-serialized by Jellyfin.

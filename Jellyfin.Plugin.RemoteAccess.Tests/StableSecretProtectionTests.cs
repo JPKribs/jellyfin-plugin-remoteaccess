@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Proves the shared protector reads the secrets the plugin stored before it moved onto the base package:
@@ -18,7 +18,7 @@ namespace Jellyfin.Plugin.DynamicDns.Tests;
 public class StableSecretProtectionTests
 {
     private static string TempDir() =>
-        Path.Join(Path.GetTempPath(), "ddns-keys-" + Guid.NewGuid().ToString("N"));
+        Path.Join(Path.GetTempPath(), "remoteaccess-keys-" + Guid.NewGuid().ToString("N"));
 
     [Fact]
     public void SecretsName_DerivesThePreviousKeyFolderAppNameAndPurpose()

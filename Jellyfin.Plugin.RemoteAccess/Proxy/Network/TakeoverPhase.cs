@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Network;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Network;
 
 /// <summary>
 /// Where the takeover of Jellyfin's ports stands.

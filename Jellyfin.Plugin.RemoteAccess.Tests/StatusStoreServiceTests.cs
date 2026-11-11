@@ -1,13 +1,13 @@
 using System;
 using System.IO;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Services;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Services;
 using MediaBrowser.Common.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Covers the runtime status store: it round trips status to disk and returns an empty status when no
@@ -17,7 +17,7 @@ public class StatusStoreServiceTests
 {
     private static (StatusStoreService Store, string Dir) NewStore()
     {
-        var dir = Path.Join(Path.GetTempPath(), "ddns-status-" + Guid.NewGuid().ToString("N"));
+        var dir = Path.Join(Path.GetTempPath(), "remoteaccess-status-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(dir);
         var paths = Substitute.For<IApplicationPaths>();
         paths.PluginConfigurationsPath.Returns(dir);
@@ -59,7 +59,7 @@ public class StatusStoreServiceTests
             Assert.Equal(2, rec1.ConsecutiveFailures);
 
             // The store file is the JSON file beside the keys, not the config XML.
-            Assert.True(File.Exists(Path.Join(dir, "Jellyfin.Plugin.DynamicDns.Status.json")));
+            Assert.True(File.Exists(Path.Join(dir, "Jellyfin.Plugin.RemoteAccess.Status.json")));
         }
         finally
         {
@@ -74,7 +74,7 @@ public class StatusStoreRemoveTests
     [Fact]
     public void RemoveRecords_DropsOnlyTheNamedRecords()
     {
-        var dir = Path.Join(Path.GetTempPath(), "ddns-status-" + Guid.NewGuid().ToString("N"));
+        var dir = Path.Join(Path.GetTempPath(), "remoteaccess-status-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(dir);
         try
         {
@@ -102,12 +102,12 @@ public class StatusStoreRemoveTests
     [Fact]
     public void StatusWrittenBeforeNewFields_LoadsWithDefaults()
     {
-        var dir = Path.Join(Path.GetTempPath(), "ddns-status-" + Guid.NewGuid().ToString("N"));
+        var dir = Path.Join(Path.GetTempPath(), "remoteaccess-status-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(dir);
         try
         {
             File.WriteAllText(
-                Path.Join(dir, "Jellyfin.Plugin.DynamicDns.Status.json"),
+                Path.Join(dir, "Jellyfin.Plugin.RemoteAccess.Status.json"),
                 "{\"DetectedIPv4\":\"1.2.3.4\",\"Records\":{\"a\":{\"LastIPv4\":\"1.2.3.4\",\"ConsecutiveFailures\":3,\"BackoffUntilUtc\":\"2030-01-01T00:00:00Z\"}}}");
             var paths = Substitute.For<IApplicationPaths>();
             paths.PluginConfigurationsPath.Returns(dir);

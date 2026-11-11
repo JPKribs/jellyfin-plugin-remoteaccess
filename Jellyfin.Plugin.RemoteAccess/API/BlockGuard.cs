@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Jellyfin.Plugin.DynamicDns.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
 using MediaBrowser.Common.Net;
 
-namespace Jellyfin.Plugin.DynamicDns.Api;
+namespace Jellyfin.Plugin.RemoteAccess.Api;
 
 /// <summary>
 /// Which addresses blocking can apply to, and which block list entries name one address.

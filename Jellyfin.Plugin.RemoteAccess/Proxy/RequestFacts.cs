@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// The parts of a request the policy looks at.

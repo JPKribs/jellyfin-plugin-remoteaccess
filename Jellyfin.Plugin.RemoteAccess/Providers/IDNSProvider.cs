@@ -1,8 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
+using Jellyfin.Plugin.RemoteAccess.Models;
 
-namespace Jellyfin.Plugin.DynamicDns.Providers;
+namespace Jellyfin.Plugin.RemoteAccess.Providers;
 
 /// <summary>
 /// Pushes a record's configured IP address(es) to a specific DNS provider.

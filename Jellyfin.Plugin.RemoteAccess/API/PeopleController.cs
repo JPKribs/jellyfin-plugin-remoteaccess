@@ -4,16 +4,16 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.People;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Jellyfin.Plugin.DynamicDns.Api;
+namespace Jellyfin.Plugin.RemoteAccess.Api;
 
 /// <summary>
 /// Administrative endpoints backing the history on the Dashboard tab and its settings on the Advanced tab. This
@@ -21,7 +21,7 @@ namespace Jellyfin.Plugin.DynamicDns.Api;
 /// </summary>
 [ApiController]
 [Authorize(Policy = "RequiresElevation")]
-[Route("DynamicDns/People")]
+[Route("RemoteAccess/People")]
 [Produces("application/json")]
 public class PeopleController : ControllerBase
 {
@@ -174,7 +174,7 @@ public class PeopleController : ControllerBase
             return Done();
         }
 
-        _activity.Log("Remote Access blocked " + text, "DynamicDNS.AddressBlocked", "Added to the block list from the Remote Access page.", userId: ActivityUser.Of(User));
+        _activity.Log("Remote Access blocked " + text, "RemoteAccess.AddressBlocked", "Added to the block list from the Remote Access page.", userId: ActivityUser.Of(User));
         await _proxy.ApplyAsync(CancellationToken.None).ConfigureAwait(false);
         return Done();
     }
@@ -207,7 +207,7 @@ public class PeopleController : ControllerBase
             return Refuse("This address is not on the block list by itself. A range that covers it can be changed under Advanced.");
         }
 
-        _activity.Log("Remote Access unblocked " + address, "DynamicDNS.AddressUnblocked", "Removed from the block list from the Remote Access page.", userId: ActivityUser.Of(User));
+        _activity.Log("Remote Access unblocked " + address, "RemoteAccess.AddressUnblocked", "Removed from the block list from the Remote Access page.", userId: ActivityUser.Of(User));
         await _proxy.ApplyAsync(CancellationToken.None).ConfigureAwait(false);
         return Done();
     }
@@ -247,7 +247,7 @@ public class PeopleController : ControllerBase
             var overview = incoming.Enabled
                 ? $"History is on, kept for {incoming.HistoryDays} days. Locations: {incoming.Location}."
                 : "History is off.";
-            _activity.Log("Remote Access history settings were changed", "DynamicDNS.HistorySettingsChanged", overview, userId: ActivityUser.Of(User));
+            _activity.Log("Remote Access history settings were changed", "RemoteAccess.HistorySettingsChanged", overview, userId: ActivityUser.Of(User));
         }
 
         // Loading or downloading the database can take a while; the status shows progress.
@@ -307,7 +307,7 @@ public class PeopleController : ControllerBase
             return Refuse("This address is not banned.");
         }
 
-        _activity.Log("Remote Access lifted the ban on " + string.Join(", ", lifted), "DynamicDNS.BanLifted", "Lifted from the Remote Access page.", userId: ActivityUser.Of(User));
+        _activity.Log("Remote Access lifted the ban on " + string.Join(", ", lifted), "RemoteAccess.BanLifted", "Lifted from the Remote Access page.", userId: ActivityUser.Of(User));
         return Done();
     }
 
@@ -356,7 +356,7 @@ public class PeopleController : ControllerBase
             return Refuse("The country rules do not block this country.");
         }
 
-        _activity.Log("Remote Access unblocked " + CountryName(country), "DynamicDNS.CountryUnblocked", "The country rules now let it connect.", userId: ActivityUser.Of(User));
+        _activity.Log("Remote Access unblocked " + CountryName(country), "RemoteAccess.CountryUnblocked", "The country rules now let it connect.", userId: ActivityUser.Of(User));
         await _proxy.ApplyAsync(CancellationToken.None).ConfigureAwait(false);
         return Done();
     }
@@ -392,7 +392,7 @@ public class PeopleController : ControllerBase
         _access.ClearBuffered();
         _blocks.Drain();
         _store.DeleteAll();
-        _activity.Log("Remote Access history was cleared", "DynamicDNS.HistoryCleared", "Every recorded visit, sign-in and refusal was deleted. Bans and the block list are unchanged.", userId: ActivityUser.Of(User));
+        _activity.Log("Remote Access history was cleared", "RemoteAccess.HistoryCleared", "Every recorded visit, sign-in and refusal was deleted. Bans and the block list are unchanged.", userId: ActivityUser.Of(User));
         return Done();
     }
 }

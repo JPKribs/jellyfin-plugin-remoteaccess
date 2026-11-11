@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 
 /// <summary>
 /// An access recorder that records nothing, for proxies started without one (probes and tests).

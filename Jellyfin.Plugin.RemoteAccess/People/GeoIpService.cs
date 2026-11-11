@@ -8,12 +8,12 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
 using JPKribs.Jellyfin.Base;
 using MaxMind.Db;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// Looks up where internet addresses are, using DB-IP's free database kept on this server. Lookups never
@@ -150,12 +150,12 @@ public sealed class GeoIpService : IDisposable
         if (error.Length > 0 && !string.Equals(error, _reportedError, StringComparison.Ordinal))
         {
             _reportedError = error;
-            _activity?.Log("Remote Access could not update its location database", "DynamicDNS.LocationDatabaseFailed", error + " Country rules use the database already loaded, if any.", LogLevel.Warning);
+            _activity?.Log("Remote Access could not update its location database", "RemoteAccess.LocationDatabaseFailed", error + " Country rules use the database already loaded, if any.", LogLevel.Warning);
         }
         else if (updated && _reportedError.Length > 0)
         {
             _reportedError = string.Empty;
-            _activity?.Log("Remote Access updated its location database", "DynamicDNS.LocationDatabaseUpdated", "The download works again.");
+            _activity?.Log("Remote Access updated its location database", "RemoteAccess.LocationDatabaseUpdated", "The download works again.");
         }
 
         return updated;

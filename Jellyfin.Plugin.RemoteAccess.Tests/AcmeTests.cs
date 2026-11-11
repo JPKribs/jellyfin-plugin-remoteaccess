@@ -8,10 +8,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Database.Implementations.Entities;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Acme;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Acme;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Activity;
 using Microsoft.Extensions.Logging;
@@ -19,7 +19,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Automatic certificates: when Let's Encrypt is asked, how failures back off, and how the issued files load.
@@ -32,7 +32,7 @@ public sealed class AcmeTests : IDisposable
     private static readonly string[] _names = { "media.example.com" };
     private static readonly DNSRecord[] NoRecords = Array.Empty<DNSRecord>();
 
-    private readonly string _dir = Path.Join(Path.GetTempPath(), "ddns-acme-" + Guid.NewGuid().ToString("N"));
+    private readonly string _dir = Path.Join(Path.GetTempPath(), "remoteaccess-acme-" + Guid.NewGuid().ToString("N"));
 
     public AcmeTests() => Directory.CreateDirectory(_dir);
 
@@ -183,7 +183,7 @@ public sealed class AcmeTests : IDisposable
 
                 var entry = Assert.Single(entries);
                 Assert.Equal("Remote Access could not get a certificate", entry.Name);
-                Assert.Equal("DynamicDNS.CertificateIssueFailed", entry.Type);
+                Assert.Equal("RemoteAccess.CertificateIssueFailed", entry.Type);
 
                 // Inside the backoff the next call does not try again.
                 Assert.False(await service.EnsureAsync(_names, NoRecords, new CertificateStatus(), CancellationToken.None));

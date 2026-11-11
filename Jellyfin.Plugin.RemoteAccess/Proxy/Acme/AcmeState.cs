@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Acme;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Acme;
 
 /// <summary>
 /// What happened on the last attempts to get a certificate from Let's Encrypt, kept so a failing setup backs

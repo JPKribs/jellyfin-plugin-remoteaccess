@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// What the dashboard shows about the proxy's certificate. Never carries key material.

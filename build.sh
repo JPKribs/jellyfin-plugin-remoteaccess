@@ -54,7 +54,7 @@ get_plugin_version() {
 
 # Get plugin info from build.yaml
 get_plugin_info() {
-    local name="Dynamic DNS"
+    local name="Remote Access"
     local guid="8150dce5-6153-4924-a985-a6927be95baa"
 
     local extracted_name=$(read_yaml_value "name")
@@ -120,7 +120,7 @@ main() {
     fi
 
     # Find the built DLL
-    local dll_path="$PROJECT_DIR/bin/$CONFIGURATION/net10.0/Jellyfin.Plugin.DynamicDns.dll"
+    local dll_path="$PROJECT_DIR/bin/$CONFIGURATION/net10.0/Jellyfin.Plugin.RemoteAccess.dll"
     if [[ ! -f "$dll_path" ]]; then
         log "ERROR" "Could not find built DLL at: $dll_path"
         exit 1

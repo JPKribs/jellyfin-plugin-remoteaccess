@@ -8,12 +8,12 @@ using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.People;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
-using Jellyfin.Plugin.DynamicDns.Proxy.Network;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
-using Jellyfin.Plugin.DynamicDns.Services;
+using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Services;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using Microsoft.AspNetCore.Builder;
@@ -28,7 +28,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Fixes from the proxy audit: request and stream limits, fair connection sharing, partial masking, wide ban
@@ -38,7 +38,7 @@ public sealed class AuditProxyTests : IAsyncLifetime
 {
     private const string Host = "media.example.com";
 
-    private readonly string _dir = Path.Join(Path.GetTempPath(), "ddns-audit-tests-" + Guid.NewGuid().ToString("N"));
+    private readonly string _dir = Path.Join(Path.GetTempPath(), "remoteaccess-audit-tests-" + Guid.NewGuid().ToString("N"));
     private readonly TaskCompletionSource _release = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private WebApplication? _jellyfin;
     private Uri _jellyfinUri = null!;

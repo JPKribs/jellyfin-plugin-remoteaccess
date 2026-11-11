@@ -4,15 +4,15 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Configuration;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Providers;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Configuration;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Providers;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Services;
+namespace Jellyfin.Plugin.RemoteAccess.Services;
 
 /// <summary>
 /// Detects the public IP and pushes each enabled record to its provider, recording status.
@@ -135,7 +135,7 @@ public sealed class DNSUpdateService : IDisposable
                 status.PlaintextWarningLogged = true;
                 _activity.Log(
                     "Dynamic DNS cannot encrypt credentials",
-                    "DynamicDNS.PlaintextCredentials",
+                    "RemoteAccess.PlaintextCredentials",
                     "The plugin could not set up its encryption keys, so no credential can be saved. Reinstall the plugin and try again, then check the permissions on its folders.",
                     LogLevel.Error);
             }
@@ -344,7 +344,7 @@ public sealed class DNSUpdateService : IDisposable
                 status.DetectionUnhealthyLogged = true;
                 _activity.Log(
                     "Dynamic DNS has been unable to detect a public IP",
-                    "DynamicDNS.DetectionUnhealthy",
+                    "RemoteAccess.DetectionUnhealthy",
                     "Detection has failed for " + status.ConsecutiveDetectionFailures
                     + " runs in a row. " + string.Join(" ", outcome.Warnings),
                     LogLevel.Warning);
@@ -357,7 +357,7 @@ public sealed class DNSUpdateService : IDisposable
         {
             _activity.Log(
                 "Dynamic DNS public IP detection recovered",
-                "DynamicDNS.DetectionRecovered",
+                "RemoteAccess.DetectionRecovered",
                 "Detection succeeded after " + status.ConsecutiveDetectionFailures + " failed runs.");
         }
 
@@ -387,7 +387,7 @@ public sealed class DNSUpdateService : IDisposable
                 _logger.LogInformation("Dynamic DNS update for {Host} works again after {Count} failed attempts", result.Hostname, record.ConsecutiveFailures);
                 _activity.Log(
                     "Dynamic DNS update for " + result.Hostname + " works again",
-                    "DynamicDNS.RecordRecovered",
+                    "RemoteAccess.RecordRecovered",
                     $"It succeeded after {record.ConsecutiveFailures} failed attempts.");
             }
 
@@ -401,7 +401,7 @@ public sealed class DNSUpdateService : IDisposable
             {
                 var summary = NewAddressSummary(record, ip);
                 _logger.LogInformation("Dynamic DNS updated {Host}{Summary}", result.Hostname, summary);
-                _activity.Log("Dynamic DNS updated " + result.Hostname + summary, "DynamicDNS.RecordUpdated", result.Message);
+                _activity.Log("Dynamic DNS updated " + result.Hostname + summary, "RemoteAccess.RecordUpdated", result.Message);
             }
             else if (result.DnsAlreadyServes)
             {
@@ -409,7 +409,7 @@ public sealed class DNSUpdateService : IDisposable
                 _logger.LogWarning("Dynamic DNS update failed for {Host}, though DNS already serves the current address: {Message}", result.Hostname, result.Message);
                 _activity.Log(
                     "Dynamic DNS update failed for " + result.Hostname,
-                    "DynamicDNS.RecordFailed",
+                    "RemoteAccess.RecordFailed",
                     result.Message + " DNS already serves the current address, so nothing is cut off yet.",
                     LogLevel.Warning);
             }
@@ -419,7 +419,7 @@ public sealed class DNSUpdateService : IDisposable
                 _logger.LogError("Dynamic DNS update failed for {Host}: {Message}", result.Hostname, result.Message);
                 _activity.Log(
                     "Dynamic DNS update failed for " + result.Hostname,
-                    "DynamicDNS.RecordFailed",
+                    "RemoteAccess.RecordFailed",
                     result.Message,
                     LogLevel.Error);
             }
@@ -560,7 +560,7 @@ public sealed class DNSUpdateService : IDisposable
             {
                 _activity.Log(
                     "Dynamic DNS paused updates for " + record.Hostname,
-                    "DynamicDNS.RecordBackoff",
+                    "RemoteAccess.RecordBackoff",
                     PauseSummary(record, backoffThreshold) + " The next attempt is after "
                     + record.BackoffUntilUtc.Value.ToString("u", CultureInfo.InvariantCulture)
                     + " or when the public IP changes.",

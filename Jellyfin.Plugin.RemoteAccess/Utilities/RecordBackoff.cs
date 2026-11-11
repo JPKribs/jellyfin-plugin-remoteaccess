@@ -1,8 +1,8 @@
 using System;
-using Jellyfin.Plugin.DynamicDns.Models;
+using Jellyfin.Plugin.RemoteAccess.Models;
 using JPKribs.Jellyfin.Base;
 
-namespace Jellyfin.Plugin.DynamicDns.Utilities;
+namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
 /// Binds a <see cref="DNSRecord"/>'s persisted failure state to the shared <see cref="BackoffPolicy"/>.

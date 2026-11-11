@@ -4,7 +4,7 @@ using System.Xml;
 // Declared in the plugin's root namespace on purpose: every plugin type lives below it, so a call to
 // FormatUtilities anywhere in the plugin finds this class before the shared library's one that a
 // using directive brings in, without any call site having to change.
-namespace Jellyfin.Plugin.DynamicDns;
+namespace Jellyfin.Plugin.RemoteAccess;
 
 /// <summary>
 /// Formatting helpers for log lines and stored status text. Wraps the shared library's helpers so text

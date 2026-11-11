@@ -4,12 +4,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Providers;
+namespace Jellyfin.Plugin.RemoteAccess.Providers;
 
 /// <summary>
 /// Shared logic for the provider implementations: per-family aggregation, server resolution, and HTTP

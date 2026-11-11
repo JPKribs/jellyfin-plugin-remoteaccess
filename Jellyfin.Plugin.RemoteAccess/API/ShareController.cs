@@ -1,18 +1,18 @@
 using System.Linq;
-using Jellyfin.Plugin.DynamicDns.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QRCoder;
 
-namespace Jellyfin.Plugin.DynamicDns.Api;
+namespace Jellyfin.Plugin.RemoteAccess.Api;
 
 /// <summary>
 /// The server's public address, with a QR code to scan into the Jellyfin apps, for the Dashboard's share card.
 /// </summary>
 [ApiController]
 [Authorize(Policy = "RequiresElevation")]
-[Route("DynamicDns/Share")]
+[Route("RemoteAccess/Share")]
 [Produces("application/json")]
 public class ShareController : ControllerBase
 {

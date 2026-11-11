@@ -4,11 +4,11 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Providers;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Providers.Implementations;
+namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
 
 /// <summary>
 /// Njalla (port of ddclient's <c>nic_njalla_update</c>). A single GET to

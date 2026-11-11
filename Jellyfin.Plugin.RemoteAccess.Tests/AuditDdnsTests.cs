@@ -6,17 +6,17 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Providers;
-using Jellyfin.Plugin.DynamicDns.Providers.Implementations;
-using Jellyfin.Plugin.DynamicDns.Services;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Providers;
+using Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
+using Jellyfin.Plugin.RemoteAccess.Services;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Covers the dynamic DNS audit fixes: a partial success feeds backoff and only the failing family is

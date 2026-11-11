@@ -1,9 +1,9 @@
 [
   {
     "guid": "8150dce5-6153-4924-a985-a6927be95baa",
-    "name": "Dynamic DNS",
-    "overview": "Keep your DNS records pointed at your server's current public IP.",
-    "description": "Keeps one or more DNS records pointed at your Jellyfin server's current public IP. Runs entirely in-process as a scheduled task and updates your DNS provider over outbound HTTP/S. Great for anyone who wants to run their entire stack entirely through Jellyfin without external programs or dependencies.",
+    "name": "Remote Access",
+    "overview": "Reach your server from anywhere: Dynamic DNS and a secure HTTPS proxy, inside Jellyfin.",
+    "description": "Keeps your DNS records pointed at your Jellyfin server's current public IP, and can put a secure HTTPS proxy in front of Jellyfin with automatic Let's Encrypt certificates, bans for failed sign-ins, a block list, country rules and a history of who connects. Everything runs inside Jellyfin, with no separate reverse proxy or updater to run. Remote Access is being actively tested.",
     "imageUrl": "https://raw.githubusercontent.com/JPKribs/jellyfin-plugin-remoteaccess/refs/heads/master/Jellyfin.Plugin.RemoteAccess/Assets/Logo.png",
     "owner": "JPKribs",
     "category": "Administration",

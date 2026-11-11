@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Jellyfin.Plugin.DynamicDns.Providers;
+namespace Jellyfin.Plugin.RemoteAccess.Providers;
 
 /// <summary>
 /// Which record fields a provider uses and the label to show for each, so the dashboard renders only the

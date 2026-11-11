@@ -1,7 +1,7 @@
-using Jellyfin.Plugin.DynamicDns.Api;
+using Jellyfin.Plugin.RemoteAccess.Api;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// The Dashboard's share card: the public address and its QR code.

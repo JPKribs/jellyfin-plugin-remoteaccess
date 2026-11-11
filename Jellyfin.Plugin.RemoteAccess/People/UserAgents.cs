@@ -1,7 +1,7 @@
 using System;
 using System.Buffers;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// Turns a User-Agent header into a few words, like <c>Firefox, Windows</c>. Only the common cases are named;

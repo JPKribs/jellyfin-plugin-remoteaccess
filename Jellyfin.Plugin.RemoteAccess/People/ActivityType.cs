@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// What an address did, for the Remote Access table.

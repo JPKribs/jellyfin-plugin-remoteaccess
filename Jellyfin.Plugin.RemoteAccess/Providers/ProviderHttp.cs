@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Jellyfin.Plugin.DynamicDns.Providers;
+namespace Jellyfin.Plugin.RemoteAccess.Providers;
 
 /// <summary>
 /// The HTTP client provider requests use. Providers send API keys in headers such as Cloudflare's
@@ -15,7 +15,7 @@ namespace Jellyfin.Plugin.DynamicDns.Providers;
 public static class ProviderHttp
 {
     /// <summary>The name the provider client is registered under.</summary>
-    public const string ClientName = "Jellyfin.Plugin.DynamicDns.Providers";
+    public const string ClientName = "Jellyfin.Plugin.RemoteAccess.Providers";
 
     /// <summary>
     /// Builds the handler under the provider client: no automatic redirects, so <see cref="SameHostRedirectHandler"/>

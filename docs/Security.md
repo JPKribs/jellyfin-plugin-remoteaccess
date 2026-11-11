@@ -47,11 +47,11 @@ relative to that folder.
 
 | What | Where |
 | :--- | :--- |
-| The plugin itself | `plugins/Dynamic DNS_<version>/` |
-| Records, settings and encrypted credentials | `plugins/configurations/Jellyfin.Plugin.DynamicDns.xml` |
+| The plugin itself | `plugins/Remote Access_<version>/` |
+| Records, settings and encrypted credentials | `plugins/configurations/Jellyfin.Plugin.RemoteAccess.xml` |
 | The key for those credentials | `plugins/configurations/Jellyfin.Plugin.DynamicDns.Keys/` |
-| Each record's last status, its backoff state, and the last detected public IP | `plugins/configurations/Jellyfin.Plugin.DynamicDns.Status.json` |
-| Remote Access data | `plugins/configurations/Jellyfin.Plugin.DynamicDns.Proxy/` |
+| Each record's last status, its backoff state, and the last detected public IP | `plugins/configurations/Jellyfin.Plugin.RemoteAccess.Status.json` |
+| Remote Access data | `plugins/configurations/Jellyfin.Plugin.RemoteAccess.Proxy/` |
 
 The Remote Access folder holds:
 

@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// The outcome of <see cref="RequestPolicy.Decide"/>.

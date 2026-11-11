@@ -5,11 +5,11 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Router;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Router;
 
 /// <summary>
 /// What the router should forward: the proxy's ports to this machine, or nothing.
@@ -438,7 +438,7 @@ public sealed class RouterPortMapper : IAsyncDisposable
         _reportedError = error;
         _activity?.Log(
             noRouter ? "Remote Access found no router that opens ports" : "Remote Access could not open ports on your router",
-            noRouter ? "DynamicDNS.RouterNotFound" : "DynamicDNS.RouterPortsFailed",
+            noRouter ? "RemoteAccess.RouterNotFound" : "RemoteAccess.RouterPortsFailed",
             error,
             LogLevel.Warning);
     }
@@ -462,7 +462,7 @@ public sealed class RouterPortMapper : IAsyncDisposable
 
         _activity?.Log(
             $"Remote Access opened {(status.Ports.Count == 1 ? "port" : "ports")} {ports} on your router",
-            "DynamicDNS.RouterPortsOpened",
+            "RemoteAccess.RouterPortsOpened",
             $"The device at {device} answered through {status.Method} and says they forward to {status.LanAddress}. "
             + (status.Device.Length > 0 && !status.DeviceIsGateway ? "It is not this server's default gateway, so check it is your router. " : string.Empty)
             + "Confirm the rule on your router's port forwarding page.");

@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Utilities;
+namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
 /// Keeps a problem that repeats, such as a database that cannot be written or detection that keeps failing,

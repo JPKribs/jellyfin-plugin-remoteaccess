@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Models;
+namespace Jellyfin.Plugin.RemoteAccess.Models;
 
 /// <summary>The decision on whether a record needs to be pushed to its provider this run.</summary>
 public enum UpdateDecision

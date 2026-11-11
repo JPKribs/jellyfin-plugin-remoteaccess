@@ -7,11 +7,11 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Database.Implementations.Entities;
-using Jellyfin.Plugin.DynamicDns.Configuration;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Providers;
-using Jellyfin.Plugin.DynamicDns.Providers.Implementations;
-using Jellyfin.Plugin.DynamicDns.Services;
+using Jellyfin.Plugin.RemoteAccess.Configuration;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Providers;
+using Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
+using Jellyfin.Plugin.RemoteAccess.Services;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Model.Activity;
@@ -21,7 +21,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Tests that construct the plugin share its static instance, so they never run in parallel.
@@ -55,7 +55,7 @@ internal sealed class OrchestratorHarness : IDisposable
     /// <param name="extraProviders">Builds providers added beside the DynDNS v2 one, given the harness's HTTP factory.</param>
     public OrchestratorHarness(Func<IHttpClientFactory, IDNSProvider[]> extraProviders)
     {
-        _dir = Path.Join(Path.GetTempPath(), "ddns-orch-" + Guid.NewGuid().ToString("N"));
+        _dir = Path.Join(Path.GetTempPath(), "remoteaccess-orch-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_dir);
 
         var paths = Substitute.For<IApplicationPaths>();

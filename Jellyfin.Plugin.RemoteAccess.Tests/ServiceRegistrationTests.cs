@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using Jellyfin.Plugin.DynamicDns.Api;
+using Jellyfin.Plugin.RemoteAccess.Api;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// The plugin's whole service graph resolves. A missing registration stops Jellyfin from starting at all, so it

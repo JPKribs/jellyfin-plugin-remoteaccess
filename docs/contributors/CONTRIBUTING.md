@@ -6,20 +6,21 @@ How to add and document parts of the Remote Access plugin. Follow this so every 
 
 Reuse the shared components from the JPKribs.Jellyfin.Base package before adding anything custom. Those carry the `jpk` prefix and take priority, so reach for a base card, selector, collapsible, or status text rather than building a new element. Add a custom element only when nothing in the base covers it.
 
-When something custom does need to exist, it uses the `ddns` prefix.
+When something custom does need to exist, it uses the `ra` prefix.
 
-* CSS classes: `ddns-` kebab case. A component is `ddns-name`, its parts are `ddns-name-part`, its states are plain modifiers like `.active` or `.collapsed`.
-* CSS variables: `--ddns-name`.
+* CSS classes: `ra-` kebab case. A component is `ra-name`, its parts are `ra-name-part`, its states are plain modifiers like `.active` or `.collapsed`.
+* CSS variables: `--ra-name`.
 * JavaScript exports: camelCase function names.
-* C# types: PascalCase in the `Jellyfin.Plugin.DynamicDns` namespace.
+* C# types: PascalCase in the `Jellyfin.Plugin.RemoteAccess` namespace.
 
 The only exception is a selector that styles Jellyfin's own markup. Those must match Jellyfin's class name and stay unprefixed, for example `sectionTitle`, `inputContainer`, `selectContainer`, `checkboxContainer`, and `emby-*`.
 
 ## Layout
 
 The plugin is in `Jellyfin.Plugin.RemoteAccess/` and its tests in `Jellyfin.Plugin.RemoteAccess.Tests/`. The
-assembly and namespace keep the name `Jellyfin.Plugin.DynamicDns`, since Jellyfin names the settings file after
-the assembly.
+assembly and namespace are `Jellyfin.Plugin.RemoteAccess`, and Jellyfin names the settings file after the assembly.
+Credentials stay encrypted under the name `Jellyfin.Plugin.DynamicDns`, so their key folder keeps that name. Files
+saved under that name are moved to the new one on startup by `LegacyDataMigration`.
 
 ```
 API/            controller endpoints for the dashboard pages
@@ -55,8 +56,8 @@ Above each component selector, add a line describing the format. Underneath, add
 
 ```css
 /* Red helper text shown under a field when a value needs attention */
-/* Example: <div class="ddns-warning">message</div> */
-.ddns-warning { ... }
+/* Example: <div class="ra-warning">message</div> */
+.ra-warning { ... }
 ```
 
 Line one describes what the style looks like. Line two is one example usage.

@@ -8,10 +8,10 @@ using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
-using Jellyfin.Plugin.DynamicDns.Proxy.Network;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using JPKribs.Jellyfin.Base;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,7 +23,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Runs the real proxy host on loopback in front of a fake Jellyfin. Loopback is
@@ -34,7 +34,7 @@ public sealed class ProxyHostTests : IAsyncLifetime
 {
     private const string Host = "media.example.com";
 
-    private readonly string _dir = Path.Join(Path.GetTempPath(), "ddns-proxy-tests-" + Guid.NewGuid().ToString("N"));
+    private readonly string _dir = Path.Join(Path.GetTempPath(), "remoteaccess-proxy-tests-" + Guid.NewGuid().ToString("N"));
     private readonly CapturingLoggerFactory _logs = new();
     private WebApplication? _jellyfin;
     private Uri _jellyfinUri = null!;
@@ -206,7 +206,7 @@ public sealed class ProxyHostTests : IAsyncLifetime
     [Fact]
     public async Task Recorder_GetsTheAddressUsedAndRefusedSignIns()
     {
-        var recorder = new Jellyfin.Plugin.DynamicDns.People.AccessRecorder();
+        var recorder = new Jellyfin.Plugin.RemoteAccess.People.AccessRecorder();
         await using var proxy = await StartProxyAsync(recorder: recorder);
         using var client = Client(proxy.HttpsPort);
 

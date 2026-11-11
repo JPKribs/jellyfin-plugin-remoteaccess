@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// Where an address is, as far as the location database knows.

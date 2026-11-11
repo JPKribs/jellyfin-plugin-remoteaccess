@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace Jellyfin.Plugin.DynamicDns.Models;
+namespace Jellyfin.Plugin.RemoteAccess.Models;
 
 /// <summary>
 /// A single DNS record kept in sync with the server's current public IP.

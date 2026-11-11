@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.DynamicDns.Proxy;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy;
 
 /// <summary>
 /// Everything that needs the proxy host rebuilt to change: ports, protocols and server-wide limits. Any other

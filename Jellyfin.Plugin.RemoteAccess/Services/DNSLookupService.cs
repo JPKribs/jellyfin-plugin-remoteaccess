@@ -3,10 +3,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Models;
+using Jellyfin.Plugin.RemoteAccess.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Services;
+namespace Jellyfin.Plugin.RemoteAccess.Services;
 
 /// <summary>
 /// Resolves a hostname's current DNS addresses so the update cycle can compare them against the detected

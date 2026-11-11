@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 
 /// <summary>
 /// Where the proxy reports failed sign-ins from the internet, so repeated failures can ban the address.

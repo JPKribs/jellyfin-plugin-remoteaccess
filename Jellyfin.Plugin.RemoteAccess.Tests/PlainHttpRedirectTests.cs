@@ -1,8 +1,8 @@
 using System.Net;
-using Jellyfin.Plugin.DynamicDns.Proxy.Hosting;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// The redirect address built for plain HTTP sent to the HTTPS port.

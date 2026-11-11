@@ -12,10 +12,10 @@ using System.Xml.Serialization;
 using Certes;
 using Certes.Acme;
 using Jellyfin.Database.Implementations.Entities;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Acme;
-using Jellyfin.Plugin.DynamicDns.Proxy.Network;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Acme;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
@@ -27,7 +27,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Fixes from the certificate and network audit: the startup fallback for Only through the proxy, serialized
@@ -87,8 +87,8 @@ public sealed class AuditCertificateTests : IDisposable
         Assert.True(orchestrator.IsBoundToLoopback);
 
         // The activity log says how to turn the proxy off by hand, and to close the router first.
-        await Eventually(() => Activity().Any(a => a.Type == "DynamicDNS.TakeoverLoopbackKept"));
-        var entry = Activity().First(a => a.Type == "DynamicDNS.TakeoverLoopbackKept");
+        await Eventually(() => Activity().Any(a => a.Type == "RemoteAccess.TakeoverLoopbackKept"));
+        var entry = Activity().First(a => a.Type == "RemoteAccess.TakeoverLoopbackKept");
         Assert.Equal(LogLevel.Error, entry.LogSeverity);
         Assert.Contains("DISABLE", entry.ShortOverview, StringComparison.Ordinal);
         Assert.Contains("forwards no ports", entry.ShortOverview, StringComparison.Ordinal);
@@ -222,7 +222,7 @@ public sealed class AuditCertificateTests : IDisposable
         using var orchestrator = Orchestrator(started: true);
         orchestrator.Commit(Settings(false), network);
         await Eventually(() => Volatile.Read(ref calls) == 1);
-        await Eventually(() => Activity().Any(a => a.Type == "DynamicDNS.RestartFailed"));
+        await Eventually(() => Activity().Any(a => a.Type == "RemoteAccess.RestartFailed"));
 
         orchestrator.Restore("test", restart: true);
         await Eventually(() => Volatile.Read(ref calls) == 2);

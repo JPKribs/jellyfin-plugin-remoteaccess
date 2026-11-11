@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Configuration;
-using Jellyfin.Plugin.DynamicDns.Models;
-using Jellyfin.Plugin.DynamicDns.Providers;
-using Jellyfin.Plugin.DynamicDns.Services;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Configuration;
+using Jellyfin.Plugin.RemoteAccess.Models;
+using Jellyfin.Plugin.RemoteAccess.Providers;
+using Jellyfin.Plugin.RemoteAccess.Services;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Jellyfin.Plugin.DynamicDns.Api;
+namespace Jellyfin.Plugin.RemoteAccess.Api;
 
 /// <summary>
 /// Administrative endpoints backing the DDNS record on the Configuration tab and the Dynamic DNS section of Advanced.
 /// </summary>
 [ApiController]
 [Authorize(Policy = "RequiresElevation")]
-[Route("DynamicDns")]
+[Route("RemoteAccess")]
 [Produces("application/json")]
 public class DynamicDNSController : ControllerBase
 {
@@ -193,7 +193,7 @@ public class DynamicDNSController : ControllerBase
         ConfigurationAudit.LogRecordChanges(_activity, before, after, userId);
         if (settingsChanged)
         {
-            _activity.Log("Dynamic DNS settings were changed", "DynamicDNS.SettingsChanged", "Detection, refresh or backoff settings were changed.", userId: userId);
+            _activity.Log("Dynamic DNS settings were changed", "RemoteAccess.SettingsChanged", "Detection, refresh or backoff settings were changed.", userId: userId);
         }
 
         // Runtime status is keyed by record id, so a record edited to point somewhere else (another

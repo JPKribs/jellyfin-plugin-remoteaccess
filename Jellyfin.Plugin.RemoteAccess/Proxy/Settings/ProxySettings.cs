@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+namespace Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 
 /// <summary>
 /// Settings for the built-in reverse proxy that sits in front of Jellyfin. Everything is off until

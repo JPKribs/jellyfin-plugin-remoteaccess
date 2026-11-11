@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Jellyfin.Plugin.DynamicDns.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Session;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
-using Jellyfin.Plugin.DynamicDns.Utilities;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 
-namespace Jellyfin.Plugin.DynamicDns.People;
+namespace Jellyfin.Plugin.RemoteAccess.People;
 
 /// <summary>
 /// Turns sign-ins and open sessions into People history: who, from which IP and location, on which device,

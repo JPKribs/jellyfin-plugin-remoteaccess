@@ -1,6 +1,6 @@
-import { createConfigPage, confirmDialog, createChipSelect } from './configurationpage?name=ddns_jpkribs_shared.js';
-import { PLUGIN_ID, TABS, errorText, showText, loadProviders, primaryRecord, recordNames, otherAddresses, addressLines, saveProxyHostnames } from './configurationpage?name=ddns_tabs.js';
-import { COUNTRY_CODES, WORLD } from './configurationpage?name=ddns_worldmap.js';
+import { createConfigPage, confirmDialog, createChipSelect } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { PLUGIN_ID, TABS, errorText, showText, loadProviders, primaryRecord, recordNames, otherAddresses, addressLines, saveProxyHostnames } from './configurationpage?name=remoteaccess_tabs.js';
+import { COUNTRY_CODES, WORLD } from './configurationpage?name=remoteaccess_worldmap.js';
 
 export default function (view) {
     'use strict';
@@ -26,7 +26,7 @@ export default function (view) {
     var proxySettings = null;
     // The Dynamic DNS fine-tuning, saved through the DDNS configuration rather than the proxy settings. The form
     // as last loaded or saved, to tell whether it changed. Null until loaded.
-    var ddnsBaseline = null;
+    var raBaseline = null;
     var DDNS_IDS = ['ipv4Url', 'ipv6Url', 'forceUpdateHours', 'skipInternal', 'backoffAfterFailures', 'backoffHours', 'requestTimeout'];
 
     // The one DDNS record's finer settings, edited here and saved into the same record Configuration shows.
@@ -84,13 +84,13 @@ export default function (view) {
         // Without the database the country cannot be known, and the warning below says why.
         if (effective === 'ServerCountry' && (serverCountry || countryDatabaseLoaded)) {
             html += serverCountry
-                ? ' This server is in <strong class="ddns-country-known">' + Shared.escapeHtml(serverCountry) + '</strong>.'
-                : ' <strong class="ddns-country-unknown">Until this server\'s country is known, everyone can connect.</strong>';
+                ? ' This server is in <strong class="ra-country-known">' + Shared.escapeHtml(serverCountry) + '</strong>.'
+                : ' <strong class="ra-country-unknown">Until this server\'s country is known, everyone can connect.</strong>';
         }
         // Country rules need the location database. Without it they do nothing, or refuse everyone, so say which.
         if (effective !== 'Off' && !countryDatabaseLoaded) {
             var blocks = Shared.getEl('advBlockWithoutDatabase').value === 'true';
-            html += ' <strong class="ddns-country-unknown">' + (blocks
+            html += ' <strong class="ra-country-unknown">' + (blocks
                 ? 'The location database is not loaded, so every internet connection is refused until it is.'
                 : 'The location database is not loaded, so country rules are not working and everyone can connect.') +
                 ' Select Refresh Locations under History to download it.</strong>';
@@ -257,21 +257,21 @@ export default function (view) {
         });
     }
 
-    function ddnsState() {
+    function raState() {
         return JSON.stringify(DDNS_IDS.map(function (id) {
             var el = Shared.getEl(id);
             return el.type === 'checkbox' ? el.checked : el.value.trim();
         }));
     }
 
-    function ddnsDirty() {
-        return ddnsBaseline !== null && ddnsState() !== ddnsBaseline;
+    function raDirty() {
+        return raBaseline !== null && raState() !== raBaseline;
     }
 
     // Uses the plugin's own config endpoints, so credentials on the records are redacted in transit and kept as
     // they are on save.
     function loadDdns() {
-        ddnsBaseline = null;
+        raBaseline = null;
         recordBaseline = null;
         var providersLoaded = providers ? Promise.resolve(providers)
             : loadProviders(Shared).then(function (p) { providers = p; return p; }).catch(function () { return null; });
@@ -293,10 +293,10 @@ export default function (view) {
             bh.value = String(cfg.BackoffHours || 24);
             if (bh.selectedIndex < 0) bh.value = '24';
             Shared.getEl('requestTimeout').value = cfg.RequestTimeoutSeconds || 15;
-            ddnsBaseline = ddnsState();
-            showText(Shared, 'ddnsLoadError', '');
+            raBaseline = raState();
+            showText(Shared, 'raLoadError', '');
         }).catch(function () {
-            showText(Shared, 'ddnsLoadError', 'Could not load the Dynamic DNS settings.');
+            showText(Shared, 'raLoadError', 'Could not load the Dynamic DNS settings.');
         });
     }
 
@@ -457,8 +457,8 @@ export default function (view) {
     // changed or extra records are left to drop. The record is kept as the only one. Resolves to an error
     // message, or empty when it worked or there was nothing to save.
     function saveDdns() {
-        if (!ddnsDirty() && !recordDirty() && !extraCount) return Promise.resolve('');
-        var posted = ddnsState();
+        if (!raDirty() && !recordDirty() && !extraCount) return Promise.resolve('');
+        var posted = raState();
         var id = record ? record.Id : null;
         return Shared.apiRequest('Configuration', 'GET').then(function (fresh) {
             if (!fresh) { throw new Error('settings unavailable'); }
@@ -476,7 +476,7 @@ export default function (view) {
             return Shared.apiRequest('Configuration', 'POST', fresh);
         }).then(function (result) {
             if (!result) { throw new Error('no reply'); }
-            ddnsBaseline = posted;
+            raBaseline = posted;
             fillRecord(primaryRecord(result.Records), (result.Records || []).length);
             return '';
         }).catch(function (err) {
@@ -488,7 +488,7 @@ export default function (view) {
     function isDirty() {
         return (settingsLoaded && JSON.stringify(read()) !== JSON.stringify(loaded))
             || (historyLoaded && JSON.stringify(readHistory()) !== historyBaseline)
-            || ddnsDirty() || recordDirty() || hostnamesDirty();
+            || raDirty() || recordDirty() || hostnamesDirty();
     }
 
     function load() {
@@ -496,7 +496,7 @@ export default function (view) {
         historyLoaded = false;
         loadHistory();
         hostnamesBaseline = null;
-        var ddnsDone = loadDdns();
+        var raDone = loadDdns();
         var defaultsLoaded = defaultSets ? Promise.resolve(defaultSets) : Shared.apiRequest('Proxy/Defaults', 'GET');
         Promise.all([defaultsLoaded, Shared.apiRequest('Proxy/Settings', 'GET')]).then(function (results) {
             defaultSets = results[0] || {};
@@ -508,7 +508,7 @@ export default function (view) {
             proxySettings = results[1];
             refreshCountryStatus();
             // The other addresses are the stored ones that are not the record's, so the record has to be known.
-            return ddnsDone.then(namesNow).then(function (names) {
+            return raDone.then(namesNow).then(function (names) {
                 fillHostnames((results[1] && results[1].Hostnames) || [], names);
             });
         }).catch(function () {
@@ -541,26 +541,26 @@ export default function (view) {
         if (button.disabled) return;
         button.disabled = true;
         Shared.setStatus('advancedStatus', 'Saving...', false);
-        var ddnsChanged = ddnsDirty() || recordDirty() || extraCount > 0;
+        var raChanged = raDirty() || recordDirty() || extraCount > 0;
         var before = [];
-        var ddnsError = '';
+        var raError = '';
         // The DDNS settings and the record save first, so the proxy's addresses follow the record's names as now
         // saved. Each save goes to its own endpoint, so one failing never stops the other, and both are reported.
         namesNow().then(function (names) {
             before = names;
             return saveDdns();
         }).then(function (error) {
-            ddnsError = error;
+            raError = error;
             return saveProxy(before);
         }).then(function (proxy) {
-            if (!ddnsError) {
-                var done = proxy.ok || !ddnsChanged ? proxy.text
+            if (!raError) {
+                var done = proxy.ok || !raChanged ? proxy.text
                     : 'The proxy settings were not saved. ' + proxy.text + ' The Dynamic DNS settings were saved.';
                 Shared.setStatus('advancedStatus', done, proxy.bad, proxy.keep ? { timeout: 0 } : undefined);
                 return;
             }
             var text = (proxy.ok ? proxy.text : 'The proxy settings were not saved. ' + proxy.text) +
-                ' The Dynamic DNS settings were not saved. ' + ddnsError;
+                ' The Dynamic DNS settings were not saved. ' + raError;
             Shared.setStatus('advancedStatus', text, true, { timeout: 0 });
         }).then(function () {
             button.disabled = false;
@@ -651,8 +651,8 @@ export default function (view) {
 
     Shared = createConfigPage(view, {
         pluginId: PLUGIN_ID,
-        apiPrefix: 'DynamicDns',
-        tabsKey: 'ddns',
+        apiPrefix: 'RemoteAccess',
+        tabsKey: 'remoteaccess',
         tabIndex: 2,
         tabs: TABS,
         bind: bind,

@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Database.Implementations.Entities;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Router;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Router;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Activity;
 using Microsoft.Extensions.Logging;
@@ -18,7 +18,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Jellyfin.Plugin.DynamicDns.Tests;
+namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// Plex-style remote access: forwarding ports on the router with NAT-PMP and UPnP, telling a provider's shared
@@ -519,7 +519,7 @@ public class RouterAndReachabilityTests
 
         Assert.Equal("192.168.1.1", mapper.Status.Device);
         Assert.True(mapper.Status.DeviceIsGateway);
-        var opened = Assert.Single(entries, e => e.Type == "DynamicDNS.RouterPortsOpened");
+        var opened = Assert.Single(entries, e => e.Type == "RemoteAccess.RouterPortsOpened");
         Assert.Contains("192.168.1.1", opened.ShortOverview, StringComparison.Ordinal);
         Assert.Contains("port forwarding page", opened.ShortOverview, StringComparison.Ordinal);
         Assert.DoesNotContain("default gateway", opened.ShortOverview, StringComparison.Ordinal);
@@ -535,7 +535,7 @@ public class RouterAndReachabilityTests
 
         Assert.Equal("192.168.1.66", mapper.Status.Device);
         Assert.False(mapper.Status.DeviceIsGateway);
-        var opened = Assert.Single(entries, e => e.Type == "DynamicDNS.RouterPortsOpened");
+        var opened = Assert.Single(entries, e => e.Type == "RemoteAccess.RouterPortsOpened");
         Assert.Contains("not this server's default gateway", opened.ShortOverview, StringComparison.Ordinal);
     }
 
@@ -666,7 +666,7 @@ public class RouterAndReachabilityTests
         // The opening is one entry, not one per renewal.
         var opened = Assert.Single(entries);
         Assert.Equal("Remote Access opened ports 80 and 443 on your router", opened.Name);
-        Assert.Equal("DynamicDNS.RouterPortsOpened", opened.Type);
+        Assert.Equal("RemoteAccess.RouterPortsOpened", opened.Type);
         Assert.Equal(LogLevel.Information, opened.LogSeverity);
     }
 
@@ -701,7 +701,7 @@ public class RouterAndReachabilityTests
         Assert.Equal(RouterPortMapper.NoRouterSentence(new[] { new PortMapping(80, 80, _lan, 1), new PortMapping(443, 443, _lan, 1) }), status.Error);
         var warnings = entries.Where(e => e.LogSeverity == LogLevel.Warning).ToList();
         var warning = Assert.Single(warnings);
-        Assert.Equal("DynamicDNS.RouterNotFound", warning.Type);
+        Assert.Equal("RemoteAccess.RouterNotFound", warning.Type);
         Assert.Equal(status.Error, warning.ShortOverview);
     }
 
@@ -722,7 +722,7 @@ public class RouterAndReachabilityTests
         Assert.False(status.Mapped);
         Assert.Equal("UPnP", status.Method);
         Assert.Equal(0, other.Discovers);
-        Assert.Contains(entries, e => e.Type == "DynamicDNS.RouterPortsFailed" && e.ShortOverview == status.Error);
+        Assert.Contains(entries, e => e.Type == "RemoteAccess.RouterPortsFailed" && e.ShortOverview == status.Error);
         Assert.Contains(entries, e => e.Name == "Remote Access opened port 80 on your router");
 
         router.Results[80] = PortMapResult.Taken(80);

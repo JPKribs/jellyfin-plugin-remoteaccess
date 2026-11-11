@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.DynamicDns.Proxy;
-using Jellyfin.Plugin.DynamicDns.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.DynamicDns.Tasks;
+namespace Jellyfin.Plugin.RemoteAccess.Tasks;
 
 /// <summary>
 /// Keeps the proxy's certificate current: requests a Let's Encrypt one when it is missing, no longer covers the
@@ -42,7 +42,7 @@ public sealed class CertificateRefreshTask : PluginScheduledTask
     public override string Name => "Refresh Certificate";
 
     /// <inheritdoc />
-    public override string Key => "DynamicDNSCertificateRefresh";
+    public override string Key => "RemoteAccessCertificateRefresh";
 
     /// <inheritdoc />
     public override string Description => "Requests a Let's Encrypt certificate when one is missing, no longer covers your addresses or expires within 30 days, and reloads or replaces other certificates as needed.";
@@ -71,13 +71,13 @@ public sealed class CertificateRefreshTask : PluginScheduledTask
         if (!status.Loaded && status.Mode != CertificateMode.Automatic)
         {
             _logger.LogError("Remote access certificate could not be loaded: {Error}", status.Error);
-            _activity.Log("Remote Access could not load its certificate", "DynamicDNS.CertificateFailed", status.Error, LogLevel.Error);
+            _activity.Log("Remote Access could not load its certificate", "RemoteAccess.CertificateFailed", status.Error, LogLevel.Error);
         }
         else if (status.Loaded && status.NotAfterUtc is { } expires && expires - DateTime.UtcNow < _warnBefore)
         {
             var message = $"The certificate for {string.Join(", ", status.Names)} expires {expires:yyyy-MM-dd}. Renew it so remote access keeps working.";
             _logger.LogWarning("{Message}", message);
-            _activity.Log("Remote Access certificate expires soon", "DynamicDNS.CertificateExpiring", message, LogLevel.Warning);
+            _activity.Log("Remote Access certificate expires soon", "RemoteAccess.CertificateExpiring", message, LogLevel.Warning);
         }
 
         progress.Report(100);
