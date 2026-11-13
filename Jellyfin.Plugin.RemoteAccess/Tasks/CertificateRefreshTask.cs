@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Logging;
@@ -71,13 +72,17 @@ public sealed class CertificateRefreshTask : PluginScheduledTask
         if (!status.Loaded && status.Mode != CertificateMode.Automatic)
         {
             _logger.LogError("Remote access certificate could not be loaded: {Error}", status.Error);
-            _activity.Log("Remote Access could not load its certificate", "RemoteAccess.CertificateFailed", status.Error, LogLevel.Error);
+            _activity.Log("Certificate Failed to Load", "RemoteAccess.CertificateFailed", ActivityEntries.Plain(status.Error), LogLevel.Error);
         }
         else if (status.Loaded && status.NotAfterUtc is { } expires && expires - DateTime.UtcNow < _warnBefore)
         {
             var message = $"The certificate for {string.Join(", ", status.Names)} expires {expires:yyyy-MM-dd}. Renew it so remote access keeps working.";
             _logger.LogWarning("{Message}", message);
-            _activity.Log("Remote Access certificate expires soon", "RemoteAccess.CertificateExpiring", message, LogLevel.Warning);
+            _activity.Log(
+                "Certificate Expiring Soon",
+                "RemoteAccess.CertificateExpiring",
+                $"The certificate for {string.Join(", ", status.Names)} expires {expires:yyyy-MM-dd}, renew it so remote access keeps working",
+                LogLevel.Warning);
         }
 
         progress.Report(100);

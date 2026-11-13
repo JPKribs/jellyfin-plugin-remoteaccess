@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using Jellyfin.Plugin.RemoteAccess.People;
@@ -150,9 +151,45 @@ public sealed class BlockingTests : IDisposable
         bans.RecordFailure(IPAddress.Parse("203.0.113.70"), options);
 
         var entry = Assert.Single(entries);
-        Assert.Equal("Remote Access banned 203.0.113.70", entry.Name);
+        Assert.Equal("203.0.113.70 Banned", entry.Name);
         Assert.Equal("RemoteAccess.AddressBanned", entry.Type);
-        Assert.Equal("2 failed sign-ins from an unknown country. Banned for 30 minutes.", entry.ShortOverview);
+        Assert.Equal("2 failed sign-ins from an unknown country, banned for 30 minutes", entry.ShortOverview);
+    }
+
+    [Fact]
+    public void Bans_PastFiveAMinute_AreSummedByCountry()
+    {
+        var entries = new List<ActivityLog>();
+        var manager = Substitute.For<IActivityManager>();
+        manager.CreateAsync(Arg.Do<ActivityLog>(e => { lock (entries) { entries.Add(e); } }));
+        var activity = new ActivityLogger(manager, Substitute.For<ILogger<ActivityLogger>>());
+        var geo = new GeoIpService(new ProxyPaths(_dir), Substitute.For<IHttpClientFactory>(), NullLogger<GeoIpService>.Instance);
+        var summary = new ActivitySummary(activity);
+        var bans = new BanList(_store, geo, NullLogger<BanList>.Instance, activity, summary);
+        var options = Runtime(CountryRuleMode.Off).Options with { BanFailures = 1, BanMinutes = 30 };
+
+        for (var i = 1; i <= 8; i++)
+        {
+            bans.RecordFailure(IPAddress.Parse("198.51.100." + i), options);
+        }
+
+        // Five are written one by one, unless the minute turned over between them, and the rest wait in the summary.
+        summary.Dispose();
+        lock (entries)
+        {
+            var summed = entries.Where(e => e.Name.EndsWith(" Banned", StringComparison.Ordinal) && e.Name.Contains("Client", StringComparison.Ordinal)).ToList();
+            var single = entries.Where(e => e.Name.EndsWith(" Banned", StringComparison.Ordinal) && !e.Name.Contains("Client", StringComparison.Ordinal)).ToList();
+            Assert.True(single.Count >= 5);
+            Assert.Equal(8, single.Count + summed.Sum(e => int.Parse(e.Name.Split(' ')[0], System.Globalization.CultureInfo.InvariantCulture)));
+            if (single.Count == 5)
+            {
+                var entry = Assert.Single(summed);
+                Assert.Equal("3 Clients Banned", entry.Name);
+                Assert.Equal("RemoteAccess.AddressBanned", entry.Type);
+                Assert.Equal(LogLevel.Warning, entry.LogSeverity);
+                Assert.Equal("3 clients were banned after failed sign-ins, too many to list one by one, from an unknown country (3)", entry.ShortOverview);
+            }
+        }
     }
 
     [Fact]

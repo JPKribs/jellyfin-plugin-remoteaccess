@@ -12,6 +12,7 @@ using Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
 using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
 using Jellyfin.Plugin.RemoteAccess.Proxy.Router;
 using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
@@ -740,9 +741,9 @@ public sealed class ProxyManager : IAsyncDisposable
         const string Why = "Something in front of the proxy, such as rootless Docker, a tunnel or another proxy, may be hiding visitors' addresses. Bans, the block list and country rules cannot apply until it passes them on.";
         _logger.LogWarning("Most visitors in the last hour came from one local address. {Why}", Why);
         _activity?.Log(
-            "Remote Access sees most visitors as local",
+            "Most Visitors Seen as Local",
             "RemoteAccess.EveryoneLooksLocal",
-            $"Most of the last hour's requests for your public names, at least {LocalTrafficWatch.Threshold}, came from one local address. " + Why + " See the Configuration tab.",
+            $"Most of the last hour's requests for your public names, at least {LocalTrafficWatch.Threshold}, came from one local address, so something in front of the proxy, such as rootless Docker, a tunnel or another proxy, may be hiding visitors' addresses and bans, the block list and country rules cannot apply until it passes them on, see the Configuration tab",
             LogLevel.Warning);
     }
 
@@ -768,7 +769,7 @@ public sealed class ProxyManager : IAsyncDisposable
             if (_reportedError.Length > 0)
             {
                 _reportedError = string.Empty;
-                _activity?.Log("Remote Access started its proxy", "RemoteAccess.ProxyStarted", "It is listening on " + addresses + ".");
+                _activity?.Log("Proxy Started", "RemoteAccess.ProxyStarted", "It is listening on " + addresses);
             }
         }
         catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
@@ -780,7 +781,7 @@ public sealed class ProxyManager : IAsyncDisposable
             if (!string.Equals(_error, _reportedError, StringComparison.Ordinal))
             {
                 _reportedError = _error;
-                _activity?.Log("Remote Access could not start its proxy", "RemoteAccess.ProxyStartFailed", _error, LogLevel.Error);
+                _activity?.Log("Proxy Failed to Start", "RemoteAccess.ProxyStartFailed", ActivityEntries.Plain(_error), LogLevel.Error);
             }
         }
     }

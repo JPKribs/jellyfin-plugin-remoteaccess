@@ -396,7 +396,7 @@ public class DNSUpdateServiceRunTests
         Assert.False(records.ContainsKey("second"));
 
         // The landed push is logged too.
-        Assert.Contains(h.Activity, e => e.Name.Contains("updated a.example.com", StringComparison.Ordinal));
+        Assert.Contains(h.Activity, e => e.Name == "1 DNS Record Updated" && (e.ShortOverview ?? string.Empty).Contains("a.example.com (1)", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -578,7 +578,7 @@ public class DNSUpdateServiceRunTests
         await h.RunAsync();
 
         Assert.NotNull(h.StatusOf("rec1").BackoffUntilUtc);
-        Assert.Contains(h.Activity, e => e.Name.StartsWith("Dynamic DNS paused updates", StringComparison.Ordinal));
+        Assert.Contains(h.Activity, e => e.Name == "1 DNS Record Paused");
     }
 
     // The response is handed to the HTTP client, which disposes it.

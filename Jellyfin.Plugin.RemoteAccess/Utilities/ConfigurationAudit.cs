@@ -34,48 +34,46 @@ public static class ConfigurationAudit
             .GroupBy(r => r.Id, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
 
+        // Additions, changes and removals are summed into one entry each per save. A credential change is
+        // security relevant, so each gets its own entry.
+        var batch = new ActivityBatch();
         var kept = new HashSet<string>(StringComparer.Ordinal);
         foreach (var record in after)
         {
             if (!prior.TryGetValue(record.Id, out var old))
             {
-                activity.Log(
-                    "Dynamic DNS record " + record.DisplayName() + " was added",
-                    "RemoteAccess.RecordAdded",
-                    "Provider: " + record.Provider + ", hostname: " + record.Hostname + ".",
-                    userId: userId);
+                batch.Add(ActivityEntries.RecordsAdded, Label(record), record.Provider.ToString());
                 continue;
             }
 
             kept.Add(record.Id);
             if (SettingsDiffer(old, record))
             {
-                activity.Log(
-                    "Dynamic DNS record " + record.DisplayName() + " was changed",
-                    "RemoteAccess.RecordChanged",
-                    (record.Enabled ? "Enabled" : "Disabled") + ". Provider: " + record.Provider + ", hostname: " + record.Hostname + ".",
-                    userId: userId);
+                batch.Add(ActivityEntries.RecordsChanged, Label(record), record.Enabled ? "enabled" : "disabled");
             }
 
             if (!string.Equals(record.Login, old.Login, StringComparison.Ordinal)
                 || !string.Equals(record.Password, old.Password, StringComparison.Ordinal))
             {
                 activity.Log(
-                    "Dynamic DNS credentials for " + record.DisplayName() + " were changed",
+                    "Credentials Changed for " + record.DisplayName(),
                     "RemoteAccess.RecordCredentialsChanged",
+                    "The login or password of the " + record.Provider + " DNS record for " + record.Hostname + " was changed",
                     userId: userId);
             }
         }
 
         foreach (var old in prior.Values.Where(r => !kept.Contains(r.Id)))
         {
-            activity.Log(
-                "Dynamic DNS record " + old.DisplayName() + " was removed",
-                "RemoteAccess.RecordRemoved",
-                "Provider: " + old.Provider + ", hostname: " + old.Hostname + ".",
-                userId: userId);
+            batch.Add(ActivityEntries.RecordsRemoved, Label(old), old.Provider.ToString());
         }
+
+        batch.Write(activity, userId);
     }
+
+    // A record is listed by its hostname, which says what it points, or its name before one is entered.
+    private static string Label(DNSRecord record)
+        => string.IsNullOrWhiteSpace(record.Hostname) ? record.DisplayName() : record.Hostname;
 
     // The fields an administrator sets, leaving out credentials (logged on their own) and the run status
     // the update service keeps on the record.

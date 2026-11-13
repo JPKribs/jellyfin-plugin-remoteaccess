@@ -195,9 +195,9 @@ public class ProxyController : ControllerBase
         if (changed.Count > 0)
         {
             _activity.Log(
-                "Remote Access settings were changed",
+                "Proxy Settings Changed",
                 "RemoteAccess.ProxySettingsChanged",
-                "Changed: " + string.Join(", ", changed) + ". The proxy is " + (incoming.Enabled ? "on." : "off."),
+                "Changed " + string.Join(", ", changed) + ", and the proxy is " + (incoming.Enabled ? "on" : "off"),
                 userId: user);
         }
 
@@ -315,7 +315,7 @@ public class ProxyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> RequestCertificate()
     {
-        _activity.Log("Remote Access was asked for a new certificate", "RemoteAccess.CertificateRequested", "Requested from the Remote Access page.", userId: ActivityUser.Of(User));
+        _activity.Log("Certificate Requested", "RemoteAccess.CertificateRequested", "A new certificate was requested from the Remote Access page", userId: ActivityUser.Of(User));
         var (ok, message) = await _proxy.RequestCertificateAsync(CancellationToken.None).ConfigureAwait(false);
         return Ok(new { Ok = ok, Message = message, Status = _proxy.GetStatus(_orchestrator.State) });
     }

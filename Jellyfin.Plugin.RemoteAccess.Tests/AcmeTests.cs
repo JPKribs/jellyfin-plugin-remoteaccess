@@ -182,7 +182,7 @@ public sealed class AcmeTests : IDisposable
                 Assert.True(status.NextAttemptUtc > DateTime.UtcNow.AddMinutes(50));
 
                 var entry = Assert.Single(entries);
-                Assert.Equal("Remote Access could not get a certificate", entry.Name);
+                Assert.Equal("Certificate Request Failed", entry.Name);
                 Assert.Equal("RemoteAccess.CertificateIssueFailed", entry.Type);
 
                 // Inside the backoff the next call does not try again.

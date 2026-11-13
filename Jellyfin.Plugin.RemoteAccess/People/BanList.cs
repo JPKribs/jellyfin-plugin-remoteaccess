@@ -45,6 +45,7 @@ public sealed class BanList : IFailureTracker
     private readonly PeopleStore _store;
     private readonly GeoIpService _geo;
     private readonly ActivityLogger? _activity;
+    private readonly ActivitySummary? _summary;
     private readonly RepeatedProblem _load = new();
     private readonly RepeatedProblem _save = new();
     private readonly ILogger<BanList> _logger;
@@ -64,11 +65,13 @@ public sealed class BanList : IFailureTracker
     /// <param name="geo">The location lookup.</param>
     /// <param name="logger">The logger.</param>
     /// <param name="activity">The activity log writer, which records each ban.</param>
-    public BanList(PeopleStore store, GeoIpService geo, ILogger<BanList> logger, ActivityLogger? activity = null)
+    /// <param name="summary">The activity summary, which sums the bans past the few a minute written one by one.</param>
+    public BanList(PeopleStore store, GeoIpService geo, ILogger<BanList> logger, ActivityLogger? activity = null, ActivitySummary? summary = null)
     {
         _store = store;
         _geo = geo;
         _activity = activity;
+        _summary = summary;
         _logger = logger;
     }
 
@@ -135,8 +138,8 @@ public sealed class BanList : IFailureTracker
     }
 
     /// <summary>
-    /// Writes the summary of bans held back from the activity log, once the minute they fell in has passed.
-    /// Called every minute, so a flood that stops is still summed up.
+    /// Writes the server log's count of bans held back from the activity log one by one, once the minute they
+    /// fell in has passed. Called every minute, so a flood that stops is still counted.
     /// </summary>
     public void FlushActivity() => LogActivity(DateTime.UtcNow, null, null);
 
@@ -199,9 +202,13 @@ public sealed class BanList : IFailureTracker
         Save(() => _store.SaveBan(ban));
         var where = location.Country.Length > 0 ? location.Country : "an unknown country";
         var length = minutes > 0 ? $"for {minutes} minutes" : "until the ban is lifted";
-        if (LogActivity(now, "Remote Access banned " + key, $"{count} failed sign-ins from {where}. Banned {length}."))
+        if (LogActivity(now, key + " Banned", $"{count} failed sign-ins from {where}, banned {length}"))
         {
             _logger.LogWarning("Banned {Key} in {Country} after {Failures} failed sign-ins", key, where, count);
+        }
+        else
+        {
+            _summary?.Add(ActivityEntries.ClientsBanned, where);
         }
     }
 
@@ -247,9 +254,9 @@ public sealed class BanList : IFailureTracker
     /// </summary>
     public void Preload() => _ = Bans;
 
-    // A few bans a minute are logged one by one; past that, they are summed up, so an attack spread over many
-    // addresses cannot bury everything else in Jellyfin's activity log.
-    // Returns whether this ban was written out on its own. A null name only flushes the summary.
+    // A few bans a minute are logged one by one; past that, they are summed up by the activity summary, so an
+    // attack spread over many addresses cannot bury everything else in Jellyfin's activity log.
+    // Returns whether this ban was written out on its own. A null name only writes the server log's count.
     private bool LogActivity(DateTime now, string? name, string? overview)
     {
         var minute = now.Ticks / TimeSpan.TicksPerMinute;
@@ -280,7 +287,6 @@ public sealed class BanList : IFailureTracker
         if (suppressed > 0)
         {
             _logger.LogWarning("Banned {Count} more addresses in the last minute", suppressed);
-            _activity?.Log($"Remote Access banned {suppressed} more addresses", "RemoteAccess.AddressBanned", "Too many bans to list one by one. The Remote Access page shows them all.", LogLevel.Warning);
         }
 
         if (log)

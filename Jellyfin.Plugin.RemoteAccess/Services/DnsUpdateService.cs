@@ -134,9 +134,9 @@ public sealed class DNSUpdateService : IDisposable
             {
                 status.PlaintextWarningLogged = true;
                 _activity.Log(
-                    "Dynamic DNS cannot encrypt credentials",
+                    "Credential Encryption Unavailable",
                     "RemoteAccess.PlaintextCredentials",
-                    "The plugin could not set up its encryption keys, so no credential can be saved. Reinstall the plugin and try again, then check the permissions on its folders.",
+                    "The plugin could not set up its encryption keys so no DNS credential can be saved, reinstall the plugin and try again, then check the permissions on its folders",
                     LogLevel.Error);
             }
         }
@@ -204,8 +204,17 @@ public sealed class DNSUpdateService : IDisposable
         }
         finally
         {
-            LogOutcomes(enabled, outcome, ip);
-            PersistStatus(status, plugin, enabled, statusUpdates, ip, backoffThreshold, backoffWindow);
+            // One entry per outcome for the whole run, not one per record.
+            var batch = new ActivityBatch();
+            LogOutcomes(enabled, outcome, ip, batch);
+            try
+            {
+                PersistStatus(status, plugin, enabled, statusUpdates, ip, backoffThreshold, backoffWindow, batch);
+            }
+            finally
+            {
+                batch.Write(_activity);
+            }
         }
 
         return outcome;
@@ -327,8 +336,8 @@ public sealed class DNSUpdateService : IDisposable
     // Describes why a record is paused: definitive failures earn the long pause, temporary ones a short one.
     private static string PauseSummary(DNSRecord record, int threshold)
         => record.ConsecutiveFailures >= threshold
-            ? "Paused after " + record.ConsecutiveFailures + " consecutive failures."
-            : "Paused after " + record.TransientFailures + " consecutive temporary failures. These are timeouts, network errors or provider server errors.";
+            ? record.ConsecutiveFailures + " consecutive failures"
+            : record.TransientFailures + " consecutive timeouts, network errors or provider server errors";
 
     /// <summary>
     /// Tracks detection health across runs so a persistent inability to find a public IP surfaces once
@@ -342,11 +351,12 @@ public sealed class DNSUpdateService : IDisposable
             if (status.ConsecutiveDetectionFailures >= UnhealthyDetectionRuns && !status.DetectionUnhealthyLogged)
             {
                 status.DetectionUnhealthyLogged = true;
+                var warnings = string.Join(", ", outcome.Warnings.Select(ActivityEntries.Phrase).Where(w => w.Length > 0));
                 _activity.Log(
-                    "Dynamic DNS has been unable to detect a public IP",
+                    "Public IP Detection Failing",
                     "RemoteAccess.DetectionUnhealthy",
-                    "Detection has failed for " + status.ConsecutiveDetectionFailures
-                    + " runs in a row. " + string.Join(" ", outcome.Warnings),
+                    ActivityEntries.Plain("Detection has failed for " + status.ConsecutiveDetectionFailures
+                    + " runs in a row" + (warnings.Length > 0 ? ": " + warnings : string.Empty)),
                     LogLevel.Warning);
             }
 
@@ -356,9 +366,9 @@ public sealed class DNSUpdateService : IDisposable
         if (status.DetectionUnhealthyLogged)
         {
             _activity.Log(
-                "Dynamic DNS public IP detection recovered",
+                "Public IP Detection Recovered",
                 "RemoteAccess.DetectionRecovered",
-                "Detection succeeded after " + status.ConsecutiveDetectionFailures + " failed runs.");
+                "Detection succeeded after " + status.ConsecutiveDetectionFailures + " failed runs");
         }
 
         status.ConsecutiveDetectionFailures = 0;
@@ -366,11 +376,11 @@ public sealed class DNSUpdateService : IDisposable
     }
 
     /// <summary>
-    /// Writes activity log entries for the records that actually contacted their provider. Skips stay
-    /// silent, a successful push is informational, and a failed push is an error. Backoff caps how many
-    /// error entries one broken record can produce before it pauses.
+    /// Counts the records that actually contacted their provider toward the run's activity summaries. Skips
+    /// stay silent, a successful push is informational, and a failed push is an error. Backoff caps how many
+    /// failures one broken record can produce before it pauses.
     /// </summary>
-    private void LogOutcomes(List<DNSRecord> enabled, DNSUpdateOutcome outcome, DetectedIP ip)
+    private void LogOutcomes(List<DNSRecord> enabled, DNSUpdateOutcome outcome, DetectedIP ip, ActivityBatch batch)
     {
         foreach (var result in outcome.Records)
         {
@@ -385,10 +395,7 @@ public sealed class DNSUpdateService : IDisposable
             if (result.Success && record is { ConsecutiveFailures: > 0 })
             {
                 _logger.LogInformation("Dynamic DNS update for {Host} works again after {Count} failed attempts", result.Hostname, record.ConsecutiveFailures);
-                _activity.Log(
-                    "Dynamic DNS update for " + result.Hostname + " works again",
-                    "RemoteAccess.RecordRecovered",
-                    $"It succeeded after {record.ConsecutiveFailures} failed attempts.");
+                batch.Add(ActivityEntries.RecordsRecovered, result.Hostname, $"{record.ConsecutiveFailures} failed attempts");
             }
 
             if (result.Success && record is not null && Unchanged(record, ip))
@@ -401,27 +408,19 @@ public sealed class DNSUpdateService : IDisposable
             {
                 var summary = NewAddressSummary(record, ip);
                 _logger.LogInformation("Dynamic DNS updated {Host}{Summary}", result.Hostname, summary);
-                _activity.Log("Dynamic DNS updated " + result.Hostname + summary, "RemoteAccess.RecordUpdated", result.Message);
+                batch.Add(ActivityEntries.RecordsUpdated, result.Hostname, NewAddresses(record, ip));
             }
             else if (result.DnsAlreadyServes)
             {
                 // DNS already points at this server, as after a failed forced refresh: nobody is cut off yet.
                 _logger.LogWarning("Dynamic DNS update failed for {Host}, though DNS already serves the current address: {Message}", result.Hostname, result.Message);
-                _activity.Log(
-                    "Dynamic DNS update failed for " + result.Hostname,
-                    "RemoteAccess.RecordFailed",
-                    result.Message + " DNS already serves the current address, so nothing is cut off yet.",
-                    LogLevel.Warning);
+                batch.Add(ActivityEntries.RecordsFailedServing, result.Hostname, ActivityEntries.Phrase(result.Message));
             }
             else
             {
                 // The record now points at an old address, so remote clients may not reach the server: an error.
                 _logger.LogError("Dynamic DNS update failed for {Host}: {Message}", result.Hostname, result.Message);
-                _activity.Log(
-                    "Dynamic DNS update failed for " + result.Hostname,
-                    "RemoteAccess.RecordFailed",
-                    result.Message,
-                    LogLevel.Error);
+                batch.Add(ActivityEntries.RecordsFailed, result.Hostname, ActivityEntries.Phrase(result.Message));
             }
         }
     }
@@ -448,9 +447,16 @@ public sealed class DNSUpdateService : IDisposable
 
     private static string NewAddressSummary(DNSRecord? record, DetectedIP ip)
     {
+        var addresses = NewAddresses(record, ip);
+        return addresses is null ? string.Empty : " to " + addresses;
+    }
+
+    // "203.0.113.5 and 2001:db8::5", or null when the record pushes neither.
+    private static string? NewAddresses(DNSRecord? record, DetectedIP ip)
+    {
         if (record is null)
         {
-            return string.Empty;
+            return null;
         }
 
         var parts = new List<string>(2);
@@ -464,7 +470,7 @@ public sealed class DNSUpdateService : IDisposable
             parts.Add(ip.IPv6!);
         }
 
-        return parts.Count == 0 ? string.Empty : " to " + string.Join(" and ", parts);
+        return parts.Count == 0 ? null : string.Join(" and ", parts);
     }
 
     private static PluginConfiguration Snapshot(PluginConfiguration config) => new()
@@ -526,7 +532,8 @@ public sealed class DNSUpdateService : IDisposable
         Dictionary<string, RecordOutcome> statusUpdates,
         DetectedIP ip,
         int backoffThreshold,
-        TimeSpan backoffWindow)
+        TimeSpan backoffWindow,
+        ActivityBatch batch)
     {
         // Records are read fresh rather than from the run's snapshot, so a record added mid-run is not
         // pruned and one edited mid-run to target something else does not inherit this run's status.
@@ -558,13 +565,11 @@ public sealed class DNSUpdateService : IDisposable
             ApplyOutcome(record, result, ip, backoffThreshold, backoffWindow);
             if (!wasBackingOff && record.BackoffUntilUtc is not null)
             {
-                _activity.Log(
-                    "Dynamic DNS paused updates for " + record.Hostname,
-                    "RemoteAccess.RecordBackoff",
-                    PauseSummary(record, backoffThreshold) + " The next attempt is after "
-                    + record.BackoffUntilUtc.Value.ToString("u", CultureInfo.InvariantCulture)
-                    + " or when the public IP changes.",
-                    LogLevel.Warning);
+                batch.Add(
+                    ActivityEntries.RecordsPaused,
+                    record.Hostname,
+                    PauseSummary(record, backoffThreshold) + " until "
+                    + record.BackoffUntilUtc.Value.ToString("u", CultureInfo.InvariantCulture));
             }
 
             written[record.Id] = RecordStatus.FromRecord(record);

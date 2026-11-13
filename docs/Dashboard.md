@@ -110,51 +110,67 @@ Each entry has a level:
 A problem is written once when it starts, and once more when it clears, not on every run. A run where every
 record is already current writes nothing.
 
+Every entry has the same shape: a short name such as **Certificate Renewed** or **203.0.113.7 Banned**, over one
+sentence saying what happened. Where many of one thing happen together, they are summed into one entry per outcome,
+named with the count, such as **3 DNS Records Updated**, whose sentence lists each one with its count, such as
+"3 DNS records were updated for a.example.com (1), b.example.com (1), c.example.com (1) to 203.0.113.5 (3)".
+
 #### Dynamic DNS entries
 
-* **Record updated**: a record was sent a new address. Refreshing the same address only goes to the server log.
-* **Update failed**: the provider refused the update or could not be reached. It is an error when the record is
-  left on an old address, and a warning when DNS already has the current one, as after a failed refresh.
-* **Update works again**: a record that was failing updated.
-* **Updates paused**: a record was paused after repeated failures, once per streak.
-* **Detection unhealthy**: no public IP was found for about an hour, with an entry when it is found again.
-* **Configuration changes**: the record was added, changed or removed, or the settings under **Advanced > Dynamic DNS** changed.
-* **Credentials cannot be encrypted**: an error when the plugin could not set up its encryption keys, once per
+Each update run writes one entry per outcome, listing the records by hostname.
+
+* **DNS Records Updated**: records were sent a new address, listed with the address. Refreshing the same address
+  only goes to the server log.
+* **DNS Records Failed**: the provider refused the update or could not be reached, listed with each reason. It is
+  an error when a record is left on an old address, and a warning when DNS already has the current one, as after a
+  failed refresh.
+* **DNS Records Recovered**: records that were failing updated again.
+* **DNS Records Paused**: records were paused after repeated failures, once per streak, with when the next try is.
+* **Public IP Detection Failing**: no public IP was found for about an hour, with **Public IP Detection Recovered**
+  when it is found again.
+* **DNS Records Added**, **Changed** or **Removed**: one entry each per save. **Credentials Changed for** a record
+  is always its own entry. **Dynamic DNS Settings Changed**: the settings under **Advanced > Dynamic DNS** changed.
+* **Credential Encryption Unavailable**: an error when the plugin could not set up its encryption keys, once per
   outage. No credential can be saved until it can. Reinstall the plugin, then check the permissions on its folders.
-* **Remote Access cannot use its own files**: an error when Jellyfin runs as an account that cannot open the
-  plugin's folders, naming the command that fixes it. See [Recovery](RemoteAccess.md#recovery).
+* **File Access Failed**: an error when Jellyfin runs as an account that cannot open the plugin's folders, naming
+  the command that fixes it. See [Recovery](RemoteAccess.md#recovery).
 
 #### Remote Access entries
 
-* **Settings changed**: a tab was saved with a change, naming what changed.
-* **Proxy could not start**: once per reason, such as a port in use, with an entry when it starts. With
+* **Proxy Settings Changed**: a tab was saved with a change, naming what changed.
+* **Proxy Failed to Start**: once per reason, such as a port in use, with **Proxy Started** when it starts. With
   **Only through the proxy** on, Jellyfin stays on this server alone, and the entry says how to turn the proxy off
   by hand. See [If the proxy stops working](RemoteAccess.md#if-the-proxy-stops-working).
-* **Trust the Proxy**: Jellyfin was set to trust the proxy, answered through it after the restart or did not,
-  or **Undo** put its settings back.
+* **Trust the Proxy**: **Proxy Trust Turned On** when Jellyfin was set to trust the proxy, **Proxy Trust Confirmed**
+  or **Proxy Check Failed** after the restart, and **Network Settings Restored** when **Undo** put its settings back.
 * **Router ports**: written once when something changes, not on every hourly renewal.
-    * **Remote Access opened ports 80 and 443 on your router**: names the device that answered, the address the
+    * **Ports 80 and 443 Opened on Router**: names the device that answered, the address the
       ports go to and whether UPnP or NAT-PMP was used, and says when that device is not this server's default
       gateway. Before a certificate is ready, only port 80 is opened. See
       [Checking the forward](RemoteAccess.md#checking-the-forward).
-    * **Remote Access could not open ports on your router**: a warning with the router's reason, such as a port
+    * **Router Ports Failed to Open**: a warning with the router's reason, such as a port
       another device already holds.
-    * **Remote Access found no router that opens ports**: a warning that no router answered over UPnP or NAT-PMP.
-* **Cannot be reached from outside**: an error when the **Verify External Access** task finds that no outside
-  place can connect to port 443, naming each place and why it failed, with an entry when it works again. A check
+    * **Router Not Found**: a warning that no router answered over UPnP or NAT-PMP.
+* **External Access Failed**: an error when the **Verify External Access** task finds that no outside
+  place can connect to port 443, naming each place and why it failed, with **External Access Restored** when it works again. A check
   the outside service could not run, such as when it is busy, only goes to the server log.
-* **Certificates**: a certificate was issued, renewed, could not be, could not be loaded, or expires soon. Asking
-  for a new one is logged with who asked.
-* **Root certificate created**: the plugin made a new self-signed root, naming what it may vouch for. Every device
+* **Certificates**: **Certificate Issued**, **Certificate Renewed**, **Certificate Request Failed**, **Certificate
+  Renewal Failed**, **Certificate Failed to Load** or **Certificate Expiring Soon**. **Certificate Requested** is
+  logged with who asked.
+* **Root Certificate Created**: the plugin made a new self-signed root, naming what it may vouch for. Every device
   that should trust the self-signed certificate needs it installed, in place of any earlier one. See [Self-signed certificates](RemoteAccess.md#self-signed-certificates).
-* **TXT record left over**: a Let's Encrypt TXT record could not be removed from the provider. It is a warning. The
-  record does no harm, but you can delete it there.
-* **Bans**: an address or network was banned. Past five bans in a minute, the rest are summed up in one entry.
-  Lifting a ban is logged too.
-* **Blocks**: an address was blocked or unblocked, or a country unblocked, from the Dashboard.
-* **Refused connections**: an hourly summary of what the block list, bans and country rules turned away.
-* **Most visitors look local**: see [When every visitor looks local](RemoteAccess.md#when-every-visitor-looks-local).
+* **TXT Records Left Over**: Let's Encrypt TXT records could not be removed from the provider, one entry per
+  cleanup. It is a warning. The records do no harm, but you can delete them there.
+* **Bans**: each ban is its own entry, such as **203.0.113.7 Banned**, with the failed sign-ins and the country.
+  Past five bans in a minute, the rest are summed into one **Clients Banned** entry listing the countries.
+  **Ban Lifted for** an address is logged too.
+* **Blocks**: an address was blocked or unblocked, or a country unblocked, from the Dashboard, such as
+  **203.0.113.7 Blocked**.
+* **Connections Refused**: an hourly summary of what the block list, bans, country rules and connection limits
+  turned away, such as "12 internet connections were refused in the last hour by the country rules (9), bans (3)".
+* **Most Visitors Seen as Local**: see [When every visitor looks local](RemoteAccess.md#when-every-visitor-looks-local).
   Logged once.
-* **Location database**: downloading it failed, once per reason, with an entry when it works again.
-* **History settings changed**: **Recording**, **History period** or **Location** was changed.
-* **History cleared**: every recorded visit, sign-in and refusal was deleted.
+* **Location Database Update Failed**: downloading it failed, once per reason, with **Location Database Updated**
+  when it works again.
+* **History Settings Changed**: **Recording**, **History period** or **Location** was changed.
+* **History Cleared**: every recorded visit, sign-in and refusal was deleted.

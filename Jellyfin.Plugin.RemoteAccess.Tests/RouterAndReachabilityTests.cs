@@ -665,7 +665,7 @@ public class RouterAndReachabilityTests
 
         // The opening is one entry, not one per renewal.
         var opened = Assert.Single(entries);
-        Assert.Equal("Remote Access opened ports 80 and 443 on your router", opened.Name);
+        Assert.Equal("Ports 80 and 443 Opened on Router", opened.Name);
         Assert.Equal("RemoteAccess.RouterPortsOpened", opened.Type);
         Assert.Equal(LogLevel.Information, opened.LogSeverity);
     }
@@ -702,7 +702,7 @@ public class RouterAndReachabilityTests
         var warnings = entries.Where(e => e.LogSeverity == LogLevel.Warning).ToList();
         var warning = Assert.Single(warnings);
         Assert.Equal("RemoteAccess.RouterNotFound", warning.Type);
-        Assert.Equal(status.Error, warning.ShortOverview);
+        Assert.Equal(ActivityText.Sentence(status.Error), warning.ShortOverview);
     }
 
     [Fact]
@@ -722,8 +722,8 @@ public class RouterAndReachabilityTests
         Assert.False(status.Mapped);
         Assert.Equal("UPnP", status.Method);
         Assert.Equal(0, other.Discovers);
-        Assert.Contains(entries, e => e.Type == "RemoteAccess.RouterPortsFailed" && e.ShortOverview == status.Error);
-        Assert.Contains(entries, e => e.Name == "Remote Access opened port 80 on your router");
+        Assert.Contains(entries, e => e.Type == "RemoteAccess.RouterPortsFailed" && e.ShortOverview == ActivityText.Sentence(status.Error));
+        Assert.Contains(entries, e => e.Name == "Port 80 Opened on Router");
 
         router.Results[80] = PortMapResult.Taken(80);
         await Sync(mapper, _both, force: true);

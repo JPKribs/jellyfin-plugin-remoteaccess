@@ -193,7 +193,7 @@ public class DynamicDNSController : ControllerBase
         ConfigurationAudit.LogRecordChanges(_activity, before, after, userId);
         if (settingsChanged)
         {
-            _activity.Log("Dynamic DNS settings were changed", "RemoteAccess.SettingsChanged", "Detection, refresh or backoff settings were changed.", userId: userId);
+            _activity.Log("Dynamic DNS Settings Changed", "RemoteAccess.SettingsChanged", "Detection, refresh or backoff settings were changed", userId: userId);
         }
 
         // Runtime status is keyed by record id, so a record edited to point somewhere else (another

@@ -67,7 +67,7 @@ public sealed class PeopleHostedService : BackgroundService
         // Found at startup, before the activity log was ready; it is written there once now.
         if (FolderAccess.Problem.Length > 0)
         {
-            _activity.Log("Remote Access cannot use its own files", "RemoteAccess.FolderAccess", FolderAccess.Problem, LogLevel.Error);
+            _activity.Log("File Access Failed", "RemoteAccess.FolderAccess", ActivityEntries.Plain(FolderAccess.Problem), LogLevel.Error);
         }
 
         // The database loads in the background, so a slow or stalled download never holds up history.
@@ -95,10 +95,8 @@ public sealed class PeopleHostedService : BackgroundService
                     if (refused.Total > 0)
                     {
                         _logger.LogInformation("Refused {Count} internet connections in the last hour: {Detail}", refused.Total, refused.Describe());
-                        _activity.Log(
-                            $"Remote Access refused {refused.Total} internet connections in the last hour",
-                            "RemoteAccess.ConnectionsRefused",
-                            "Refused " + refused.Describe() + ". The Remote Access page lists the addresses.");
+                        var (name, overview) = ActivityEntries.Refused(refused);
+                        _activity.Log(name, "RemoteAccess.ConnectionsRefused", overview);
                     }
 
                     refused = default;

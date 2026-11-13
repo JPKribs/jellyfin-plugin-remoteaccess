@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MaxMind.Db;
 using Microsoft.Extensions.Logging;
@@ -151,12 +152,12 @@ public sealed class GeoIpService : IDisposable
         if (error.Length > 0 && !string.Equals(error, _reportedError, StringComparison.Ordinal))
         {
             _reportedError = error;
-            _activity?.Log("Remote Access could not update its location database", "RemoteAccess.LocationDatabaseFailed", error + " Country rules use the database already loaded, if any.", LogLevel.Warning);
+            _activity?.Log("Location Database Update Failed", "RemoteAccess.LocationDatabaseFailed", ActivityEntries.Plain(ActivityEntries.Phrase(error) + ", country rules use the database already loaded, if any"), LogLevel.Warning);
         }
         else if (updated && _reportedError.Length > 0)
         {
             _reportedError = string.Empty;
-            _activity?.Log("Remote Access updated its location database", "RemoteAccess.LocationDatabaseUpdated", "The download works again.");
+            _activity?.Log("Location Database Updated", "RemoteAccess.LocationDatabaseUpdated", "The download works again");
         }
 
         return updated;

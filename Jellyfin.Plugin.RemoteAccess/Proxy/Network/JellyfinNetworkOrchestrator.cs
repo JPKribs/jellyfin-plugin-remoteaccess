@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
@@ -297,7 +298,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
 
         const string Message = "Jellyfin now trusts the proxy and keeps its own ports. Jellyfin is restarting.";
         _logger.LogInformation("Jellyfin now trusts the reverse proxy; restarting Jellyfin");
-        _activity?.Log("Remote Access is setting Jellyfin to trust the proxy", "RemoteAccess.TakeoverStarted", Message, userId: userId);
+        _activity?.Log("Proxy Trust Turned On", "RemoteAccess.TakeoverStarted", "Jellyfin now trusts the proxy and keeps its own ports, and is restarting", userId: userId);
         ScheduleRestart();
         return new TakeoverResult(true, Message, true);
     }
@@ -361,9 +362,9 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             _configuration.SaveConfiguration(NetworkKey, network);
             _logger.LogInformation("Updated the addresses Jellyfin gives its clients to follow the proxy's hostnames");
             _activity?.Log(
-                "Remote Access updated Jellyfin's published address",
+                "Published Address Updated",
                 "RemoteAccess.TakeoverAddressUpdated",
-                "Jellyfin now gives its clients the address " + external.Replace("external=", string.Empty, StringComparison.OrdinalIgnoreCase) + ".",
+                "Jellyfin now gives its clients the address " + external.Replace("external=", string.Empty, StringComparison.OrdinalIgnoreCase),
                 userId: userId);
             return true;
         }
@@ -418,7 +419,12 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
 
         const string Message = "Jellyfin's network settings were put back.";
         _logger.LogInformation("{Message} {Reason}", Message, reason);
-        _activity?.Log("Remote Access put Jellyfin's network settings back", "RemoteAccess.TakeoverRestored", Message + " " + reason, userId: userId);
+        var why = ActivityEntries.Phrase(reason);
+        _activity?.Log(
+            "Network Settings Restored",
+            "RemoteAccess.TakeoverRestored",
+            "Jellyfin's network settings were put back" + (why.Length > 0 ? ", " + char.ToLowerInvariant(why[0]) + why[1..] : string.Empty),
+            userId: userId);
         if (restart)
         {
             ScheduleRestart();
@@ -491,7 +497,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             if (problem is not null)
             {
                 _logger.LogError("Jellyfin could not be reached through the proxy: {Problem}", problem);
-                _activity?.Log("Remote Access could not reach Jellyfin through the proxy", "RemoteAccess.TakeoverCheckFailed", problem, LogLevel.Error);
+                _activity?.Log("Proxy Check Failed", "RemoteAccess.TakeoverCheckFailed", ActivityEntries.Plain("Jellyfin could not be reached through the proxy: " + ActivityEntries.Phrase(problem)), LogLevel.Error);
                 if (state.Snapshot is { BoundToLoopback: true })
                 {
                     ReportStillClosed(problem);
@@ -499,7 +505,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             }
             else if (wasPending)
             {
-                _activity?.Log("Remote Access set Jellyfin to trust the proxy", "RemoteAccess.TakeoverCompleted", "The proxy started and Jellyfin answered through it.");
+                _activity?.Log("Proxy Trust Confirmed", "RemoteAccess.TakeoverCompleted", "The proxy started and Jellyfin answered through it");
             }
         }
         finally
@@ -527,11 +533,11 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             network,
             problem);
         _activity?.Log(
-            "Remote Access kept Jellyfin on this machine only",
+            "Jellyfin Kept on This Machine Only",
             "RemoteAccess.TakeoverLoopbackKept",
-            "Jellyfin could not be reached through the proxy, so it stays closed until the proxy works. To turn the proxy off by hand, create an empty file named DISABLE at "
+            "Jellyfin could not be reached through the proxy so it stays closed until the proxy works, to turn the proxy off by hand create an empty file named DISABLE at "
             + _paths.DisableFlag
-            + " and restart Jellyfin. Until the proxy is on again, make sure your router forwards no ports to this server. The server log has every step.",
+            + " and restart Jellyfin, and until the proxy is on again make sure your router forwards no ports to this server, the server log has every step",
             LogLevel.Error);
     }
 
@@ -661,9 +667,9 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
                 Interlocked.Exchange(ref _restartScheduled, 0);
                 _logger.LogError(ex, "Jellyfin could not be restarted. Restart it by hand so the network change takes effect");
                 _activity?.Log(
-                    "Remote Access could not restart Jellyfin",
+                    "Jellyfin Restart Failed",
                     "RemoteAccess.RestartFailed",
-                    "Restart Jellyfin by hand so the change to its network settings takes effect.",
+                    "Restart Jellyfin by hand so the change to its network settings takes effect",
                     LogLevel.Error);
             }
         });

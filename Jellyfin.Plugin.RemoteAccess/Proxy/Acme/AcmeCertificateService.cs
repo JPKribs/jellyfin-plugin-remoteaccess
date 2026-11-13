@@ -10,6 +10,7 @@ using Certes.Acme;
 using Certes.Acme.Resource;
 using Jellyfin.Plugin.RemoteAccess.Models;
 using Jellyfin.Plugin.RemoteAccess.Providers;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
@@ -192,11 +193,11 @@ public sealed class AcmeCertificateService : IDisposable
                 _logger.LogInformation("Let's Encrypt issued a certificate for {Names}", list);
                 if (decision.Action == AcmeAction.Renew)
                 {
-                    _activity?.Log("Remote Access renewed its certificate", "RemoteAccess.CertificateRenewed", "Let's Encrypt renewed the certificate for " + list + ".");
+                    _activity?.Log("Certificate Renewed", "RemoteAccess.CertificateRenewed", "Let's Encrypt renewed the certificate for " + list);
                 }
                 else
                 {
-                    _activity?.Log("Remote Access got a certificate for " + list, "RemoteAccess.CertificateIssued", "Issued by Let's Encrypt.");
+                    _activity?.Log("Certificate Issued", "RemoteAccess.CertificateIssued", "Let's Encrypt issued a certificate for " + list);
                 }
 
                 return true;
@@ -211,9 +212,9 @@ public sealed class AcmeCertificateService : IDisposable
                 var level = decision.Action == AcmeAction.Renew ? LogLevel.Warning : LogLevel.Error;
                 _logger.Log(level, "Let's Encrypt did not issue a certificate for {Names}: {Error}", string.Join(", ", names), error);
                 _activity?.Log(
-                    decision.Action == AcmeAction.Renew ? "Remote Access could not renew its certificate" : "Remote Access could not get a certificate",
+                    decision.Action == AcmeAction.Renew ? "Certificate Renewal Failed" : "Certificate Request Failed",
                     decision.Action == AcmeAction.Renew ? "RemoteAccess.CertificateRenewFailed" : "RemoteAccess.CertificateIssueFailed",
-                    error + " The next try is after " + next.ToString("u", System.Globalization.CultureInfo.InvariantCulture) + ".",
+                    ActivityEntries.Plain(ActivityEntries.Phrase(error) + ", the next try is after " + next.ToString("u", System.Globalization.CultureInfo.InvariantCulture)),
                     level);
                 return false;
             }
@@ -413,6 +414,7 @@ public sealed class AcmeCertificateService : IDisposable
         }
 
         var byId = records.Where(r => !string.IsNullOrEmpty(r.Id)).GroupBy(r => r.Id, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+        var leftOver = new ActivityBatch();
         foreach (var item in pending)
         {
             var removed = byId.TryGetValue(item.RecordId, out var record)
@@ -430,15 +432,13 @@ public sealed class AcmeCertificateService : IDisposable
             else
             {
                 _logger.LogWarning("Gave up removing the TXT record {Name}; remove it at your DNS provider", item.Name);
-                _activity?.Log(
-                    "Remote Access could not remove a Let's Encrypt TXT record",
-                    "RemoteAccess.AcmeTxtLeftOver",
-                    item.Name + " is still published at the DNS provider. It does no harm, but you can delete it there.",
-                    LogLevel.Warning);
+                leftOver.Add(ActivityEntries.TxtRecordsLeftOver, item.Name);
             }
 
             ChangePending(list => list.Forget(item));
         }
+
+        leftOver.Write(_activity);
     }
 
     // A removal must never stop the run it cleans up after, and is bounded so a hung provider cannot hold it.

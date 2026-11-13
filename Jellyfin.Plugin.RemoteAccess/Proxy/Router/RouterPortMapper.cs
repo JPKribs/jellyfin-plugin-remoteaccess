@@ -437,9 +437,9 @@ public sealed class RouterPortMapper : IAsyncDisposable
 
         _reportedError = error;
         _activity?.Log(
-            noRouter ? "Remote Access found no router that opens ports" : "Remote Access could not open ports on your router",
+            noRouter ? "Router Not Found" : "Router Ports Failed to Open",
             noRouter ? "RemoteAccess.RouterNotFound" : "RemoteAccess.RouterPortsFailed",
-            error,
+            ActivityEntries.Plain(error),
             LogLevel.Warning);
     }
 
@@ -461,11 +461,11 @@ public sealed class RouterPortMapper : IAsyncDisposable
         }
 
         _activity?.Log(
-            $"Remote Access opened {(status.Ports.Count == 1 ? "port" : "ports")} {ports} on your router",
+            $"{(status.Ports.Count == 1 ? "Port" : "Ports")} {ports} Opened on Router",
             "RemoteAccess.RouterPortsOpened",
-            $"The device at {device} answered through {status.Method} and says they forward to {status.LanAddress}. "
-            + (status.Device.Length > 0 && !status.DeviceIsGateway ? "It is not this server's default gateway, so check it is your router. " : string.Empty)
-            + "Confirm the rule on your router's port forwarding page.");
+            $"The device at {device} answered through {status.Method} and says they forward to {status.LanAddress}, "
+            + (status.Device.Length > 0 && !status.DeviceIsGateway ? "it is not this server's default gateway so check it is your router, " : string.Empty)
+            + "confirm the rule on your router's port forwarding page");
     }
 
     // "80", "80 and 443".

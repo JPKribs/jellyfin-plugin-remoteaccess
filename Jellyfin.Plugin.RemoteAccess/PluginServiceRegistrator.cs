@@ -42,6 +42,10 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
             .ConfigurePrimaryHttpMessageHandler(ProviderHttp.PrimaryHandler)
             .AddHttpMessageHandler(() => new SameHostRedirectHandler());
         serviceCollection.AddActivityLogger();
+
+        // Sums bursts, such as a flood of bans, into one activity entry per outcome. The container disposes it
+        // on shutdown, which writes whatever is still waiting.
+        serviceCollection.AddSingleton(sp => new ActivitySummary(sp.GetRequiredService<ActivityLogger>()));
         serviceCollection.AddSingleton<IPDetectionService>();
         serviceCollection.AddSingleton<DNSLookupService>();
         serviceCollection.AddSingleton<StatusStoreService>();

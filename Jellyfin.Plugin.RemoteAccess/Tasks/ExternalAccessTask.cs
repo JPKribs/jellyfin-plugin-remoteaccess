@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Proxy.Router;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Logging;
@@ -72,13 +73,13 @@ public sealed class ExternalAccessTask : PluginScheduledTask
             if (!_failing)
             {
                 _failing = true;
-                _activity.Log("Remote Access cannot be reached from outside", "RemoteAccess.ExternalAccessFailed", ActivityLogger.Trim(message), LogLevel.Error);
+                _activity.Log("External Access Failed", "RemoteAccess.ExternalAccessFailed", ActivityEntries.Plain(message), LogLevel.Error);
             }
         }
         else if (_failing)
         {
             _failing = false;
-            _activity.Log("Remote Access can be reached from outside again", "RemoteAccess.ExternalAccessRestored", $"An outside location connected to port {ReachabilityChecker.Port}.");
+            _activity.Log("External Access Restored", "RemoteAccess.ExternalAccessRestored", $"An outside location connected to port {ReachabilityChecker.Port}");
         }
 
         progress.Report(100);
