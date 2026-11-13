@@ -9,6 +9,14 @@
     "category": "Administration",
     "versions": [
       {
+        "version": "12.4.4.10",
+        "changelog": "\n## Fixed\n- The arrows on collapsible sections are back to their usual size\n\n## Developer\n- Uses JPKribs.Jellyfin.Base 2026.11.13.3",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://github.com/JPKribs/jellyfin-plugin-remoteaccess/releases/download/v12.4.4.10/jellyfin-plugin-remoteaccess-12.4.4.10.zip",
+        "checksum": "e9f031deca0c2dbcca5f758a73e02471",
+        "timestamp": "2026-11-13T20:02:29Z"
+      },
+      {
         "version": "12.4.4.9",
         "changelog": "\n## Added\n- A failed sign-in is recorded with the username that was tried, even when no such user exists, such as a guess at \"admin\". Jellyfin only reports the name for users that exist. The Dashboard shows it in the User column.\n\n## Changed\n- Jellyfin's API reference under /api-docs is no longer reachable from the internet. It still opens on your own network.\n- On Linux and macOS the proxy only offers AES-GCM and ChaCha20-Poly1305 ciphers. The older CBC ciphers are no longer accepted.\n- Jellyfin's X-Response-Time-Ms header is no longer passed on to clients.\n\n## Fixed\n- Two failed sign-ins from one address moments apart, one for a real user and one for a made-up name, are no longer recorded as two failures for the real user.",
         "targetAbi": "12.4.0.0",
