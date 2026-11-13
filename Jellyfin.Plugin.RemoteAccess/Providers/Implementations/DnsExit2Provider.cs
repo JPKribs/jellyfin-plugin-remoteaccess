@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -198,11 +197,7 @@ public sealed class DnsExit2Provider : DNSProviderBase
                 : int.TryParse(codeEl.GetString(), out var parsed) ? parsed : -1;
             serverMessage = messageEl.GetString() ?? string.Empty;
         }
-        catch (JsonException)
-        {
-            return DNSUpdateResult.Fail("could not parse server response as JSON.");
-        }
-        catch (FormatException)
+        catch (Exception ex) when (ex is JsonException or FormatException)
         {
             return DNSUpdateResult.Fail("could not parse server response as JSON.");
         }

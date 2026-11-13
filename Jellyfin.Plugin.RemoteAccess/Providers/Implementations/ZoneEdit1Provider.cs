@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -112,8 +111,8 @@ public sealed class ZoneEdit1Provider : DNSProviderBase
         var status = match.Groups[1].Value;
         var assignments = match.Groups[2].Value;
 
-        string code = "999";
-        string text = string.Empty;
+        var code = "999";
+        var text = string.Empty;
         var statusIp = ipValue;
 
         foreach (Match a in AssignmentRegex.Matches(assignments))

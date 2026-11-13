@@ -25,8 +25,7 @@ public sealed record JellyfinNetworkView(Uri Backend, string BaseUrl, bool Trust
     public static JellyfinNetworkView From(NetworkConfiguration network, int httpPort, int httpsPort)
     {
         ArgumentNullException.ThrowIfNull(network);
-        var backend = NetworkTakeover.BackendUri(network);
-        backend = new UriBuilder(backend) { Port = httpPort }.Uri;
+        var backend = new UriBuilder(NetworkTakeover.BackendUri(network)) { Port = httpPort }.Uri;
         return new JellyfinNetworkView(backend, network.BaseUrl ?? string.Empty, NetworkTakeover.TrustsForwarding(network), httpPort, httpsPort);
     }
 }

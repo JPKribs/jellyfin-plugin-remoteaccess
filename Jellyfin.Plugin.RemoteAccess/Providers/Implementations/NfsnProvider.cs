@@ -8,7 +8,6 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Providers;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 

@@ -1,12 +1,11 @@
 using System;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Jellyfin.Plugin.RemoteAccess.Utilities;
 
 namespace Jellyfin.Plugin.RemoteAccess.People;
 
@@ -105,6 +104,7 @@ public sealed class PeopleHostedService : BackgroundService
                     refused = default;
                     refusedSince = DateTime.UtcNow;
                 }
+
                 if (PeopleService.Recording)
                 {
                     _store.RecordBlocked(blocked);
@@ -126,6 +126,7 @@ public sealed class PeopleHostedService : BackgroundService
                     lastServer = DateTime.UtcNow;
                     await _server.RefreshAsync(stoppingToken).ConfigureAwait(false);
                 }
+
                 if (DateTime.UtcNow - lastPrune > _pruneInterval)
                 {
                     _people.Prune();

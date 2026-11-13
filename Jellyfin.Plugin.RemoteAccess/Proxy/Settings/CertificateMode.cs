@@ -8,7 +8,7 @@ public enum CertificateMode
     /// <summary>No certificate. The HTTPS listener does not start.</summary>
     None,
 
-    /// <summary>Issued and renewed from Let's Encrypt over HTTP-01, through the proxy's HTTP listener.</summary>
+    /// <summary>Issued and renewed from Let's Encrypt, proved over HTTP-01 through the proxy's HTTP listener or over DNS-01 through a DDNS record.</summary>
     Automatic,
 
     /// <summary>A PKCS#12 (.pfx/.p12) file, reloaded when it changes.</summary>

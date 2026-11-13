@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;

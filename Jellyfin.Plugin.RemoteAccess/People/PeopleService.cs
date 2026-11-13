@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Session;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
-using Jellyfin.Plugin.RemoteAccess.Utilities;
 
 namespace Jellyfin.Plugin.RemoteAccess.People;
 
@@ -135,7 +135,7 @@ public sealed class PeopleService
 
             if (success && userId.Length > 0)
             {
-                _store.RecordObservation(Observe(userId, username, ipText, ip, url, deviceId, deviceName, client, DateTime.UtcNow, location, local));
+                _store.RecordObservation(Observe(userId, username, ipText, url, deviceId, deviceName, client, DateTime.UtcNow, location, local));
             }
         });
     }
@@ -180,7 +180,6 @@ public sealed class PeopleService
                 session.UserId.ToString("N"),
                 session.UserName ?? string.Empty,
                 ipText,
-                ip,
                 _access.UrlFor(ipText),
                 session.DeviceId ?? string.Empty,
                 session.DeviceName ?? string.Empty,
@@ -197,7 +196,7 @@ public sealed class PeopleService
     /// </summary>
     public void Prune() => Safely(() => _store.Prune(Settings.HistoryDays));
 
-    private static Observation Observe(string userId, string userName, string ipText, IPAddress? ip, string url, string deviceId, string deviceName, string client, DateTime seen, GeoLocation location, bool local)
+    private static Observation Observe(string userId, string userName, string ipText, string url, string deviceId, string deviceName, string client, DateTime seen, GeoLocation location, bool local)
         => new()
         {
             UserId = userId,
@@ -216,10 +215,10 @@ public sealed class PeopleService
         };
 
     // Local means what it means to the proxy: loopback, the LAN, or a trusted network.
-    private static List<System.Net.IPNetwork> TrustedNetworks()
+    private static List<IPNetwork> TrustedNetworks()
         => NetworkClassifier.ParseNetworks(Plugin.Instance?.ReadConfiguration(c => c.Proxy.Advanced.TrustedNetworks.ToList()));
 
-    private bool IsLocal(IPAddress? ip, IEnumerable<System.Net.IPNetwork> trusted)
+    private bool IsLocal(IPAddress? ip, IEnumerable<IPNetwork> trusted)
     {
         if (ip is null)
         {

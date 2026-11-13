@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Jellyfin.Plugin.RemoteAccess.Proxy;
 using Microsoft.AspNetCore.Authorization;
@@ -25,8 +26,8 @@ public class ShareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<ShareInfo> Get()
     {
-        var hostnames = Plugin.Instance?.ReadConfiguration(c => c.Proxy.Enabled ? c.Proxy.Hostnames.ToList() : new System.Collections.Generic.List<string>())
-            ?? new System.Collections.Generic.List<string>();
+        var hostnames = Plugin.Instance?.ReadConfiguration(c => c.Proxy.Enabled ? c.Proxy.Hostnames.ToList() : new List<string>())
+            ?? new List<string>();
         var publicName = hostnames.FirstOrDefault(h => !h.StartsWith('*') && HostnameMatcher.IsPublicName(h));
         var name = publicName ?? hostnames.FirstOrDefault(h => !h.StartsWith('*'));
         var info = Create(name is null ? string.Empty : "https://" + name);
@@ -54,7 +55,6 @@ public class ShareController : ControllerBase
         var svg = code.GetGraphic(8, "#000000", "#ffffff", true, SvgQRCode.SizingMode.ViewBoxAttribute);
         return new ShareInfo { Url = url, QrSvg = svg };
     }
-
 }
 
 /// <summary>

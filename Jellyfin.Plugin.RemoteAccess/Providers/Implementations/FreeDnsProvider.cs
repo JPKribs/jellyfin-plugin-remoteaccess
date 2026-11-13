@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -78,8 +77,8 @@ public sealed class FreeDnsProvider : DNSProviderBase
             return DNSUpdateResult.Fail("failed to get record list (HTTP " + listReply.Status + ").");
         }
 
-        // Bucket the matching host's records by the address type they currently hold so we never switch a
-        // record from one family to the other. A NULL/empty current address counts as IPv4.
+        // Bucket the matching host's records by the address type they currently hold, so a record is never
+        // switched from one family to the other. A NULL/empty current address counts as IPv4.
         string? recIPv4 = null;
         string? currentIPv4 = null;
         string? recIPv6 = null;

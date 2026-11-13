@@ -250,7 +250,7 @@ export default function (view) {
             if (!fresh) { throw new Error('settings unavailable'); }
             var base = id ? (fresh.Records || []).find(function (x) { return x.Id === id; }) : null;
             // No record and nothing typed: the save only drops the extra records.
-            fresh.Records = !record && !hasRecordInput() ? [] : [buildRecord(base || (record ? record : null))];
+            fresh.Records = !record && !hasRecordInput() ? [] : [buildRecord(base || record)];
             return saveConfig(fresh);
         }).then(function (result) {
             if (!result || !result.Records) { throw new Error('no reply'); }
@@ -567,7 +567,7 @@ export default function (view) {
 
     // ===== The steps =====
 
-    // The steps in order. The key names the step's elements: step, head, body, icon, state and text followed by the key.
+    // The steps in order. The key names the step's elements: step, body, icon, state and text followed by the key.
     var STEPS = [
         { key: 'Power', title: 'Proxy on' },
         { key: 'Address', title: 'Address' },

@@ -6,7 +6,6 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -129,11 +128,7 @@ public sealed class GoDaddyProvider : DNSProviderBase
             writer.WriteStartArray();
             writer.WriteStartObject();
             writer.WriteString("data", value);
-            if (ttl > 0)
-            {
-                writer.WriteNumber("ttl", ttl);
-            }
-
+            writer.WriteNumber("ttl", ttl);
             writer.WriteString("name", hostname);
             writer.WriteString("type", type);
             writer.WriteEndObject();

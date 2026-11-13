@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -91,13 +90,12 @@ public sealed class DynadotProvider : DNSProviderBase
         }
 
         var isRoot = subDomain.Length == 0;
-        var containRoot = isRoot ? "true" : "false";
         var server = ServerBase(record, DefaultServer);
 
         return await ApplyPerFamilyAsync(
             record,
             ip,
-            (type, address, ct) => PushAsync(server, record.Password, ResolveTtl(record), domain, subDomain, isRoot, containRoot, type, address, ct),
+            (type, address, ct) => PushAsync(server, record.Password, ResolveTtl(record), domain, subDomain, isRoot, type, address, ct),
             cancellationToken).ConfigureAwait(false);
     }
 
@@ -108,12 +106,11 @@ public sealed class DynadotProvider : DNSProviderBase
         string domain,
         string subDomain,
         bool isRoot,
-        string containRoot,
         string type,
         string value,
         CancellationToken cancellationToken)
     {
-        var url = server + "/set_ddns?containRoot=" + containRoot
+        var url = server + "/set_ddns?containRoot=" + (isRoot ? "true" : "false")
             + "&domain=" + Uri.EscapeDataString(domain)
             + "&ip=" + Uri.EscapeDataString(value)
             + "&pwd=" + Uri.EscapeDataString(password)

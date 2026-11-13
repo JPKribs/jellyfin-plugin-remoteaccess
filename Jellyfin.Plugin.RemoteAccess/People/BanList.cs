@@ -6,10 +6,10 @@ using System.Net;
 using System.Threading;
 using Jellyfin.Plugin.RemoteAccess.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
-using Jellyfin.Plugin.RemoteAccess.Utilities;
 
 namespace Jellyfin.Plugin.RemoteAccess.People;
 
@@ -243,7 +243,7 @@ public sealed class BanList : IFailureTracker
 
     /// <summary>
     /// Reads the saved bans now, before the proxy listens, so they apply from the first connection. A failed
-    /// read is retried on later use, as before.
+    /// read is retried on later use.
     /// </summary>
     public void Preload() => _ = Bans;
 

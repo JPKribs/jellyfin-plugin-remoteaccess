@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -107,12 +106,12 @@ public sealed class InwxProvider : DNSProviderBase
             login: record.Login,
             password: record.Password).ConfigureAwait(false);
 
-        // INWX can return 200 OK even on error, so the body must be inspected for the status token.
         if (!result.Ok)
         {
             return DNSUpdateResult.Fail("HTTP " + result.Status + ".");
         }
 
+        // INWX can return 200 OK even on error, so the body must be inspected for the status token.
         var status = FirstToken(result.Body);
         if (string.IsNullOrEmpty(status))
         {

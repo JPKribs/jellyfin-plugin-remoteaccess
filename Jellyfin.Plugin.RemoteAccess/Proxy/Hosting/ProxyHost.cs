@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Threading;
@@ -12,10 +10,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -164,7 +160,7 @@ public sealed class ProxyHost : IAsyncDisposable
 
     private static void ConfigureTransforms(Yarp.ReverseProxy.Transforms.Builder.TransformBuilderContext context)
     {
-        // Our own forwarding headers replace anything the client sent, so a client cannot claim a LAN address.
+        // The proxy's own forwarding headers replace anything the client sent, so a client cannot claim a LAN address.
         context.UseDefaultForwarders = false;
         context.AddXForwardedFor(action: ForwardedTransformActions.Set);
         context.AddXForwardedProto(action: ForwardedTransformActions.Set);

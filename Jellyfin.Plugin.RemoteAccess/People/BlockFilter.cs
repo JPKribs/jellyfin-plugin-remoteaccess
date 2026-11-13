@@ -228,7 +228,7 @@ public readonly record struct RefusalTotals(long Address, long Ban, long Country
     public RefusalTotals Add(RefusalTotals other) => this + other;
 
     /// <summary>
-    /// Describes the counts, like <c>12 by country, 3 by a ban</c>.
+    /// Describes the counts, like <c>12 by the country rules, 3 by bans</c>.
     /// </summary>
     /// <returns>The description, empty when nothing was refused.</returns>
     public string Describe()

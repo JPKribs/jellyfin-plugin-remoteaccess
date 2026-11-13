@@ -647,8 +647,7 @@ public sealed class ProxyManager : IAsyncDisposable
         // exposed when the machine has a public address at all.
         var bound = network.LocalNetworkAddresses
             .Select(a => IPAddress.TryParse(a, out var ip) ? ip : null)
-            .Where(ip => ip is not null)
-            .Cast<IPAddress>()
+            .OfType<IPAddress>()
             .ToList();
         if (bound.Count > 0 && !bound.Any(ip => ip.Equals(IPAddress.Any) || ip.Equals(IPAddress.IPv6Any)))
         {
@@ -775,7 +774,7 @@ public sealed class ProxyManager : IAsyncDisposable
         catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
         {
             // Any start failure is kept for the status page rather than thrown, so the startup check after it
-            // still runs and can give Jellyfin its own addresses back when it listens on this machine only.
+            // still runs and reports it.
             _error = DescribeStartError(ex, runtime.Listener);
             _logger.LogError("Reverse proxy could not start: {Error}", _error);
             if (!string.Equals(_error, _reportedError, StringComparison.Ordinal))

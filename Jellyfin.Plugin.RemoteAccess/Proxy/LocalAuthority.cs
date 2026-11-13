@@ -269,6 +269,6 @@ internal static class LocalAuthority
     public static string Fingerprint(X509Certificate2 root)
     {
         ArgumentNullException.ThrowIfNull(root);
-        return string.Join(':', SHA256.HashData(root.RawData).Select(b => b.ToString("X2", System.Globalization.CultureInfo.InvariantCulture)));
+        return string.Join(':', SHA256.HashData(root.RawData).Select(b => b.ToString("X2", CultureInfo.InvariantCulture)));
     }
 }

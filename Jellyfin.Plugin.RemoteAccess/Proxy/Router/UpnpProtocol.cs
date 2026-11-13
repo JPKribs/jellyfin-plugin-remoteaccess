@@ -29,9 +29,6 @@ internal static class UpnpProtocol
     /// <summary>UPnP error 606: the router does not let this device change forwards.</summary>
     public const int ActionNotAuthorized = 606;
 
-    /// <summary>UPnP error 714: no forward exists for that port.</summary>
-    public const int NoSuchEntryInArray = 714;
-
     /// <summary>
     /// Gets the services that forward ports, best first. A router offers one of them on its WAN connection.
     /// </summary>

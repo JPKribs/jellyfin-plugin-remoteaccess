@@ -22,7 +22,7 @@ namespace Jellyfin.Plugin.RemoteAccess.Proxy.Network;
 /// Every change is preceded by a snapshot. Jellyfin keeps its own ports throughout, so a proxy that fails to
 /// start never locks anyone out of Jellyfin: the problem is reported, and Undo puts the settings back. The one
 /// exception is Only through the proxy, where Jellyfin listens on this machine alone: a proxy that is not
-/// working at startup then gives Jellyfin its own addresses back on its own.
+/// working at startup then leaves Jellyfin closed, and the log says how to turn the proxy off by hand.
 /// </summary>
 public sealed class JellyfinNetworkOrchestrator : IDisposable
 {

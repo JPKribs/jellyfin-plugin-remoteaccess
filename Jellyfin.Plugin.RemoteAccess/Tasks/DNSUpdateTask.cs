@@ -46,7 +46,6 @@ public sealed class DNSUpdateTask : PluginScheduledTask
     public override IEnumerable<TaskTriggerInfo> GetDefaultTriggers()
     {
         // Seeds the default schedule only. Administrators change these under Scheduled Tasks.
-        // Run every 15 minutes and once on server startup.
         yield return EveryInterval(TimeSpan.FromMinutes(15));
         yield return OnStartup();
     }

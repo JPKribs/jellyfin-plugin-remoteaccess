@@ -6,15 +6,14 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
 
 /// <summary>
 /// Gandi LiveDNS API. Port of ddclient's <c>nic_gandi_update</c>: for each enabled record type it
-/// GETs the current rrset for the host under the zone, skips the update when the value (and TTL, when
-/// configured) already match, otherwise PUTs the new rrset value. Set <see cref="DNSRecord.Password"/>
+/// GETs the current rrset for the host under the zone, skips the update when the value and TTL
+/// already match, otherwise PUTs the new rrset value. Set <see cref="DNSRecord.Password"/>
 /// to the Gandi API key or personal access token. Set <see cref="DNSRecord.Login"/> to <c>token</c> to
 /// send an <c>Authorization: Bearer</c> header (personal access token). Any other value sends
 /// <c>Authorization: Apikey</c>. <see cref="DNSRecord.Zone"/> is the domain and the hostname is the
@@ -144,20 +143,12 @@ public sealed class GandiProvider : DNSProviderBase
     }
 
     private static string BuildBody(string ipValue, int ttl)
-    {
-        // ddclient only sends rrset_ttl when a ttl is configured. Treat <= 0 as "not configured".
-        if (ttl > 0)
-        {
-            return string.Concat(
-                "{\"rrset_ttl\":",
-                ttl.ToString(CultureInfo.InvariantCulture),
-                ",\"rrset_values\":[\"",
-                ipValue,
-                "\"]}");
-        }
-
-        return "{\"rrset_values\":[\"" + ipValue + "\"]}";
-    }
+        => string.Concat(
+            "{\"rrset_ttl\":",
+            ttl.ToString(CultureInfo.InvariantCulture),
+            ",\"rrset_values\":[\"",
+            ipValue,
+            "\"]}");
 
     private static bool AlreadySet(string body, string ipValue, int ttl)
     {
@@ -182,12 +173,6 @@ public sealed class GandiProvider : DNSProviderBase
                 || !string.Equals(first.GetString(), ipValue, StringComparison.Ordinal))
             {
                 return false;
-            }
-
-            // When no TTL is configured, ddclient ignores the server's TTL for the "skip" decision.
-            if (ttl <= 0)
-            {
-                return true;
             }
 
             return root.TryGetProperty("rrset_ttl", out var ttlElement)

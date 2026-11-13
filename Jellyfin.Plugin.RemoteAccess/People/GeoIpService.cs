@@ -116,7 +116,8 @@ public sealed class GeoIpService : IDisposable
             return;
         }
 
-        if (File.Exists(FilePath(detail)) && TryOpen(FilePath(detail), out var reader))
+        var path = FilePath(detail);
+        if (File.Exists(path) && TryOpen(path, out var reader))
         {
             Swap(reader, detail);
             return;

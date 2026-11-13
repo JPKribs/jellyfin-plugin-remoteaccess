@@ -25,7 +25,7 @@ public sealed class RecordOutcome
     /// <summary>Gets or sets the outcome message.</summary>
     public string Message { get; set; } = string.Empty;
 
-    /// <summary>Gets or sets the run outcome: <c>Updated</c>, <c>Unchanged</c>, <c>No address</c>, or <c>Failed</c>.</summary>
+    /// <summary>Gets or sets the run outcome: <c>Updated</c>, <c>IP Unchanged</c>, <c>No address</c>, <c>Backing off</c>, or <c>Failed</c>.</summary>
     public string Action { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the per-family IPv4 outcome: <c>null</c> when no IPv4 push was attempted or the provider does not report per family.</summary>

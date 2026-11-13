@@ -92,7 +92,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
         {
             try
             {
-                Proxy.SecretFile.ProtectFolder(folder);
+                SecretFile.ProtectFolder(folder);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or PlatformNotSupportedException or InvalidOperationException or System.Security.SecurityException)
             {
@@ -202,8 +202,6 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
         // encryption. The stored configuration can be null on the very first save before any file exists.
         ConfigurationAudit.LogRecordChanges(ActivityLogger.Current, stored?.Records, incoming.Records);
 
-        // The proxy settings get the same treatment as the dashboard's proxy endpoint: the certificate
-        // password is encrypted, values are normalized, and an invalid configuration is refused.
         // The People settings get the same limits as their own endpoint.
         incoming.People ??= new();
         incoming.People.HistoryDays = Math.Clamp(incoming.People.HistoryDays, 1, 3650);
@@ -212,6 +210,8 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
             throw new ArgumentException("Location has an unknown value.", nameof(incoming));
         }
 
+        // The proxy settings get the same treatment as the dashboard's proxy endpoint: the certificate
+        // password is encrypted, values are normalized, and an invalid configuration is refused.
         incoming.Proxy ??= new();
         incoming.Proxy.Certificate ??= new();
         var rawHostnames = incoming.Proxy.Hostnames;
@@ -226,6 +226,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
         {
             throw new ArgumentException(CredentialEncryption.KeyStoreUnavailable, nameof(incoming));
         }
+
         ProxySettingsValidator.Normalize(incoming.Proxy);
         var errors = ProxySettingsValidator.Validate(incoming.Proxy, rawHostnames);
         if (!incoming.Proxy.Enabled && IsTakeoverActive())

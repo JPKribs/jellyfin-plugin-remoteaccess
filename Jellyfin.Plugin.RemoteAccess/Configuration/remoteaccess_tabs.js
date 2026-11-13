@@ -1,6 +1,6 @@
 import { confirmDialog, SECRET_KEPT } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
 
-// What every Dynamic DNS page shares, kept in one place so the pages never disagree.
+// What every Remote Access page shares, kept in one place so the pages never disagree.
 export const PLUGIN_ID = '8150dce5-6153-4924-a985-a6927be95baa';
 
 // The tab bar. Each page passes its own position here as its tabIndex.

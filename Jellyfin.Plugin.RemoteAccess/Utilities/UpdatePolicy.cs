@@ -5,7 +5,7 @@ using Jellyfin.Plugin.RemoteAccess.Models;
 namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
-/// Decides whether a record should be updated, so we never re-push an address a provider already holds.
+/// Decides whether a record should be updated, so an address a provider already holds is never pushed again.
 /// </summary>
 public static class UpdatePolicy
 {

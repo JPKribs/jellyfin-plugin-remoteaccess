@@ -53,8 +53,7 @@ public sealed class ProxyHostedService : IHostedService, IDisposable
                     }
                     catch (Exception ex) when (ex is not OperationCanceledException || !stopping.IsCancellationRequested)
                     {
-                        // The startup check below still runs, so a proxy that failed to start never leaves Jellyfin
-                        // listening on this machine alone.
+                        // The startup check below still runs, so a proxy that failed to start is still reported.
                         _logger.LogError(ex, "Reverse proxy start-up failed");
                     }
 

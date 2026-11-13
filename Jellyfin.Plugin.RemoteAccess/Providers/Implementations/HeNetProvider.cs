@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -112,7 +111,7 @@ public sealed class HeNetProvider : DNSProviderBase
             returnedIp = line[(space + 1)..].Trim();
         }
 
-        // "nochg" means the address already matched, which is a success for our purposes.
+        // "nochg" means the address already matched, which counts as success.
         if (string.Equals(status, "nochg", StringComparison.Ordinal))
         {
             status = "good";

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Jellyfin.Plugin.RemoteAccess.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
@@ -45,6 +44,7 @@ public static class CountryRules
         {
             return string.IsNullOrEmpty(serverCountry) || listed || string.Equals(countryCode, serverCountry, StringComparison.OrdinalIgnoreCase);
         }
+
         return options.CountryMode == CountryRuleMode.Block ? !listed : listed;
     }
 

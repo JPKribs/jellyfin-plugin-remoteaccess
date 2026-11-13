@@ -254,13 +254,12 @@ public static class NetworkTakeover
         var host = network.EnableIPv4 || !network.EnableIPv6 ? "127.0.0.1" : "[::1]";
         var bound = network.LocalNetworkAddresses
             .Select(a => IPAddress.TryParse(a, out var ip) ? ip : null)
-            .Where(ip => ip is not null)
-            .Cast<IPAddress>()
+            .OfType<IPAddress>()
             .ToList();
         if (bound.Count > 0 && !bound.Any(ip => ip.Equals(IPAddress.Loopback) || ip.Equals(IPAddress.Any) || ip.Equals(IPAddress.IPv6Any)))
         {
             var first = bound[0];
-            host = IPAddress.IPv6Loopback.Equals(first) || first.AddressFamily == AddressFamily.InterNetworkV6 ? "[" + first + "]" : first.ToString();
+            host = first.AddressFamily == AddressFamily.InterNetworkV6 ? "[" + first + "]" : first.ToString();
         }
 
         return new Uri("http://" + host + ":" + network.InternalHttpPort.ToString(CultureInfo.InvariantCulture) + "/");

@@ -88,8 +88,8 @@ public class DNSRecord
     public string LastStatus { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the outcome of the most recent run: <c>Updated</c>, <c>Unchanged</c>,
-    /// <c>No address</c>, or <c>Failed</c>. Lets the dashboard distinguish a real push from a
+    /// Gets or sets the outcome of the most recent run: <c>Updated</c>, <c>IP Unchanged</c>,
+    /// <c>No address</c>, <c>Backing off</c>, or <c>Failed</c>. Lets the dashboard distinguish a real push from a
     /// skipped (already-current) check. Empty for records last touched before this was added.
     /// </summary>
     [XmlIgnore]
