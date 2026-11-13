@@ -278,9 +278,6 @@ log say what failed and how to turn the proxy off by hand:
     Until the proxy is on again, make sure your router forwards no ports to this server, including 80, 443, 8096
     and 8920. With the proxy off, a forwarded port reaches Jellyfin directly with none of the proxy's protection.
 
-If the proxy fails to start while this is on, nothing could reach Jellyfin. The plugin then puts Jellyfin's own
-addresses back by itself, and Jellyfin's activity log says why, such as a port in use.
-
 ## Docker, tunnels and other proxies
 
 The proxy needs to see each visitor's real address. Some setups hide it, because something in front of the proxy

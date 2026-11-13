@@ -11,7 +11,7 @@ Wherever you see `mymedia` or `example.com`, use your own name.
 
 ## What you need
 
-* Jellyfin 12.2 at home, and an administrator account on it.
+* Jellyfin 12.4 at home, and an administrator account on it.
 * Access to your router's settings, in case it does not forward ports on its own.
 * A public IP from your internet provider. Step 0 checks it.
 
