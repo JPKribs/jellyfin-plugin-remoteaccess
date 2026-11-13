@@ -9,6 +9,14 @@
     "category": "Administration",
     "versions": [
       {
+        "version": "12.4.4.8",
+        "changelog": "\n## Changed\n- Activity log entries share one shape, a short name over one sentence, and repeated events are summed into one entry per outcome. DNS record updates, failures, recoveries and pauses are summed per update run, records added, changed or removed per save, bans past five a minute by country, and left-over Let's Encrypt TXT records per cleanup. Bans, credential changes and other single events keep their own entries, with shorter names such as \"203.0.113.7 Banned\" and \"Certificate Renewed\".\n\n## Developer\n- Uses JPKribs.Jellyfin.Base 2026.11.13.2.",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://github.com/JPKribs/jellyfin-plugin-remoteaccess/releases/download/v12.4.4.8/jellyfin-plugin-remoteaccess-12.4.4.8.zip",
+        "checksum": "839d52f87083f0db6950a4c7e10b27c9",
+        "timestamp": "2026-11-13T18:59:25Z"
+      },
+      {
         "version": "12.4.4.7",
         "changelog": "\n## Changed\n- The code and documentation are cleaned up, with no change to what the plugin does.\n- Built for Jellyfin 12.4. Servers on an earlier Jellyfin keep the previous release.\n\n## Developer\n- The Jellyfin.Controller and Jellyfin.Model packages move to 12.4.0, and the target ABI to 12.4.0.0.",
         "targetAbi": "12.4.0.0",
