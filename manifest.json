@@ -9,6 +9,14 @@
     "category": "Administration",
     "versions": [
       {
+        "version": "12.4.4.7",
+        "changelog": "\n## Changed\n- The code and documentation are cleaned up, with no change to what the plugin does.\n- Built for Jellyfin 12.4. Servers on an earlier Jellyfin keep the previous release.\n\n## Developer\n- The Jellyfin.Controller and Jellyfin.Model packages move to 12.4.0, and the target ABI to 12.4.0.0.",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://github.com/JPKribs/jellyfin-plugin-remoteaccess/releases/download/v12.4.4.7/jellyfin-plugin-remoteaccess-12.4.4.7.zip",
+        "checksum": "ef40caf60f1bf0197a8804767181b0ad",
+        "timestamp": "2026-11-13T08:41:29Z"
+      },
+      {
         "version": "12.2.4.6",
         "changelog": "\n## Changed\n- The plugin is fully migrated to the Remote Access name. The catalog, the dashboard menu, scheduled tasks and the activity log all say Remote Access.\n- On the first start, settings, record status and proxy data move to their Jellyfin.Plugin.RemoteAccess files. Saved credentials keep working.\n- Custom schedules for this plugin's scheduled tasks go back to their defaults once. Set them again under Dashboard > Scheduled Tasks if you changed them.\n\n## Developer\n- The assembly, namespaces, API routes and configuration pages use the RemoteAccess name.",
         "targetAbi": "12.2.0.0",
