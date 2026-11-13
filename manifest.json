@@ -9,6 +9,14 @@
     "category": "Administration",
     "versions": [
       {
+        "version": "12.4.4.9",
+        "changelog": "\n## Added\n- A failed sign-in is recorded with the username that was tried, even when no such user exists, such as a guess at \"admin\". Jellyfin only reports the name for users that exist. The Dashboard shows it in the User column.\n\n## Changed\n- Jellyfin's API reference under /api-docs is no longer reachable from the internet. It still opens on your own network.\n- On Linux and macOS the proxy only offers AES-GCM and ChaCha20-Poly1305 ciphers. The older CBC ciphers are no longer accepted.\n- Jellyfin's X-Response-Time-Ms header is no longer passed on to clients.\n\n## Fixed\n- Two failed sign-ins from one address moments apart, one for a real user and one for a made-up name, are no longer recorded as two failures for the real user.",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://github.com/JPKribs/jellyfin-plugin-remoteaccess/releases/download/v12.4.4.9/jellyfin-plugin-remoteaccess-12.4.4.9.zip",
+        "checksum": "29ebbc06a15dd8e4b3456e2de06515d1",
+        "timestamp": "2026-11-13T19:17:19Z"
+      },
+      {
         "version": "12.4.4.8",
         "changelog": "\n## Changed\n- Activity log entries share one shape, a short name over one sentence, and repeated events are summed into one entry per outcome. DNS record updates, failures, recoveries and pauses are summed per update run, records added, changed or removed per save, bans past five a minute by country, and left-over Let's Encrypt TXT records per cleanup. Bans, credential changes and other single events keep their own entries, with shorter names such as \"203.0.113.7 Banned\" and \"Certificate Renewed\".\n\n## Developer\n- Uses JPKribs.Jellyfin.Base 2026.11.13.2.",
         "targetAbi": "12.4.0.0",
