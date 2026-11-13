@@ -24,7 +24,7 @@
       <PrivateAssets>all</PrivateAssets>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
-    <PackageReference Include="JPKribs.Jellyfin.Base" Version="2026.11.13.2" />
+    <PackageReference Include="JPKribs.Jellyfin.Base" Version="2026.11.13.3" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
     <PackageReference Include="MaxMind.Db" Version="5.2.0" />
     <PackageReference Include="QRCoder" Version="1.8.0" />
