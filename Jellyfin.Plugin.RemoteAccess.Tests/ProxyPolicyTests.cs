@@ -127,6 +127,14 @@ public class ProxyPolicyTests
         => Assert.Equal(RequestAction.Forbidden, Decide(false, true, "media.example.com", "/Startup/Configuration").Action);
 
     [Fact]
+    public void ApiDocs_ForbiddenFromTheInternetOnly()
+    {
+        Assert.Equal(RequestAction.Forbidden, Decide(false, true, "media.example.com", "/api-docs/openapi.json").Action);
+        Assert.Equal(RequestAction.Forbidden, Decide(false, true, "media.example.com", "/api-docs/swagger/index.html").Action);
+        Assert.Equal(RequestAction.Forward, Decide(true, true, "media.example.com", "/api-docs/openapi.json").Action);
+    }
+
+    [Fact]
     public void Wan_StartupForbiddenUnderBaseUrl()
     {
         var jellyfin = Jellyfin with { BaseUrl = "/jellyfin" };

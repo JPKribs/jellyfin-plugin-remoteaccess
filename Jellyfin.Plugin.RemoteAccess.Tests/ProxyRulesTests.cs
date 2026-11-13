@@ -95,6 +95,15 @@ public class ProxyRulesTests
     public void Path_Startup(string path, bool expected) => Assert.Equal(expected, PathRules.IsStartup(path));
 
     [Theory]
+    [InlineData("/api-docs/openapi.json", true)]
+    [InlineData("/API-Docs/swagger/index.html", true)]
+    [InlineData("//api-docs/swagger", true)]
+    [InlineData("/api-docs", true)]
+    [InlineData("/api-docsy", false)]
+    [InlineData("/System/Info", false)]
+    public void Path_ApiDocs(string path, bool expected) => Assert.Equal(expected, PathRules.IsApiDocs(path));
+
+    [Theory]
     [InlineData("/Videos/1/stream.mkv", true)]
     [InlineData("/videos/1/hls1/main/0.ts", true)]
     [InlineData("/Audio/1/universal", true)]

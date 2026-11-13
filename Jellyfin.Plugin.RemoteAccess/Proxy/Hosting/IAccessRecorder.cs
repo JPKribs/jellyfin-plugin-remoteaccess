@@ -22,5 +22,6 @@ public interface IAccessRecorder
     /// </summary>
     /// <param name="client">The client's IP address.</param>
     /// <param name="url">The address it used.</param>
-    void RecordSignInFailure(IPAddress client, string url);
+    /// <param name="username">The username it tried, or empty when the request named none.</param>
+    void RecordSignInFailure(IPAddress client, string url, string username = "");
 }

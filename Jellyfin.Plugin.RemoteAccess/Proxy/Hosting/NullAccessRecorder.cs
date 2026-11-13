@@ -16,7 +16,7 @@ public sealed class NullAccessRecorder : IAccessRecorder
     }
 
     /// <inheritdoc />
-    public void RecordSignInFailure(IPAddress client, string url)
+    public void RecordSignInFailure(IPAddress client, string url, string username = "")
     {
     }
 }

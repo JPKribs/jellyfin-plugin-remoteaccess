@@ -25,6 +25,9 @@ public sealed class ProxyPolicyMiddleware
     /// </summary>
     public const string RouteHeader = "X-Ddns-Proxy-Route";
 
+    /// <summary>The header Jellyfin adds to every response with how long the request took. Never passed on.</summary>
+    public const string ResponseTimeHeader = "X-Response-Time-Ms";
+
     // The most a sign-in request may send, and how long it may take to send it.
     private const int SignInBodyLimit = 16 * 1024;
     private static readonly TimeSpan _signInReadLimit = TimeSpan.FromSeconds(10);
@@ -183,9 +186,16 @@ public sealed class ProxyPolicyMiddleware
         var request = context.Request;
         var signIn = clientAddress is not null && PathRules.IsSignIn(path);
         var internetSignIn = signIn && !local;
-        if (internetSignIn && !await ReadSignInBodyAsync(context).ConfigureAwait(false))
+
+        // The username is read now, while the body is still here to read, and only used if the sign-in fails.
+        var username = string.Empty;
+        if (signIn)
         {
-            return;
+            (var proceed, username) = await ReadSignInBodyAsync(context, internetSignIn).ConfigureAwait(false);
+            if (!proceed)
+            {
+                return;
+            }
         }
 
         if (internetSignIn && !_gate.TryEnterSignIn(clientAddress!))
@@ -208,7 +218,7 @@ public sealed class ProxyPolicyMiddleware
 
         if (signIn && IsFailedSignIn(context.Response.StatusCode, path))
         {
-            _recorder.RecordSignInFailure(clientAddress!, AccessUrl(request));
+            _recorder.RecordSignInFailure(clientAddress!, AccessUrl(request), username);
 
             // The ban takes effect at once: every connection from the address is closed, streams included.
             if (!local && _failures.RecordFailure(clientAddress!, runtime.Options))
@@ -219,46 +229,58 @@ public sealed class ProxyPolicyMiddleware
         }
     }
 
-    // A sign-in is a few hundred bytes. It is read in full, quickly, before it takes a sign-in slot, so a client
-    // trickling a large body cannot hold the slots every other user behind the same address needs.
-    private static async Task<bool> ReadSignInBodyAsync(HttpContext context)
+    // A sign-in is a few hundred bytes. From the internet it is read in full, quickly, before it takes a sign-in
+    // slot, so a client trickling a large body cannot hold the slots every other user behind the same address
+    // needs. Either way the username in it is returned, for the history should the sign-in fail. A local client
+    // is never limited: its body is only read when it says up front that it is small.
+    private static async Task<(bool Proceed, string Username)> ReadSignInBodyAsync(HttpContext context, bool limited)
     {
         var request = context.Request;
+        if (!limited && request.ContentLength is not (> 0 and <= SignInBodyLimit))
+        {
+            return (true, string.Empty);
+        }
+
         if (request.ContentLength > SignInBodyLimit)
         {
             context.Response.StatusCode = StatusCodes.Status413PayloadTooLarge;
-            return false;
+            return (false, string.Empty);
         }
 
         var size = context.Features.Get<IHttpMaxRequestBodySizeFeature>();
-        if (size is { IsReadOnly: false })
+        if (limited && size is { IsReadOnly: false })
         {
             size.MaxRequestBodySize = SignInBodyLimit;
         }
 
         request.EnableBuffering(SignInBodyLimit, SignInBodyLimit);
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(context.RequestAborted);
-        deadline.CancelAfter(_signInReadLimit);
+        if (limited)
+        {
+            deadline.CancelAfter(_signInReadLimit);
+        }
+
         try
         {
-            await request.Body.CopyToAsync(Stream.Null, deadline.Token).ConfigureAwait(false);
+            using var body = new MemoryStream();
+            await request.Body.CopyToAsync(body, deadline.Token).ConfigureAwait(false);
             request.Body.Position = 0;
-            return true;
+            return (true, SignInBody.Username(body.GetBuffer().AsSpan(0, (int)body.Length)));
         }
         catch (OperationCanceledException) when (!context.RequestAborted.IsCancellationRequested)
         {
             context.Response.StatusCode = StatusCodes.Status408RequestTimeout;
-            return false;
+            return (false, string.Empty);
         }
         catch (OperationCanceledException)
         {
             // The client went away mid-body. Nothing is left to answer, and it is not an error.
-            return false;
+            return (false, string.Empty);
         }
         catch (Exception ex) when (ex is Microsoft.AspNetCore.Http.BadHttpRequestException or IOException)
         {
             context.Response.StatusCode = StatusCodes.Status413PayloadTooLarge;
-            return false;
+            return (false, string.Empty);
         }
     }
 
@@ -297,6 +319,9 @@ public sealed class ProxyPolicyMiddleware
         var headers = context.Response.Headers;
         headers.Remove(HeaderNames.Server);
         headers.Remove("X-Powered-By");
+
+        // Jellyfin times every request and says how long it took, which helps a client measure what it should not.
+        headers.Remove(ResponseTimeHeader);
 
         if (!headers.ContainsKey(HeaderNames.XContentTypeOptions))
         {

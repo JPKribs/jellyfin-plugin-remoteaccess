@@ -12,7 +12,8 @@ namespace Jellyfin.Plugin.RemoteAccess.People;
 /// <summary>
 /// Remembers the address each client IP last used to reach Jellyfin, buffers internet visits for the history,
 /// and holds sign-in failures the proxy saw until Jellyfin's own failure event claims them. A failure no event
-/// claims was for a username that does not exist, which Jellyfin does not report.
+/// claims was for a username that does not exist, which Jellyfin does not report; it is kept with the username
+/// the proxy read from the request.
 /// </summary>
 public sealed class AccessRecorder : IAccessRecorder
 {
@@ -107,14 +108,14 @@ public sealed class AccessRecorder : IAccessRecorder
     }
 
     /// <inheritdoc />
-    public void RecordSignInFailure(IPAddress client, string url)
+    public void RecordSignInFailure(IPAddress client, string url, string username = "")
     {
         ArgumentNullException.ThrowIfNull(client);
         lock (_failureLock)
         {
             if (_failures.Count < MaxClients)
             {
-                _failures.Add(new PendingFailure(client.ToString(), url, DateTime.UtcNow));
+                _failures.Add(new PendingFailure(client.ToString(), url, DateTime.UtcNow, SignInBody.Clean(username)));
             }
         }
     }
@@ -137,14 +138,15 @@ public sealed class AccessRecorder : IAccessRecorder
     /// two are paired whenever the proxy's copy is collected.
     /// </summary>
     /// <param name="ip">The client IP.</param>
+    /// <param name="username">The username Jellyfin reported, so it claims the proxy's failure for that name and not one for another name tried moments apart.</param>
     /// <returns>The address the client used, or empty.</returns>
-    public string Claim(string ip)
+    public string Claim(string ip, string username = "")
     {
         lock (_failureLock)
         {
             if (_reported.Count < MaxClients)
             {
-                _reported.Add(new PendingFailure(ip, string.Empty, DateTime.UtcNow));
+                _reported.Add(new PendingFailure(ip, string.Empty, DateTime.UtcNow, SignInBody.Clean(username)));
             }
         }
 
@@ -184,7 +186,7 @@ public sealed class AccessRecorder : IAccessRecorder
                 foreach (var failure in ready)
                 {
                     var pair = byIp.TryGetValue(failure.Ip, out var candidates)
-                        ? candidates.FindIndex(r => (r.At - failure.At).Duration() <= _pairWindow)
+                        ? candidates.FindIndex(r => (r.At - failure.At).Duration() <= _pairWindow && SameName(r.Username, failure.Username))
                         : -1;
                     if (pair >= 0)
                     {
@@ -207,6 +209,11 @@ public sealed class AccessRecorder : IAccessRecorder
             return unpaired;
         }
     }
+
+    // The same attempt has the same username on both sides, compared the way Jellyfin does. A side without one,
+    // such as a sign-in by user id, pairs on the address and time alone.
+    private static bool SameName(string reported, string seen)
+        => reported.Length == 0 || seen.Length == 0 || string.Equals(reported, seen, StringComparison.OrdinalIgnoreCase);
 
     // One minute's visits, with how many new groups each IPv6 /48 has taken, swapped out whole on each drain.
     private sealed class SeenBuffer

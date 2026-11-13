@@ -216,9 +216,12 @@ These are on by default, and each can be changed under **Advanced**.
   must arrive within 10 seconds.
 * **Immediate**: a ban, a block or a new country rule also closes connections already open, streams included.
 * **Setup wizard**: never reachable from the internet.
+* **API reference**: Jellyfin's API pages under `/api-docs` are never reachable from the internet. They still open
+  on your own network.
 * **Unknown names**: requests for any name you did not add, your bare IP included, are dropped before anything
   is encrypted.
 * **HTTPS only**: browsers are told to always use HTTPS for your addresses, and TLS 1.2 or 1.3 is required.
+  On Linux and macOS only the modern ciphers are offered. On Windows the system's own list applies.
 
 The [Dashboard](Dashboard.md) shows who connects and what was turned away, with bans you can lift and addresses
 you can block.

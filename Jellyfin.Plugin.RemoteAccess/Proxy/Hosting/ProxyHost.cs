@@ -189,6 +189,7 @@ public sealed class ProxyHost : IAsyncDisposable
         });
         context.AddResponseHeaderRemove("Server", ResponseCondition.Always);
         context.AddResponseHeaderRemove("X-Powered-By", ResponseCondition.Always);
+        context.AddResponseHeaderRemove(ProxyPolicyMiddleware.ResponseTimeHeader, ResponseCondition.Always);
 
         // Jellyfin builds its links from the name the client asked for.
         context.AddOriginalHost(true);
@@ -257,6 +258,7 @@ public sealed class ProxyHost : IAsyncDisposable
                         EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13,
 #pragma warning restore CA5398
                         ApplicationProtocols = alpn,
+                        CipherSuitesPolicy = TlsCiphers.Policy,
                         CertificateRevocationCheckMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.NoCheck
                     });
                 }

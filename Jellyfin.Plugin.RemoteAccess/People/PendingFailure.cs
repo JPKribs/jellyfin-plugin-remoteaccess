@@ -8,4 +8,5 @@ namespace Jellyfin.Plugin.RemoteAccess.People;
 /// <param name="Ip">The client IP.</param>
 /// <param name="Url">The address used.</param>
 /// <param name="At">When (UTC).</param>
-public sealed record PendingFailure(string Ip, string Url, DateTime At);
+/// <param name="Username">The username tried, or empty when unknown.</param>
+public sealed record PendingFailure(string Ip, string Url, DateTime At, string Username = "");

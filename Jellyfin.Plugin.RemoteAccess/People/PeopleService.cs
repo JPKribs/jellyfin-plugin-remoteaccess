@@ -112,7 +112,7 @@ public sealed class PeopleService
         var ipText = ip?.ToString() ?? string.Empty;
 
         // The proxy saw this failure too; claiming it keeps it from also being logged as an unknown username.
-        var url = success ? _access.UrlFor(ipText) : _access.Claim(ipText);
+        var url = success ? _access.UrlFor(ipText) : _access.Claim(ipText, username);
         var location = _geo.Lookup(ip);
         var local = IsLocal(ip, TrustedNetworks());
         Safely(() =>
@@ -160,6 +160,7 @@ public sealed class PeopleService
             Safely(() => _store.RecordAttempt(new SignInAttempt
             {
                 TimeUtc = failure.At,
+                Username = failure.Username,
                 Success = false,
                 Ip = failure.Ip,
                 Host = failure.Url,

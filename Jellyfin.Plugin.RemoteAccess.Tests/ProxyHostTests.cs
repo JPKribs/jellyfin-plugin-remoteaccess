@@ -38,6 +38,7 @@ public sealed class ProxyHostTests : IAsyncLifetime
     private readonly CapturingLoggerFactory _logs = new();
     private WebApplication? _jellyfin;
     private Uri _jellyfinUri = null!;
+    private volatile string _lastSignInBody = string.Empty;
     private int _webAssetHits;
     private int _uploads;
 
@@ -48,7 +49,12 @@ public sealed class ProxyHostTests : IAsyncLifetime
         {
             app.MapGet("/System/Info/Public", () => Results.Json(new { Id = "abc" }));
             app.MapGet("/Users/Public", () => Results.Json(new[] { new { Name = "alice" } }));
-            app.MapPost("/Users/AuthenticateByName", () => Results.Unauthorized());
+            app.MapPost("/Users/AuthenticateByName", async (HttpContext ctx) =>
+            {
+                using var reader = new System.IO.StreamReader(ctx.Request.Body);
+                _lastSignInBody = await reader.ReadToEndAsync();
+                return Results.Unauthorized();
+            });
             app.MapGet("/web/main.js", () =>
             {
                 Interlocked.Increment(ref _webAssetHits);
@@ -61,7 +67,11 @@ public sealed class ProxyHostTests : IAsyncLifetime
                 await ctx.Request.Body.CopyToAsync(sink).ConfigureAwait(false);
                 return Results.Text(sink.Length.ToString(System.Globalization.CultureInfo.InvariantCulture));
             });
-            app.Map("/{**rest}", (HttpContext ctx) => Results.Json(Echo(ctx, "jellyfin")));
+            app.Map("/{**rest}", (HttpContext ctx) =>
+            {
+                ctx.Response.Headers[ProxyPolicyMiddleware.ResponseTimeHeader] = "1.5";
+                return Results.Json(Echo(ctx, "jellyfin"));
+            });
         }).ConfigureAwait(false);
     }
 
@@ -104,6 +114,7 @@ public sealed class ProxyHostTests : IAsyncLifetime
         Assert.Equal(string.Empty, echo["forwarded"]);
         Assert.Equal(string.Empty, echo["route-header"]);
         Assert.False(response.Headers.Contains("Server"));
+        Assert.False(response.Headers.Contains(ProxyPolicyMiddleware.ResponseTimeHeader));
         Assert.Equal("nosniff", response.Headers.GetValues("X-Content-Type-Options").Single());
         Assert.StartsWith("max-age=", response.Headers.GetValues("Strict-Transport-Security").Single(), StringComparison.Ordinal);
     }
@@ -114,6 +125,38 @@ public sealed class ProxyHostTests : IAsyncLifetime
         await using var proxy = await StartProxyAsync();
         using var client = Client(proxy.HttpsPort);
         await Assert.ThrowsAsync<HttpRequestException>(() => client.GetAsync(new Uri($"https://unknown.example.org:{proxy.HttpsPort}/")));
+    }
+
+    [Fact]
+    public async Task Tls12_OlderCbcCiphersAreRefused_ModernOnesAccepted()
+    {
+        // Windows has no per-connection cipher list, so the system's applies there.
+        if (TlsCiphers.Policy is null)
+        {
+            return;
+        }
+
+        Assert.DoesNotContain(TlsCiphers.Suites, s => s.ToString().Contains("CBC", StringComparison.Ordinal));
+        await using var proxy = await StartProxyAsync();
+
+        async Task HandshakeAsync(System.Net.Security.TlsCipherSuite suite)
+        {
+            using var tcp = new System.Net.Sockets.TcpClient();
+            await tcp.ConnectAsync(IPAddress.Loopback, proxy.HttpsPort);
+            await using var tls = new System.Net.Security.SslStream(tcp.GetStream());
+            await tls.AuthenticateAsClientAsync(new System.Net.Security.SslClientAuthenticationOptions
+            {
+                TargetHost = Host,
+                EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12,
+#pragma warning disable CA1416 // Only reached where the proxy has a policy, which is never Windows.
+                CipherSuitesPolicy = new System.Net.Security.CipherSuitesPolicy(new[] { suite }),
+#pragma warning restore CA1416
+                RemoteCertificateValidationCallback = (_, _, _, _) => true
+            });
+        }
+
+        await HandshakeAsync(System.Net.Security.TlsCipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384);
+        await Assert.ThrowsAnyAsync<Exception>(() => HandshakeAsync(System.Net.Security.TlsCipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384));
     }
 
     [Fact]
@@ -192,6 +235,9 @@ public sealed class ProxyHostTests : IAsyncLifetime
 
         using var startup = await client.GetAsync(new Uri($"https://{Host}:{proxy.HttpsPort}/Startup/Configuration"));
         Assert.Equal(HttpStatusCode.Forbidden, startup.StatusCode);
+
+        using var docs = await client.GetAsync(new Uri($"https://{Host}:{proxy.HttpsPort}/api-docs/openapi.json"));
+        Assert.Equal(HttpStatusCode.Forbidden, docs.StatusCode);
     }
 
     [Fact]
@@ -216,10 +262,29 @@ public sealed class ProxyHostTests : IAsyncLifetime
         // Loopback counts as the internet in this test, so the visit is buffered for the history.
         Assert.Equal("127.0.0.1", Assert.Single(recorder.DrainSeen()).Ip);
 
-        using var signInBody = new StringContent("{}");
+        using var signInBody = new StringContent("{\"Username\":\"admin\",\"Pw\":\"hunter2\"}");
         using var signIn = await client.PostAsync(new Uri($"https://{Host}:{proxy.HttpsPort}/Users/AuthenticateByName"), signInBody);
         Assert.Equal(HttpStatusCode.Unauthorized, signIn.StatusCode);
-        Assert.Equal(new[] { "127.0.0.1" }, recorder.TakeUnclaimed(TimeSpan.Zero).Select(f => f.Ip));
+
+        // The name tried is kept with the failure, and the backend still got the whole body.
+        var failure = Assert.Single(recorder.TakeUnclaimed(TimeSpan.Zero));
+        Assert.Equal("127.0.0.1", failure.Ip);
+        Assert.Equal("admin", failure.Username);
+        Assert.Equal("{\"Username\":\"admin\",\"Pw\":\"hunter2\"}", _lastSignInBody);
+    }
+
+    [Fact]
+    public async Task Recorder_GetsTheNameALocalClientTried()
+    {
+        var recorder = new Jellyfin.Plugin.RemoteAccess.People.AccessRecorder();
+        await using var proxy = await StartProxyAsync(loopbackIsLocal: true, recorder: recorder);
+        using var client = Client(proxy.HttpPort);
+
+        using var body = new StringContent("{\"Username\":\"root\",\"Pw\":\"x\"}");
+        using var signIn = await client.PostAsync(new Uri($"http://127.0.0.1:{proxy.HttpPort}/Users/AuthenticateByName"), body);
+        Assert.Equal(HttpStatusCode.Unauthorized, signIn.StatusCode);
+        Assert.Equal("root", Assert.Single(recorder.TakeUnclaimed(TimeSpan.Zero)).Username);
+        Assert.Equal("{\"Username\":\"root\",\"Pw\":\"x\"}", _lastSignInBody);
     }
 
     [Fact]

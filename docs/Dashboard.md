@@ -48,7 +48,7 @@ The **Country** filter also has **Local**, for visitors from your own network.
 | Type | Meaning |
 |---|---|
 | **User** | Signed in, with the user and device. |
-| **Failure** | A sign-in that failed. |
+| **Failure** | A sign-in that failed, with the username that was tried, whether or not that user exists. |
 | **Blocked** | Turned away by a ban, the block list or the country rules. |
 | **Seen** | Reached the sign-in page and did nothing else. |
 

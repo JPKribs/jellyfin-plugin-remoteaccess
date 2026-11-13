@@ -1,7 +1,7 @@
 ---
 name: "Remote Access"
 guid: "8150dce5-6153-4924-a985-a6927be95baa"
-version: "12.4.4.8"
+version: "12.4.4.9"
 targetAbi: "12.4.0.0"
 framework: "net10.0"
 overview: "Reach your server from anywhere: Dynamic DNS and a secure HTTPS proxy, inside Jellyfin."
@@ -22,7 +22,11 @@ artifacts:
 - "BouncyCastle.Cryptography.dll"
 - "QRCoder.dll"
 changelog:
+  added:
+  - A failed sign-in is recorded with the username that was tried, even when no such user exists, such as a guess at "admin". Jellyfin only reports the name for users that exist. The Dashboard shows it in the User column.
   changed:
-  - Activity log entries share one shape, a short name over one sentence, and repeated events are summed into one entry per outcome. DNS record updates, failures, recoveries and pauses are summed per update run, records added, changed or removed per save, bans past five a minute by country, and left-over Let's Encrypt TXT records per cleanup. Bans, credential changes and other single events keep their own entries, with shorter names such as "203.0.113.7 Banned" and "Certificate Renewed".
-  developer:
-  - Uses JPKribs.Jellyfin.Base 2026.11.13.2.
+  - Jellyfin's API reference under /api-docs is no longer reachable from the internet. It still opens on your own network.
+  - On Linux and macOS the proxy only offers AES-GCM and ChaCha20-Poly1305 ciphers. The older CBC ciphers are no longer accepted.
+  - Jellyfin's X-Response-Time-Ms header is no longer passed on to clients.
+  fixed:
+  - Two failed sign-ins from one address moments apart, one for a real user and one for a made-up name, are no longer recorded as two failures for the real user.

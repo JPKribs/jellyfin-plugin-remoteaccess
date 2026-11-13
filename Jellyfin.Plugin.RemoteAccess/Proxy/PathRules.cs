@@ -15,6 +15,10 @@ public static class PathRules
     // create the first administrator, so it is never reachable from the internet.
     private static readonly string[] _startup = { "/Startup" };
 
+    // Jellyfin's API reference and the page that shows it. Neither needs a sign-in, building the reference is
+    // slow, and no app uses them, so the internet gets neither.
+    private static readonly string[] _apiDocs = { "/api-docs" };
+
     // Streams a client may pause. Kestrel's minimum send rate would otherwise cut a paused player off.
     private static readonly string[] _media =
     {
@@ -46,6 +50,11 @@ public static class PathRules
     /// <param name="path">The base-relative path.</param>
     /// <returns>True for the setup wizard.</returns>
     public static bool IsStartup(PathString path) => StartsWithAny(Collapse(path), _startup);
+
+    /// <summary>Whether a path is Jellyfin's API reference.</summary>
+    /// <param name="path">The base-relative path.</param>
+    /// <returns>True for the API reference and its viewer.</returns>
+    public static bool IsApiDocs(PathString path) => StartsWithAny(Collapse(path), _apiDocs);
 
     /// <summary>Whether a path is Quick Connect sign-in, which answers a wrong secret with 404.</summary>
     /// <param name="path">The base-relative path.</param>

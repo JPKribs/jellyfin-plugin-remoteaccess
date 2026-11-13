@@ -48,9 +48,13 @@ public static class RequestPolicy
             return new RequestDecision(RequestAction.Drop);
         }
 
-        if (!facts.Local && PathRules.IsStartup(PathRules.StripBase(facts.Path, runtime.BaseUrl)))
+        if (!facts.Local)
         {
-            return new RequestDecision(RequestAction.Forbidden);
+            var path = PathRules.StripBase(facts.Path, runtime.BaseUrl);
+            if (PathRules.IsStartup(path) || PathRules.IsApiDocs(path))
+            {
+                return new RequestDecision(RequestAction.Forbidden);
+            }
         }
 
         return new RequestDecision(RequestAction.Forward);
