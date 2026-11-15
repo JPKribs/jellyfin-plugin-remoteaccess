@@ -448,7 +448,7 @@ export default function (view) {
         // Let's Encrypt is only used once its terms are accepted, so with the proxy on the box has to be ticked to
         // choose it.
         if (Shared.getEl('enabled').checked && Shared.getEl('certMode').value === 'Automatic' && !Shared.getEl('certTerms').checked) {
-            Shared.setStatus('saveStatus', 'Turn on I accept the Let\'s Encrypt terms in step 3, or select another certificate source.', true, { timeout: 0 });
+            Shared.setStatus('saveStatus', 'Turn on Accept the Let\'s Encrypt Terms in step 3, or select another certificate source.', true, { timeout: 0 });
             setStepOpen('Certificate');
             return Promise.resolve(false);
         }

@@ -9,7 +9,7 @@ From nothing to Jellyfin on your phone at a secure `https://` address. There are
 Both paths get a trusted Let's Encrypt certificate with no extra setup, and only step 2 differs between them.
 Wherever you see `mymedia` or `example.com`, use your own name.
 
-## What you need
+## What You Need
 
 * Jellyfin 12.4 at home, and an administrator account on it.
 * Access to your router's settings, in case it does not forward ports on its own.
@@ -34,7 +34,7 @@ behind it, so **check before you buy anything**:
 If they match, you are fine. If they differ, or the router's address starts with `100.64` to `100.127`, ask your
 provider for a public IP first. Later, Configuration step 4 checks this for you.
 
-## 1. Install the plugin
+## 1. Install the Plugin
 
 1. In Jellyfin, open **Dashboard > Plugins > Repositories** and add this repository:
 
@@ -47,7 +47,7 @@ provider for a public IP first. Later, Configuration step 4 checks this for you.
 
 A **Remote Access** entry now sits in the dashboard's side menu.
 
-## 2. Get a name and add it
+## 2. Get a Name and Add It
 
 Pick your path. Everything that differs between them is here.
 
@@ -72,10 +72,10 @@ Pick your path. Everything that differs between them is here.
        to your domain, and create it. Copy the token, Cloudflare shows it once.
     4. In Jellyfin, open **Remote Access > Configuration**, open step 2, **Address**, and fill in:
         * **Provider**: **Cloudflare**
-        * **Record name**: `media.example.com`
-        * **Auth email or token**: the word `token`
-        * **API token or key**: the token from step 3
-        * **Zone name**: `example.com`
+        * **Record Name**: `media.example.com`
+        * **Auth Email or Token**: the word `token`
+        * **API Token or Key**: the token from step 3
+        * **Zone Name**: `example.com`
 
     !!! warning "Keep the cloud grey"
         With the orange cloud on, every visitor reaches Jellyfin from a Cloudflare address, and the plugin can no
@@ -89,7 +89,7 @@ If your home has no IPv6, turn off **Update IPv6** under **Advanced > Dynamic DN
 ## 3. Turn on Remote Access
 
 1. Step 1, **Proxy On**: turn on **Enabled**.
-2. Step 3, **Certificate**: keep **Let's Encrypt** and tick **I accept the Let's Encrypt terms**.
+2. Step 3, **Certificate**: keep **Let's Encrypt** and tick **Accept the Let's Encrypt Terms**.
 3. Select **Save**.
 
 Within a minute or two step 3 shows a certificate. It works before your router is set up, since the name is
@@ -110,7 +110,7 @@ Step 4, **Router**, opens ports 80 and 443 on your router by itself.
 In step 5, select **Trust the Proxy** and confirm. Jellyfin restarts once. Until then the proxy turns internet
 visitors away, since Jellyfin cannot tell them apart from people at home.
 
-## 6. Test it
+## 6. Test It
 
 In step 6, select **Test from Outside**. It shows **Reachable** once a place outside your network gets through.
 Then turn off Wi-Fi on your phone and open your address. You should see Jellyfin's sign-in page with a padlock.
@@ -118,7 +118,7 @@ Then turn off Wi-Fi on your phone and open your address. You should see Jellyfin
 Add the address as a server in your Jellyfin apps for use away from home. At home, keep the local address, since
 many routers cannot open your own public address from inside.
 
-## After setup
+## After Setup
 
 * **Travelling**: only your own country can connect by default. Add countries under **Advanced > Blocking** before
   a trip.
@@ -137,10 +137,10 @@ many routers cannot open your own public address from inside.
 
     | What you see | What to do |
     |---|---|
-    | `no 'A' record at Cloudflare` | Create the record from step 1, or match its name to **Record name**. |
+    | `no 'A' record at Cloudflare` | Create the record from step 1, or match its name to **Record Name**. |
     | `no 'AAAA' record at Cloudflare` | Turn off **Update IPv6** under **Advanced > Dynamic DNS**. |
-    | `zone lookup failed`, or a permission error | Make a new token, and check **Auth email or token** is `token`. |
-    | `no zone ID found for zone ...` | **Zone name** is the domain alone, such as `example.com`. |
+    | `zone lookup failed`, or a permission error | Make a new token, and check **Auth Email or Token** is `token`. |
+    | `no zone ID found for zone ...` | **Zone Name** is the domain alone, such as `example.com`. |
 
 | What you see | What to do |
 |---|---|

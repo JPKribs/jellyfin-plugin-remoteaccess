@@ -1,10 +1,10 @@
-# Creating a provider
+# Creating a Provider
 
 How to add a new DNS provider to the plugin and document it. Follow it exactly so every provider reads the
 same way. The providers are ports of ddclient's protocols, so the source of truth for behavior is the
 matching `nic_{name}_update` in ddclient.
 
-## The pieces
+## The Pieces
 
 A provider is one C# class plus two small touch points. Nothing else is wired by hand. Every concrete
 `IDNSProvider` is found by scanning the assembly at startup, and records are matched to a provider by its `Kind`
@@ -36,7 +36,7 @@ each provider class, so the JS needs no per provider edit.
 4. Override `Label`, `Hint`, and `Fields` on the provider. `Label` is the friendly name in the dropdown,
    `Hint` is the one line note under it, and `Fields` is the label for each used field with a null for any
    field the provider does not use. The dashboard renders itself from these, so no JS edit is needed. The
-   other flags on `ProviderFields` are `Server` for the **Server override** field, `Ttl` for the **TTL** field,
+   other flags on `ProviderFields` are `Server` for the **Server Override** field, `Ttl` for the **TTL** field,
    `IPv6` for the **Update IPv6** toggle, and `Advanced` for the DynDNS style options such as `wildcard`.
 5. If the protocol can only send IPv4, override `SupportsIPv6` to return false and set `IPv6 = false` in
    `Fields`, so the toggle is hidden.
@@ -47,7 +47,7 @@ each provider class, so the JS needs no per provider edit.
 8. Add a test under `Jellyfin.Plugin.RemoteAccess.Tests` that exercises the request shape and the success and
    failure detection, following the existing provider tests.
 
-## Base class helpers
+## Base Class Helpers
 
 `DNSProviderBase` carries everything a provider needs, so a provider stays small and consistent.
 
@@ -62,7 +62,7 @@ each provider class, so the JS needs no per provider edit.
   whose body is a short status line such as `good` or `nochg`.
 * `Redact(url)`: strips credentials from a URL before it is logged.
 
-## Documenting the field mapping
+## Documenting the Field Mapping
 
 The class summary is the canonical record of what each field means, so write it precisely. Name the
 ddclient protocol it ports, then state what `Login`, `Password`, `Zone`, and `Server` map to. The user
@@ -76,7 +76,7 @@ setup doc and the dashboard hint are derived from this.
 /// </summary>
 ```
 
-## The user setup doc
+## The User Setup Doc
 
 Every provider has a `docs/providers/{Kind}.md`. Keep it to the fields the provider actually reads, one
 line each, in the form `Field: where to get the value`. Note any field that is not what its name suggests,
@@ -84,7 +84,7 @@ for example a hostname field that actually takes a numeric record id. When a pro
 its public DNS hides the origin, like Cloudflare's orange cloud, tell the user to turn on Treat as proxied
 address on the record so the plugin compares against the last pushed IP instead of DNS.
 
-## C# documentation
+## C# Documentation
 
 A standard XML doc on every public type and member, the summary two sentences or fewer, followed by every
 `param` and a `returns` when the member returns a value. For a branch or a non obvious step, add a short

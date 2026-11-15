@@ -43,9 +43,9 @@ public sealed class GoDaddyProvider : DNSProviderBase
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record name",
-        Login = "API key",
-        Password = "API secret",
+        Hostname = "Record Name",
+        Login = "API Key",
+        Password = "API Secret",
         Zone = "Domain",
         Server = true,
         Ttl = true,

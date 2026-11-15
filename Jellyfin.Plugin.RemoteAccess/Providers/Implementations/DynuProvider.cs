@@ -54,7 +54,7 @@ public sealed class DynuProvider : DNSProviderBase
         Hostname = "Hostname",
         Login = "Username",
         Password = "Password",
-        Zone = "Custom domain",
+        Zone = "Custom Domain",
         Server = true,
     };
 

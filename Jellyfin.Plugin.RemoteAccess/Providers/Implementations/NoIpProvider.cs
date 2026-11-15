@@ -51,7 +51,7 @@ public sealed class NoIpProvider : DNSProviderBase
     {
         Hostname = "Hostname",
         Login = "Username",
-        Password = "Password or DDNS key",
+        Password = "Password or DDNS Key",
         Server = true,
     };
 

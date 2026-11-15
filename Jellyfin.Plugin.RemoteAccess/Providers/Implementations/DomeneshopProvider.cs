@@ -37,8 +37,8 @@ public sealed class DomeneshopProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Host",
-        Login = "API token",
-        Password = "API secret",
+        Login = "API Token",
+        Password = "API Secret",
         Server = true,
     };
 

@@ -4,7 +4,7 @@ In step 2, **Address**, of the **Configuration** tab, set **Provider** to **No-I
 
 - **Hostname**: the host to update.
 - **Username**: your No-IP username or email.
-- **Password or DDNS key**: your No-IP password, or a DDNS key.
-- **Server override**: leave blank to use No-IP's own server.
+- **Password or DDNS Key**: your No-IP password, or a DDNS key.
+- **Server Override**: leave blank to use No-IP's own server.
 
 _Ported from ddclient's `nic_noip_update`._

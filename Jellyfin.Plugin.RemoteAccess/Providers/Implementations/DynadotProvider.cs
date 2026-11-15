@@ -36,7 +36,7 @@ public sealed class DynadotProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Hostname",
-        Password = "DDNS password",
+        Password = "DDNS Password",
         Zone = "Domain",
         Server = true,
         Ttl = true,

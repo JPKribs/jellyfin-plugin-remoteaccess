@@ -1,4 +1,4 @@
-# Provider setup
+# Provider Setup
 
 Each page below lists the fields a provider shows on step 2, **Address**, of the **Configuration** tab and where to find each value.
 Set **Provider** to your DNS provider, then fill in the fields from its page.
@@ -49,7 +49,7 @@ Set **Provider** to your DNS provider, then fill in the fields from its page.
 * [Yandex PDD](Yandex.md)
 * [ZoneEdit](ZoneEdit1.md)
 
-## Provider notes
+## Provider Notes
 
 * **TTL**: a TTL of `1`, the default, uses the provider's default. Each provider turns it into a value its API accepts, such as Gandi's 300 second minimum or GoDaddy's 600 second minimum. It never sends a literal one second TTL.
 * **IPv4 only**: OVH, DynDNS v1, DSLReports and NearlyFreeSpeech.NET carry a single IPv4 address. The **Update IPv6** toggle is hidden for them, and no AAAA update is ever recorded.

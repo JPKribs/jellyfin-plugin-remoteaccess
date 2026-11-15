@@ -5,7 +5,7 @@ In step 2, **Address**, of the **Configuration** tab, set **Provider** to **DSLR
 - **Host**: your DSLReports host ID.
 - **Username**: your DSLReports username.
 - **Password**: your DSLReports password.
-- **Server override**: leave blank to use DSLReports's own server.
+- **Server Override**: leave blank to use DSLReports's own server.
 
 This protocol carries a single IPv4 address, so the **Update IPv6** toggle is hidden for it.
 

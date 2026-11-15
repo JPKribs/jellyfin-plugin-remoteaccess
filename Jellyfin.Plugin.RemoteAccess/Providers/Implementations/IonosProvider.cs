@@ -41,7 +41,7 @@ public sealed class IonosProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Hostname",
-        Password = "API key",
+        Password = "API Key",
         Server = true,
         Ttl = true,
     };

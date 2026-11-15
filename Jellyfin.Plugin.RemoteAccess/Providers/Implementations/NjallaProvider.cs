@@ -39,7 +39,7 @@ public sealed class NjallaProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Host",
-        Password = "DDNS key",
+        Password = "DDNS Key",
         Server = true,
     };
 

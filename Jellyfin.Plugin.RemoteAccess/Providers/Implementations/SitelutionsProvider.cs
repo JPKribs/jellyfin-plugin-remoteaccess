@@ -39,8 +39,8 @@ public sealed class SitelutionsProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Record ID",
-        Login = "Account email",
-        Password = "Account password",
+        Login = "Account Email",
+        Password = "Account Password",
         Server = true,
         Ttl = true,
     };

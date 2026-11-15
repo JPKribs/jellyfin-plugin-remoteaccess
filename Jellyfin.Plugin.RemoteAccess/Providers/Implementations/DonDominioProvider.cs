@@ -39,7 +39,7 @@ public sealed class DonDominioProvider : DNSProviderBase
     {
         Hostname = "Host",
         Login = "User",
-        Password = "API key",
+        Password = "API Key",
         Server = true,
     };
 

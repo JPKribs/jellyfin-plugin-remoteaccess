@@ -53,8 +53,8 @@ public sealed class DnsMadeEasyProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Record ID",
-        Login = "Account email",
-        Password = "Record password",
+        Login = "Account Email",
+        Password = "Record Password",
         Server = true,
     };
 

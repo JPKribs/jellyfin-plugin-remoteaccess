@@ -51,9 +51,9 @@ public sealed class NfsnProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Hostname",
-        Login = "Member login",
-        Password = "API key",
-        Zone = "DNS zone",
+        Login = "Member Login",
+        Password = "API Key",
+        Zone = "DNS Zone",
         Server = true,
         Ttl = true,
         IPv6 = false,

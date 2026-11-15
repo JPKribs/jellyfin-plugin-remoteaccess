@@ -5,6 +5,6 @@ In step 2, **Address**, of the **Configuration** tab, set **Provider** to **Myth
 - **Hostname**: the record name. The service sets it to the address the request comes from.
 - **Username**: your Mythic Beasts dynamic DNS API key.
 - **Password**: the API key's secret. Create a Dynamic DNS credential in the Mythic Beasts panel.
-- **Server override**: leave blank to use Mythic Beasts's own server.
+- **Server Override**: leave blank to use Mythic Beasts's own server.
 
 _Ported from ddclient's `nic_mythicdyn_update`._

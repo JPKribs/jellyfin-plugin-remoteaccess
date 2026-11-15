@@ -37,7 +37,7 @@ Utilities/      shared helpers such as credential encryption
 Keep a type in its own file named after it. Providers are discovered by scanning the assembly, so a new one needs
 no wiring. See [Creating a Provider](PROVIDERS.md).
 
-## On-screen text
+## On-screen Text
 
 Text a person reads on the plugin's pages follows these rules:
 
@@ -48,7 +48,7 @@ Text a person reads on the plugin's pages follows these rules:
 
 Log messages and code comments are not on-screen text.
 
-## How to document
+## How to Document
 
 ### CSS
 
@@ -74,7 +74,7 @@ function setSecretField(id, stored) { ... }
 
 Do not comment trivial getters or one line passthroughs.
 
-### HTML templates
+### HTML Templates
 
 A single line comment naming each object where it starts.
 

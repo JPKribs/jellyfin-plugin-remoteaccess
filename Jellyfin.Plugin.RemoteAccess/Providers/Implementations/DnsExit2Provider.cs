@@ -56,8 +56,8 @@ public sealed class DnsExit2Provider : DNSProviderBase
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record name",
-        Password = "API key",
+        Hostname = "Record Name",
+        Password = "API Key",
         Zone = "Domain",
         Server = true,
         Ttl = true,

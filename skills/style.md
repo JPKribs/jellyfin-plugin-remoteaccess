@@ -459,15 +459,7 @@ grep -o "export function create[A-Za-z]*" ~/.nuget/packages/jpkribs.jellyfin.bas
 
 ## Hand Built Pieces
 
-These pieces are still built by hand, or still differ from this guide. Replace each when its page is next changed, and add nothing to this list.
-
-| Today | Replace with |
-| :--- | :--- |
-| `.ra-button-row` | `base-button-row` |
-| On and Off selects on Advanced, such as **HTTP/2** | `emby-checkbox` with a `fieldDescription` |
-| Advanced field labels in sentence case, such as **Request timeout** | Title Case labels, with the docs changed in the same commit |
-| Configuration labels with slashes, such as **Hostname / domain** | One noun, with the rest in the description |
-| Docs headings in sentence case | Title Case headings, with their anchors fixed |
+Nothing is built by hand today. Add nothing that Base has a component for.
 
 ## Checklist
 

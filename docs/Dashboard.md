@@ -5,7 +5,7 @@ It is the page the **Remote Access** entry in the dashboard's side menu opens on
 
 ![Dashboard tab](screenshots/Dashboard.png)
 
-## Share your server
+## Share Your Server
 
 Once Remote Access has an address, the **Share Your Server** card at the top shows it with a QR code. It is the
 proxy's first public name, the DDNS record's hostname in step 2 of the **Configuration** tab. A **Public** badge means
@@ -66,10 +66,10 @@ The button at the end of a row acts on it:
 * **Unblock** removes it. An address blocked by a range under **Advanced** is unblocked there instead.
 * **Unblock** on a country turned away by the country rules allows that country from then on.
 
-## What is recorded
+## What Is Recorded
 
 History is on by default and kept for 90 days. Change it under **Advanced > History**, listed in the
-[Settings Reference](Settings.md#history). With **Recording** off the Dashboard stays empty, but bans and blocks
+[Settings Reference](Settings.md#history). With **Record History** off the Dashboard stays empty, but bans and blocks
 still work. **Clear History** deletes everything recorded and keeps the block list.
 
 Locations come from the free [DB-IP](https://db-ip.com) database, downloaded to this server. Addresses are looked up
@@ -79,7 +79,7 @@ on the server itself and never sent anywhere. The history is kept in `people.db`
 
 The Dashboard tab covers visitors. The DDNS record and the plugin itself report in two other places.
 
-### Record status
+### Record Status
 
 The status card in step 2, **Address**, of the **Configuration** tab shows how the DDNS record is doing:
 
@@ -91,7 +91,7 @@ The status card in step 2, **Address**, of the **Configuration** tab shows how t
 When the proxy is off, the step says **Up to date** once the last check worked within the last 24 hours,
 **Failing** when it did not, and **Not updated yet** before the first one.
 
-### Activity log
+### Activity Log
 
 The plugin writes what it does to Jellyfin's activity log, which is part of Jellyfin's own dashboard, not the
 plugin's **Dashboard** tab. Changes you make are credited to you.
@@ -116,7 +116,7 @@ sentence saying what happened. Where many of one thing happen together, they are
 named with the count, such as **3 DNS Records Updated**, whose sentence lists each one with its count, such as
 "3 DNS records were updated for a.example.com (1), b.example.com (1), c.example.com (1) to 203.0.113.5 (3)".
 
-#### Dynamic DNS entries
+#### Dynamic DNS Entries
 
 Each update run writes one entry per outcome, listing the records by hostname.
 
@@ -136,11 +136,11 @@ Each update run writes one entry per outcome, listing the records by hostname.
 * **File Access Failed**: an error when Jellyfin runs as an account that cannot open the plugin's folders, naming
   the command that fixes it. See [Recovery](RemoteAccess.md#recovery).
 
-#### Remote Access entries
+#### Remote Access Entries
 
 * **Proxy Settings Changed**: a tab was saved with a change, naming what changed.
 * **Proxy Failed to Start**: once per reason, such as a port in use, with **Proxy Started** when it starts. With
-  **Only through the proxy** on, Jellyfin stays on this server alone, and the entry says how to turn the proxy off
+  **Only Through the Proxy** on, Jellyfin stays on this server alone, and the entry says how to turn the proxy off
   by hand. See [If the proxy stops working](RemoteAccess.md#if-the-proxy-stops-working).
 * **Trust the Proxy**: **Proxy Trust Turned On** when Jellyfin was set to trust the proxy, **Proxy Trust Confirmed**
   or **Proxy Check Failed** after the restart, and **Network Settings Restored** when **Undo** put its settings back.
@@ -173,5 +173,5 @@ Each update run writes one entry per outcome, listing the records by hostname.
   Logged once.
 * **Location Database Update Failed**: downloading it failed, once per reason, with **Location Database Updated**
   when it works again.
-* **History Settings Changed**: **Recording**, **History period** or **Location** was changed.
+* **History Settings Changed**: **Record History**, **History Period** or **Location** was changed.
 * **History Cleared**: every recorded visit, sign-in and refusal was deleted.

@@ -38,8 +38,8 @@ public sealed class EnomProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Host",
-        Login = "Base domain",
-        Password = "Domain password",
+        Login = "Base Domain",
+        Password = "Domain Password",
         Server = true,
     };
 

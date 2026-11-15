@@ -39,10 +39,10 @@ public sealed class CloudflareProvider : DNSProviderBase, IAcmeDnsProvider
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record name",
-        Login = "Auth email or token",
-        Password = "API token or key",
-        Zone = "Zone name",
+        Hostname = "Record Name",
+        Login = "Auth Email or Token",
+        Password = "API Token or Key",
+        Zone = "Zone Name",
         Server = true,
     };
 

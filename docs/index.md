@@ -10,7 +10,7 @@ Jellyfin:
 * **The proxy** puts a secure HTTPS address in front of Jellyfin, with a free certificate from Let's Encrypt and
   protection against people trying to break in. See [Remote Access](RemoteAccess.md).
 
-## Where to start
+## Where to Start
 
 * **New to all of this?** Follow the [Beginner's Guide](BeginnersGuide.md). It goes from nothing to watching from
   your phone, with a free path using Duck DNS and a recommended path using your own domain.

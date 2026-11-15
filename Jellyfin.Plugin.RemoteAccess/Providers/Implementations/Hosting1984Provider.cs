@@ -38,7 +38,7 @@ public sealed class Hosting1984Provider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Domain",
-        Password = "API key",
+        Password = "API Key",
         Server = true,
     };
 

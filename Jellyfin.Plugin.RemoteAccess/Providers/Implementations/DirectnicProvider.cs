@@ -39,8 +39,8 @@ public sealed class DirectnicProvider : DNSProviderBase
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Login = "IPv4 gateway URL",
-        Password = "IPv6 gateway URL",
+        Login = "IPv4 Gateway URL",
+        Password = "IPv6 Gateway URL",
         Server = true,
     };
 

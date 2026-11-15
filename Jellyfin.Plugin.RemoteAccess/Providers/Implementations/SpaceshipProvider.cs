@@ -46,8 +46,8 @@ public sealed class SpaceshipProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Hostname",
-        Login = "API key",
-        Password = "API secret",
+        Login = "API Key",
+        Password = "API Secret",
         Zone = "Domain",
         Server = true,
         Ttl = true,

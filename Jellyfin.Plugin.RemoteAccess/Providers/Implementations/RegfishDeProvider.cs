@@ -45,7 +45,7 @@ public sealed class RegfishDeProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Hostname",
-        Password = "Update token",
+        Password = "Update Token",
         Server = true,
     };
 

@@ -45,9 +45,9 @@ public sealed class HetznerProvider : DNSProviderBase
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record name",
-        Password = "API token",
-        Zone = "DNS zone",
+        Hostname = "Record Name",
+        Password = "API Token",
+        Zone = "DNS Zone",
         Server = true,
         Ttl = true,
     };

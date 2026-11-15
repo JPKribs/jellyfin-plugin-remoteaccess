@@ -52,7 +52,7 @@ public sealed class ZoneEdit1Provider : DNSProviderBase
     {
         Hostname = "Hostname",
         Login = "Username",
-        Password = "DDNS token",
+        Password = "DDNS Token",
         Zone = "Zone",
         Server = true,
     };

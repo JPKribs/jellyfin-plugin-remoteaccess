@@ -44,9 +44,9 @@ public sealed class GandiProvider : DNSProviderBase
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record name",
-        Login = "Auth keyword",
-        Password = "API key or token",
+        Hostname = "Record Name",
+        Login = "Auth Keyword",
+        Password = "API Key or Token",
         Zone = "Domain",
         Server = true,
         Ttl = true,

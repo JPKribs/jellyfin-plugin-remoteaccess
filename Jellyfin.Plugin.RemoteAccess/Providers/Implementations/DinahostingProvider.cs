@@ -41,7 +41,7 @@ public sealed class DinahostingProvider : DNSProviderBase
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Host and domain",
+        Hostname = "Host and Domain",
         Login = "Username",
         Password = "Password",
         Zone = "Domain",

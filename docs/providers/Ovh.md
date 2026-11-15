@@ -5,7 +5,7 @@ In step 2, **Address**, of the **Configuration** tab, set **Provider** to **OVH*
 - **Hostname**: the record to update.
 - **Username**: your OVH DynHost username. Create a DynHost user in the OVH control panel.
 - **Password**: the DynHost password.
-- **Server override**: leave blank to use OVH's own server.
+- **Server Override**: leave blank to use OVH's own server.
 
 OVH uses DynHost credentials, which you create per record in the OVH panel, not your main OVH API keys.
 

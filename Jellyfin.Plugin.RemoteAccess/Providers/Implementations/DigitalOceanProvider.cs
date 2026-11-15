@@ -40,9 +40,9 @@ public sealed class DigitalOceanProvider : DNSProviderBase
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record name",
-        Password = "API token",
-        Zone = "Apex domain",
+        Hostname = "Record Name",
+        Password = "API Token",
+        Zone = "Apex Domain",
         Server = true,
     };
 

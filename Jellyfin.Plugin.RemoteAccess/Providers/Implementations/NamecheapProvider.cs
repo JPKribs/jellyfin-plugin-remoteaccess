@@ -36,9 +36,9 @@ public sealed class NamecheapProvider : DNSProviderBase
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Host and domain",
+        Hostname = "Host and Domain",
         Login = "Domain",
-        Password = "DDNS password",
+        Password = "DDNS Password",
         Server = true,
     };
 

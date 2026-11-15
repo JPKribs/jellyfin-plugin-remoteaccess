@@ -5,7 +5,7 @@ In step 2, **Address**, of the **Configuration** tab, set **Provider** to **DynD
 - **Hostname**: the host to update.
 - **Username**: your account username at the DynDNS v1 compatible service.
 - **Password**: your account password.
-- **Server override**: the update host. Left blank, members.dyndns.org is used. Set it to your service's update host.
+- **Server Override**: the update host. Left blank, members.dyndns.org is used. Set it to your service's update host.
 
 DynDNS v1 is a legacy protocol.
 

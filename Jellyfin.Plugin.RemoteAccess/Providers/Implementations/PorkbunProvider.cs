@@ -44,9 +44,9 @@ public sealed class PorkbunProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Hostname",
-        Login = "API key",
-        Password = "Secret API key",
-        Zone = "Root domain",
+        Login = "API Key",
+        Password = "Secret API Key",
+        Zone = "Root Domain",
         Server = true,
     };
 

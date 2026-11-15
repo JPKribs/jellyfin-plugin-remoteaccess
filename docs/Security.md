@@ -26,7 +26,7 @@
 ## Network
 
 * **Dynamic DNS only connects out**, to your DNS provider and the IP detection services. It uses HTTPS unless
-  you set a **Server override** that starts with `http://`. Record names are looked up with the server's own DNS
+  you set a **Server Override** that starts with `http://`. Record names are looked up with the server's own DNS
   settings.
 * **Credentials stay with their server**: a request to a provider follows a redirect only on the same server. A
   redirect to another server, or from HTTPS to HTTP, is never followed, so a key is only ever sent where you
@@ -34,8 +34,8 @@
 * **Ports open only with Remote Access**: nothing listens until the proxy is turned on. Then it refuses names you
   did not add before encrypting anything, keeps the setup wizard off the internet, and never blocks your own
   network. See [Protection](RemoteAccess.md#protection).
-* **The router**: with **Automatic port forwarding** on, the plugin asks the router on your own network to forward
-  ports 80 and 443, and nothing else. See [Automatic port forwarding](RemoteAccess.md#automatic-port-forwarding).
+* **The router**: with **Automatic Port Forwarding** on, the plugin asks the router on your own network to forward
+  ports 80 and 443, and nothing else. See [Automatic Port Forwarding](RemoteAccess.md#automatic-port-forwarding).
 * **Test from Outside** sends the hostname and port 443 to check-host.net when you select it, and the
   **Verify External Access** task sends the same every hour while the proxy is on. Disable the task under
   **Dashboard > Scheduled Tasks** to send them only when you ask.
@@ -67,7 +67,7 @@ The Remote Access folder holds:
 Jellyfin's own config folder also gets `network.before-remote-access.xml`, a copy of its network settings from
 before the plugin first changed them.
 
-### Private folders
+### Private Folders
 
 The key folder and the Remote Access folder are made readable only by Jellyfin's account at every start. On
 Windows, SYSTEM and Administrators keep access too. If Jellyfin later runs as a different account that cannot open

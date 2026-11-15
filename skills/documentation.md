@@ -43,7 +43,7 @@ Remove compatibility notes for Jellyfin versions the plugin no longer supports. 
 
 ### Headings
 
-* Use Title Case for every heading. "## Automatic Port Forwarding". Older pages still use sentence case, per [style.md](style.md#hand-built-pieces), and move to Title Case when they are next changed.
+* Use Title Case for every heading. "## Automatic Port Forwarding".
 * Page titles are `#` and appear once per page.
 * Name the thing, not the action, unless the section is a procedure. "## Settings" and "## Add the Plugin Repository" are both correct.
 * Never rename a heading without fixing its anchors. `mkdocs build --strict` fails on a broken anchor.

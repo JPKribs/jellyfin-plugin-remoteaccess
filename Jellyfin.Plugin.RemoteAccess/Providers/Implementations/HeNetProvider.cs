@@ -48,7 +48,7 @@ public sealed class HeNetProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Record",
-        Password = "DDNS key",
+        Password = "DDNS Key",
         Server = true,
     };
 

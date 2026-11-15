@@ -27,9 +27,9 @@ shared through CGNAT, and on Linux or in Docker access to ports 80 and 443. The 
 Do not forward Jellyfin's own ports. Internet traffic should only reach the proxy. If this server has a public
 address of its own, such as a VPS or a public IPv6 address, block Jellyfin's ports in its firewall too. Step 5,
 **Trust the Proxy**, warns when it finds one. To close that gap from the plugin instead, see
-[Only through the proxy](#only-through-the-proxy).
+[Only Through the Proxy](#only-through-the-proxy).
 
-## Name check
+## Name Check
 
 Step 2, **Address**, looks up the proxy's first public name, the record's hostname, and compares it with this server's public IP.
 
@@ -43,9 +43,9 @@ Step 2, **Address**, looks up the proxy's first public name, the record's hostna
 
 A name behind Cloudflare's orange cloud points at Cloudflare, so it shows as **Not pointed here**.
 
-## Automatic port forwarding
+## Automatic Port Forwarding
 
-**Automatic port forwarding**, under **Advanced > Addresses**, asks your router to forward the ports for you. It is
+**Automatic Port Forwarding**, under **Advanced > Addresses**, asks your router to forward the ports for you. It is
 on by default. Step 4, **Router**, shows how it went.
 
 * The plugin asks the router through NAT-PMP first, then UPnP. Most home routers support one of them, though some
@@ -69,7 +69,7 @@ turns green once **Test from Outside** reaches the server.
 
 ![Step 4, Router](screenshots/Router%20Step.png)
 
-### Checking the forward
+### Checking the Forward
 
 Step 4 reports what the device that answered says. To check the forward really is on your router:
 
@@ -79,10 +79,10 @@ Step 4 reports what the device that answered says. To check the forward really i
 4. In step 6, select **Test from Outside**. It shows **Reachable** once a place outside your network gets through.
 
 If the router lists no such rules, or step 4 says the device is not this server's default gateway, another device
-answered for the router. Turn off **Automatic port forwarding** under **Advanced > Addresses**, forward the ports by
+answered for the router. Turn off **Automatic Port Forwarding** under **Advanced > Addresses**, forward the ports by
 hand, and look up the device at that address in the router's list of connected devices.
 
-### Shared addresses and CGNAT
+### Shared Addresses and CGNAT
 
 Some internet providers share one public address between many homes, called carrier-grade NAT or CGNAT. Behind it,
 no forwarded port can be reached from the internet. Step 4 compares the internet address the router reports with
@@ -135,10 +135,10 @@ Change how often it runs, or disable it, under **Dashboard > Scheduled Tasks**. 
 | **PKCS#12 file** | You have a single `.pfx` or `.p12` file. |
 | **Self-signed** | No outside service at all. Each device has to trust it once, and TVs cannot. |
 
-Let's Encrypt is only contacted once **I accept the Let's Encrypt terms** is ticked. The terms are the
+Let's Encrypt is only contacted once **Accept the Let's Encrypt Terms** is ticked. The terms are the
 [Let's Encrypt Subscriber Agreement](https://letsencrypt.org/repository/).
 
-### How Let's Encrypt checks your address
+### How Let's Encrypt Checks Your Address
 
 Let's Encrypt only issues a certificate after checking that the address really points at you. The plugin picks the
 check, and the Certificate step says which is in use:
@@ -166,7 +166,7 @@ To replace a certificate now, for example if its key may have leaked, select **R
     `https://acme-staging-v02.api.letsencrypt.org/directory` to use Let's Encrypt's test server. Its certificates
     are not trusted, but they do not count against the real limits.
 
-### Self-signed certificates
+### Self-signed Certificates
 
 The plugin makes its own root certificate, valid for three years, and issues the proxy's certificate from it.
 That certificate renews itself about every 13 months, and whenever your addresses change. A device that trusts
@@ -203,15 +203,15 @@ when that happens, and every device then needs the new root. Remove the old one 
 These are on by default, and each can be changed under **Advanced**.
 
 * **Your own network is never blocked.** Bans, the block list and country rules only apply to the internet.
-* **Country rule**: only visitors from the country this server is in can connect, which blocks you abroad too.
+* **Country Rule**: only visitors from the country this server is in can connect, which blocks you abroad too.
   See [Defaults worth knowing](Settings.md#defaults-worth-knowing) for how to add countries. Unblocking a country
   from the Dashboard also adds it. Country rules need the location database. While it is missing, everyone can
-  connect, or nobody can with **Without the location database** set to **Block**, and **Advanced > Blocking** says
-  so under **Country rule**. A refresh only replaces the database with a new one that works, and a database that
+  connect, or nobody can with **Without the Location Database** set to **Block**, and **Advanced > Blocking** says
+  so under **Country Rule**. A refresh only replaces the database with a new one that works, and a database that
   will not open falls back to the one it replaced.
 * **Bans**: 5 failed sign-ins within 10 minutes bans the address for 60 minutes. An IPv6 visitor is banned with
   its whole /64, since it can pick any address in it. Failures spread over many /64s ban the wider /56 after 3 times
-  **Failed sign-ins before a ban**, or the /48 after 6 times, which is 15 and 30 at the default. Those wider bans last at most 15 minutes, since they shut out others in that network too.
+  **Failed Sign-ins Before a Ban**, or the /48 after 6 times, which is 15 and 30 at the default. Those wider bans last at most 15 minutes, since they shut out others in that network too.
 * **Sign-in limits**: an address can have two sign-ins in progress at once, a /56 four and a /48 eight, and each
   must arrive within 10 seconds.
 * **Immediate**: a ban, a block or a new country rule also closes connections already open, streams included.
@@ -226,7 +226,7 @@ These are on by default, and each can be changed under **Advanced**.
 The [Dashboard](Dashboard.md) shows who connects and what was turned away, with bans you can lift and addresses
 you can block.
 
-### Low-memory servers
+### Low-memory Servers
 
 When less than 3 GB of memory is available to Jellyfin, such as on a single-board computer or in a container with
 a memory limit, the proxy holds fewer connections: 500 in total instead of 2000, 32 per internet address instead
@@ -235,7 +235,7 @@ limit, so a 4 GB container counts as 3 GB and gets the standard values, while a 
 and gets the lower ones. This only changes settings you have not set yourself, the ones marked **Auto** in the
 [Settings Reference](Settings.md#timeouts). **Advanced** shows both defaults and which one applies.
 
-## Other apps
+## Other Apps
 
 The proxy serves Jellyfin only. To reach other apps on your network from outside, such as a request manager, use a
 general reverse proxy instead, for example [NGINX](https://nginx.org), [Apache](https://httpd.apache.org) or
@@ -244,9 +244,9 @@ turn Remote Access off, and point it at Jellyfin as Jellyfin's
 [networking guide](https://jellyfin.org/docs/general/post-install/networking/) describes. The plugin's Dynamic DNS
 keeps working alongside it.
 
-## Only through the proxy
+## Only Through the Proxy
 
-**Advanced > Security > Only through the proxy** makes the proxy the only way into Jellyfin. While Jellyfin
+**Advanced > Security > Only Through the Proxy** makes the proxy the only way into Jellyfin. While Jellyfin
 trusts the proxy, it listens on this server alone, so even a port left forwarded on the router, or a public
 address on the server, cannot reach it directly.
 
@@ -265,7 +265,7 @@ Visitors at home still count as local, so bans, the block list and country rules
 It needs at least one address that is not a wildcard. Turning it on or off while Jellyfin trusts the proxy
 restarts Jellyfin once, and a change that cannot be applied is refused rather than saved.
 
-### If the proxy stops working
+### If the Proxy Stops Working
 
 Jellyfin stays on this server alone. It is never opened up on its own, since on a VPS or a server with a public
 address that would put it on the internet with none of the proxy's protection. The server log and the activity
@@ -281,7 +281,7 @@ log say what failed and how to turn the proxy off by hand:
     Until the proxy is on again, make sure your router forwards no ports to this server, including 80, 443, 8096
     and 8920. With the proxy off, a forwarded port reaches Jellyfin directly with none of the proxy's protection.
 
-## Docker, tunnels and other proxies
+## Docker, Tunnels and Other Proxies
 
 The proxy needs to see each visitor's real address. Some setups hide it, because something in front of the proxy
 makes the connections itself:
@@ -293,7 +293,7 @@ makes the connections itself:
 In Docker, use host networking, `network_mode: host`. Do not also publish Jellyfin's own port with
 `-p 8096:8096`, since Docker opens published ports past firewalls such as ufw.
 
-### When every visitor looks local
+### When Every Visitor Looks Local
 
 When something hides the real addresses, every visitor seems to come from the same local address. The proxy then
 treats everyone as part of your home network, strangers included:
@@ -319,6 +319,6 @@ requests for your public names, all from one local address and none from the int
 
 !!! warning "Disabling the plugin"
     Disabling the plugin on Jellyfin's Plugins page stops the proxy but leaves Jellyfin trusting it. With
-    **Only through the proxy** on, nobody can reach Jellyfin at all. Use **Undo** before disabling. If you are
+    **Only Through the Proxy** on, nobody can reach Jellyfin at all. Use **Undo** before disabling. If you are
     already locked out, create the `DISABLE` file and restart with the plugin enabled, or stop Jellyfin and copy
     `network.before-remote-access.xml` over `network.xml` in Jellyfin's config folder.

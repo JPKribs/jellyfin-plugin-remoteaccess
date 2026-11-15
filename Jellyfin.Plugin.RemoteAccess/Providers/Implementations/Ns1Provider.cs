@@ -45,8 +45,8 @@ public sealed class Ns1Provider : DNSProviderBase
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record name",
-        Login = "API key",
+        Hostname = "Record Name",
+        Login = "API Key",
         Zone = "Zone",
         Server = true,
         Ttl = true,

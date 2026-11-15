@@ -37,8 +37,8 @@ public sealed class SimplyComProvider : DNSProviderBase
     public override ProviderFields Fields => new()
     {
         Hostname = "Hostname",
-        Login = "Account name",
-        Password = "API key",
+        Login = "Account Name",
+        Password = "API Key",
         Zone = "Zone",
         Server = true,
     };

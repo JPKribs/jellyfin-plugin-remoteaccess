@@ -44,7 +44,7 @@ public sealed class YandexProvider : DNSProviderBase
     {
         Hostname = "FQDN",
         Login = "Domain",
-        Password = "PDD token",
+        Password = "PDD Token",
         Server = true,
     };
 

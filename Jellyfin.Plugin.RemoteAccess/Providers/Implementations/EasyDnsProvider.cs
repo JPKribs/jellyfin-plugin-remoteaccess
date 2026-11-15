@@ -55,7 +55,7 @@ public sealed partial class EasyDnsProvider : DNSProviderBase
     {
         Hostname = "Hostname",
         Login = "Username",
-        Password = "API token",
+        Password = "API Token",
         Server = true,
         Advanced = new[] { "wildcard", "mx", "backupmx" },
     };

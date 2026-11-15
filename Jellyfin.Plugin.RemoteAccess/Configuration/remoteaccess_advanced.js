@@ -175,7 +175,8 @@ export default function (view) {
         fields().forEach(function (el) {
             var v = advanced[el.dataset.adv];
             if (v == null && defaults && !isAuto(el.dataset.adv)) v = defaults[el.dataset.adv];
-            if (el.dataset.kind === 'lines') el.value = (v || []).join('\n');
+            if (el.type === 'checkbox') el.checked = !!v;
+            else if (el.dataset.kind === 'lines') el.value = (v || []).join('\n');
             else el.value = v == null ? '' : String(v);
         });
         showCountryMode();
@@ -185,6 +186,10 @@ export default function (view) {
         var advanced = {};
         fields().forEach(function (el) {
             var key = el.dataset.adv;
+            if (el.type === 'checkbox') {
+                advanced[key] = el.checked;
+                return;
+            }
             var raw = el.value.trim();
             switch (el.dataset.kind) {
                 case 'bool': advanced[key] = raw === '' ? null : raw === 'true'; break;
@@ -204,7 +209,7 @@ export default function (view) {
 
     function fillHistory(settings) {
         var s = settings || HISTORY_DEFAULTS;
-        Shared.getEl('historyEnabled').value = s.Enabled === false ? 'false' : 'true';
+        Shared.getEl('historyEnabled').checked = s.Enabled !== false;
         Shared.getEl('historyDays').value = s.HistoryDays || HISTORY_DEFAULTS.HistoryDays;
         Shared.getEl('locationDetail').value = s.Location || HISTORY_DEFAULTS.Location;
         showLocationNote();
@@ -212,7 +217,7 @@ export default function (view) {
 
     function readHistory() {
         return {
-            Enabled: Shared.getEl('historyEnabled').value === 'true',
+            Enabled: Shared.getEl('historyEnabled').checked,
             HistoryDays: Math.max(1, parseInt(Shared.getEl('historyDays').value, 10) || HISTORY_DEFAULTS.HistoryDays),
             Location: Shared.getEl('locationDetail').value
         };

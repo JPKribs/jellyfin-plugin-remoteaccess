@@ -1,14 +1,6 @@
 /* remoteaccess_common.css */
 /* Layout only Remote Access has, on top of Base's shared style sheet. */
 
-/* ra-button-row */
-/* A row of action buttons under the description that explains them, with its status line after it. */
-/* Example: <div class="ra-button-row"><button class="raised base-button secondary small">Update Now</button></div> */
-.ra-button-row { display: flex; flex-wrap: wrap; gap: var(--base-gap-narrow); align-items: stretch; margin: var(--base-gap-narrow) 0 0; }
-.ra-button-row + .base-status-text, .ra-button-row:last-child { margin-bottom: var(--base-gap-wide); }
-.ra-button-row > button { flex: 1 1 12rem; margin: 0; justify-content: center; text-align: center; }
-.ra-button-row > button.small { flex: 0 0 auto; }
-
 /* ra-table */
 /* Space under a Base table, so the next heading does not sit on it. */
 /* Example: <div id="banned" class="ra-table"></div> */
