@@ -9,13 +9,13 @@ It is the page the **Remote Access** entry in the dashboard's side menu opens on
 
 Once Remote Access has an address, the **Share Your Server** card at the top shows it with a QR code. It is the
 proxy's first public name, the DDNS record's hostname in step 2 of the **Configuration** tab. A **Public** badge means
-anyone can open it, and **Home only** means only your home network can.
+anyone can open it, and **Home Only** means only your home network can.
 
 * Scan the code with a phone camera to open the address.
-* **Copy URL** puts the address on the clipboard, and **Copy Image** the QR code, ready to paste into a message.
-  A browser that cannot copy images, such as one on a plain `http://` page, saves the code as a file instead.
+* **Copy Image** puts the QR code on the clipboard, and **Download** saves it as a picture. The copy button beside the
+  address puts the address on the clipboard.
 * **Share** opens the device's share sheet, on browsers that have one.
-* When the only address is one your home network alone knows, such as `nas.lan`, the card shows **Home only** and a note,
+* When the only address is one your home network alone knows, such as `nas.lan`, the card shows **Home Only** and a note,
   since phones outside cannot open it. Choose a public address in step 2 to share it outside.
 * The card stays hidden while the proxy is off, or has no address other than a wildcard.
 
@@ -25,12 +25,13 @@ anyone can open it, and **Home only** means only your home network can.
 
 A world map and a table of countries.
 
-* **Users**, **Failures** and **Blocked** above the map choose what it shows. All three are on when the page
-  opens, and at least one always stays on.
-* On the map, countries with users are blue, countries with failed sign-ins red, and countries with only blocked
-  visitors purple. The more activity, the stronger the colour.
+* **Users**, **Failures** and **Blocked** above the map turn each kind on or off. All three are on when the page
+  opens.
+* On the map, users are blue, failed sign-ins red, and blocked visitors purple. A country with several kinds mixes
+  their colours, and the more activity, the stronger the colour.
 * The table has a row per country, with the number of users, failed sign-ins and blocked visitors, and when the
-  country was last seen.
+  country was last seen. A column shows only while its kind is on.
+* Selecting a country on the map selects its row, and selecting a row highlights its country.
 
 ## Banned
 
@@ -87,7 +88,7 @@ The status card in step 2, **Address**, of the **Configuration** tab shows how t
 * **Result**: what the last check did, in green when it worked and red when it failed, or **Paused** when updates
   are off under **Advanced > Dynamic DNS**.
 
-When the proxy is off, the step's badge says **Up to date** once the last check worked within the last 24 hours,
+When the proxy is off, the step says **Up to date** once the last check worked within the last 24 hours,
 **Failing** when it did not, and **Not updated yet** before the first one.
 
 ### Activity log

@@ -1,6 +1,11 @@
-import { createConfigPage, confirmDialog } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
-import { WORLD, WORLD_VIEWBOX } from './configurationpage?name=remoteaccess_worldmap.js';
-import { PLUGIN_ID, TABS, errorText, showText } from './configurationpage?name=remoteaccess_tabs.js';
+// remoteaccess_dashboard.js
+// The Dashboard tab: the share card, where visitors came from, banned addresses and what each address did.
+
+import { createConfigPage, confirmDialog, createWorldMap, linkWorldMap, createDataTable, createQrCode, createCollapsibleSection, renderRelative } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { PLUGIN_ID, TABS, problemText, showText, MAP_LAYERS, countryCounts, countryRows, countryFilterOptions, activityQuery } from './configurationpage?name=remoteaccess_tabs.js';
+
+// The badge color for each kind of activity, matching the map layer for the same kind.
+var TYPE_COLORS = { User: 'blue', Failure: 'red', Blocked: 'purple', Seen: 'gray' };
 
 export default function (view) {
     'use strict';
@@ -9,284 +14,147 @@ export default function (view) {
     var data = null;
     // While a block, unblock or unban request runs, the row buttons are off so a second click sends nothing.
     var busy = false;
-    // Which kinds the map and its table show. Any mix can be picked; all three is everything.
-    var mapShown = { people: true, failed: true, blocked: true };
-    // The Activity table's own filters, kept across the 30-second refresh.
-    var filterType = '';
-    var filterCountry = '';
-    var MAP_COLORS = { people: '0, 164, 220', failed: '224, 93, 93', blocked: '155, 89, 182' };
-    var TYPES = {
-        User: { color: 'blue' },
-        Failure: { color: 'red' },
-        Blocked: { color: 'purple' },
-        Seen: { color: 'gray' }
-    };
+    var map = null;
+    var countries = null;
+    var banned = null;
+    var activity = null;
+    var qr = null;
+    var share = null;
+    // The Activity filters of the last request, so the country filter keeps the country picked.
+    var lastFilters = {};
+    var placeOptions = '';
+    // The Activity table loads itself when it is built, so the first show does not ask again.
+    var builtThisShow = false;
 
-    function esc(text) { return Shared.escapeHtml(text == null ? '' : String(text)); }
-
-    // The short form, for tables where width is tight.
-    function agoShort(value) {
-        var t = new Date(value).getTime();
-        if (isNaN(t)) return '';
-        var s = Math.max(0, (Date.now() - t) / 1000);
-        if (s < 120) return 'now';
-        if (s < 3600) return Math.round(s / 60) + ' min ago';
-        if (s < 86400) return Math.round(s / 3600) + ' hr ago';
-        if (s < 86400 * 14) return Math.round(s / 86400) + ' days ago';
-        return new Date(t).toLocaleDateString();
+    // place
+    // The Activity row's country, or Local for your network.
+    function place(row) {
+        if (row.IsLocal) return 'Local';
+        return row.Country || 'Unknown';
     }
 
-    function place(item) {
-        if (item.IsLocal) return 'Local';
-        return item.Country || 'Unknown';
-    }
-
-    // Cities are looked up only when Location is set to City; then the table gains a column for them.
-    function showsArea() {
-        return !!(data && data.Settings && data.Settings.Location === 'City');
-    }
-
+    // shortHost
     // The address without its scheme, which every row would repeat.
     function shortHost(host) {
         return (host || '').replace(/^https?:\/\//, '');
     }
 
-    // The accessible name says which address or country the button acts on, since every row has one.
-    function button(label, cls, attrs, title, name) {
-        return '<button is="emby-button" type="button" class="raised jpk-button-small ' + cls + '" ' + attrs +
-            (title ? ' title="' + esc(title) + '"' : '') + (name ? ' aria-label="' + esc(name) + '"' : '') +
-            (busy && attrs !== 'disabled' ? ' disabled' : '') + '><span>' + label + '</span></button>';
+    // badge
+    // A colored label for a table cell.
+    function badge(color, text) {
+        var el = document.createElement('span');
+        el.className = 'base-badge ' + color;
+        el.textContent = text;
+        return el;
     }
 
-    // Every row has one button. A banned address can be unbanned; your network is never blocked, so its button
-    // is off; a blocked address unblocks itself; an address its country's rule refuses unblocks the country;
-    // anything else can be blocked.
+    // mono
+    // A cell in the mono font, for addresses.
+    function mono(text) {
+        var el = document.createElement('span');
+        el.className = 'base-mono';
+        el.textContent = text || '';
+        return el;
+    }
+
+    // rowButton
+    // A small button for a table row. The accessible name says which address or country it acts on, since every
+    // row has one.
+    //
+    // Inputs
+    // label [string]: The button's text.
+    // variant [string]: secondary or destructive.
+    // attrs [object]: Data attributes that name the action, or null for a button that is always off.
+    // title [string]: Why the button is off, or empty.
+    // name [string]: The accessible name.
+    //
+    // Output
+    // [HTMLElement]: The button.
+    function rowButton(label, variant, attrs, title, name) {
+        var b = document.createElement('button');
+        b.setAttribute('is', 'emby-button');
+        b.type = 'button';
+        b.className = 'raised base-button small ' + variant;
+        Object.keys(attrs || {}).forEach(function (k) { b.setAttribute('data-' + k, attrs[k]); });
+        if (title) b.title = title;
+        if (name) b.setAttribute('aria-label', name);
+        b.disabled = !attrs || busy;
+        var span = document.createElement('span');
+        span.textContent = label;
+        b.appendChild(span);
+        return b;
+    }
+
+    // action
+    // The one button each Activity row has. A banned address can be unbanned, your network is never blocked so
+    // its button is off, a blocked address unblocks itself, an address its country's rule refuses unblocks the
+    // country, and anything else can be blocked.
     function action(r) {
-        if (r.Banned) {
-            return button('Unban', 'jpk-secondary', 'data-unban="' + esc(r.Ip) + '"', '', 'Unban ' + r.Ip);
-        }
-
-        if (r.Exempt) {
-            return button('Block', 'jpk-button-destructive', 'disabled', 'Your network and trusted networks are never blocked.', 'Block ' + r.Ip);
-        }
-
-        if (r.Listed) {
-            return button('Unblock', 'jpk-secondary', 'data-unblock="' + esc(r.Ip) + '"', '', 'Unblock ' + r.Ip);
-        }
-
-        // Blocked only by a range: unblocking one address would not help, so say where it is changed.
-        if (r.Covered) {
-            return button('Unblock', 'jpk-secondary', 'disabled', 'Blocked by a range under Advanced.', 'Unblock ' + r.Ip);
-        }
-
+        if (r.Banned) return rowButton('Unban', 'secondary', { unban: r.Ip }, '', 'Unban ' + r.Ip);
+        if (r.Exempt) return rowButton('Block', 'destructive', null, 'Your network and trusted networks are never blocked.', 'Block ' + r.Ip);
+        if (r.Listed) return rowButton('Unblock', 'secondary', { unblock: r.Ip }, '', 'Unblock ' + r.Ip);
+        // Blocked only by a range, where unblocking one address would not help, so say where it is changed.
+        if (r.Covered) return rowButton('Unblock', 'secondary', null, 'Blocked by a range under Advanced.', 'Unblock ' + r.Ip);
         if (r.CountryBlocked) {
-            return button('Unblock', 'jpk-secondary', 'data-unblock-country="' + esc(r.CountryCode) + '" data-country="' + esc(r.Country) + '"', 'Allow connections from ' + r.Country, 'Unblock ' + r.Country + ' for ' + r.Ip);
+            return rowButton('Unblock', 'secondary', { 'unblock-country': r.CountryCode, country: r.Country }, 'Allow connections from ' + r.Country, 'Unblock ' + r.Country + ' for ' + r.Ip);
         }
-
-        return button('Block', 'jpk-button-destructive', 'data-block="' + esc(r.Ip) + '"', '', 'Block ' + r.Ip);
+        return rowButton('Block', 'destructive', { block: r.Ip }, '', 'Block ' + r.Ip);
     }
 
-    // When a ban ends, in the same short form as the tables.
-    function untilText(value) {
-        if (!value) return 'Until lifted';
-        var minutes = Math.max(0, (new Date(value).getTime() - Date.now()) / 60000);
-        if (minutes < 60) return Math.max(1, Math.round(minutes)) + ' min';
-        if (minutes < 1440 * 2) return Math.round(minutes / 60) + ' hr';
-        return Math.round(minutes / 1440) + ' days';
+    // showsArea
+    // Cities are looked up only when Location is set to City, and then the Activity table shows them.
+    function showsArea() {
+        return !!(data && data.Settings && data.Settings.Location === 'City');
     }
 
-    // Addresses banned for failed sign-ins, newest first, each with a way to lift the ban.
-    function renderBanned() {
-        var bans = (data && data.Banned) || [];
-        var box = Shared.getEl('banned');
-        if (!bans.length) {
-            box.innerHTML = '<div class="ra-table-wrap ra-empty">No banned addresses.</div>';
-            return;
-        }
-
-        box.innerHTML = '<div class="ra-table-wrap"><table class="ra-table ra-activity"><thead><tr>' +
-            '<th>IP</th><th>Country</th><th>Failures</th><th>Banned</th><th>Ends</th><th><span class="sr-only">Action</span></th>' +
-            '</tr></thead><tbody>' +
-            bans.map(function (b) {
-                return '<tr><td class="jpk-mono">' + esc(b.Ip) + '</td>' +
-                    '<td>' + esc(b.Country || 'Unknown') + '</td>' +
-                    '<td>' + esc(b.Failures) + '</td>' +
-                    '<td>' + esc(agoShort(b.BannedUtc)) + '</td>' +
-                    '<td>' + esc(untilText(b.UntilUtc)) + '</td>' +
-                    '<td class="ra-action">' + button('Unban', 'jpk-secondary', 'data-unban="' + esc(b.Ip) + '"', '', 'Unban ' + b.Ip) + '</td></tr>';
-            }).join('') + '</tbody></table></div>';
-    }
-
-    // The country filter lists every country with any activity, from the full totals rather than the rows
-    // shown, plus your network, and keeps the current choice.
-    function fillCountryFilter() {
-        var names = {};
-        [data.PeopleByCountry, data.FailedByCountry, data.BlockedByCountry].forEach(function (list) {
-            (list || []).forEach(function (t) { names[t.CountryCode] = t.Country || t.CountryCode; });
-        });
-        var codes = Object.keys(names).sort(function (a, b) { return names[a].localeCompare(names[b]); });
-        var select = Shared.getEl('filterCountry');
-        select.innerHTML = '<option value="">All</option><option value="local">Local</option>' + codes.map(function (c) {
-            return '<option value="' + esc(c) + '">' + esc(names[c]) + '</option>';
-        }).join('');
-        if (filterCountry && filterCountry !== 'local' && !names[filterCountry]) {
-            select.insertAdjacentHTML('beforeend', '<option value="' + esc(filterCountry) + '">' + esc(filterCountry) + '</option>');
-        }
-        select.value = filterCountry;
-    }
-
-    // What each address did, newest first. The server applies the filters, so a flood of one kind never hides
-    // another behind the row limit.
-    function renderActivity() {
-        fillCountryFilter();
-        var rows = (data && data.Activity) || [];
-        var box = Shared.getEl('activity');
-        if (!rows.length) {
-            box.innerHTML = '<div class="ra-table-wrap ra-empty">' + (filterType || filterCountry ? 'Nothing matches these filters.' : 'Nothing recorded yet.') + '</div>';
-            return;
-        }
-
-        var area = showsArea();
-        box.innerHTML = '<div class="ra-table-wrap"><table class="ra-table ra-activity"><thead><tr>' +
-            '<th>Type</th><th>User</th><th>IP</th><th>Device</th><th>Address</th><th>Country</th>' + (area ? '<th>Area</th>' : '') + '<th>Last Seen</th>' +
-            '<th><span class="sr-only">Action</span></th>' +
-            '</tr></thead><tbody>' +
-            rows.map(function (r) {
-                var type = TYPES[r.Type] || TYPES.Seen;
-                return '<tr><td><span class="jpk-badge ' + type.color + '">' + esc(r.Type) + '</span></td>' +
-                    '<td>' + esc(r.User) + '</td>' +
-                    '<td class="jpk-mono">' + esc(r.Ip) + '</td>' +
-                    '<td>' + esc(r.Device) + '</td>' +
-                    '<td>' + esc(shortHost(r.Host)) + '</td>' +
-                    '<td>' + esc(place(r)) + '</td>' +
-                    (area ? '<td>' + esc(r.IsLocal ? '' : r.City || '') + '</td>' : '') +
-                    '<td>' + esc(agoShort(r.LastUtc)) + '</td>' +
-                    '<td class="ra-action">' + action(r) + '</td></tr>';
-            }).join('') + '</tbody></table></div>';
-    }
-
-    // One row per country: users seen, failed sign-ins and blocked addresses side by side, most first, for the
-    // kinds picked above the map.
-    function countryRows() {
-        var rows = {};
-        function add(list, key) {
-            (list || []).forEach(function (t) {
-                var r = rows[t.CountryCode] || (rows[t.CountryCode] = { code: t.CountryCode, name: t.Country || t.CountryCode, users: 0, failures: 0, blocked: 0, last: t.LastUtc });
-                r[key] = t.Count;
-                if (Date.parse(t.LastUtc) > Date.parse(r.last)) {
-                    r.last = t.LastUtc;
-                }
-            });
-        }
-
-        if (data && mapShown.people) {
-            add(data.PeopleByCountry, 'users');
-        }
-
-        if (data && mapShown.failed) {
-            add(data.FailedByCountry, 'failures');
-        }
-
-        if (data && mapShown.blocked) {
-            add(data.BlockedByCountry, 'blocked');
-        }
-
-        return Object.keys(rows).map(function (k) { return rows[k]; }).sort(function (x, y) {
-            return total(y) - total(x) || (x.name < y.name ? -1 : 1);
-        });
-    }
-
-    function total(r) {
-        return r.users + r.failures + r.blocked;
-    }
-
-    // A count column's heading: the word, or an icon on a narrow screen. The word stays as the tooltip and the
-    // accessible name.
-    function countHeading(word, icon) {
-        return '<th class="ra-num" title="' + word + '" aria-label="' + word + '"><span class="ra-word">' + word +
-            '</span><span class="ra-icon material-icons" aria-hidden="true">' + icon + '</span></th>';
-    }
-
-    function countLabel(r) {
-        return [
-            r.users ? r.users + (r.users === 1 ? ' user' : ' users') : '',
-            r.failures ? r.failures + (r.failures === 1 ? ' failed sign-in' : ' failed sign-ins') : '',
-            r.blocked ? r.blocked + (r.blocked === 1 ? ' blocked address' : ' blocked addresses') : ''
-        ].filter(function (x) { return x; }).join(', ');
-    }
-
-    // Shades each country by how much came from it. Countries with users are blue, then countries with failed
-    // sign-ins are red, and countries with only blocked addresses are purple. Local connections have no
-    // country, so they are not on the map.
+    // renderMap
+    // Shades the map and fills the country table beside it for the layers that are on.
     function renderMap() {
-        var rows = countryRows();
-        var byCode = {};
-        var max = 0;
-        rows.forEach(function (r) { byCode[r.code] = r; max = Math.max(max, total(r)); });
+        map.setCounts(countryCounts(data));
+        countries.setRows(countryRows(data, map.getActive()));
+    }
 
-        var paths = Object.keys(WORLD).map(function (code) {
-            var shape = WORLD[code];
-            var r = byCode[code];
-            if (!r) {
-                return '<path d="' + shape.d + '"><title>' + esc(shape.name) + '</title></path>';
-            }
+    // showLayers
+    // Shows a count column only while its layer is on.
+    function showLayers(active) {
+        MAP_LAYERS.forEach(function (layer) { countries.setColumnHidden(layer.column, active.indexOf(layer.key) < 0); });
+        if (data) countries.setRows(countryRows(data, active));
+    }
 
-            var count = total(r);
-            var strength = 0.35 + 0.65 * (max > 1 ? (count - 1) / (max - 1) : 1);
-            var color = r.users ? MAP_COLORS.people : r.failures ? MAP_COLORS.failed : MAP_COLORS.blocked;
-            return '<path class="ra-hit" style="fill: rgba(' + color + ', ' + strength.toFixed(2) + ')" d="' + shape.d + '">' +
-                '<title>' + esc(r.name + ', ' + countLabel(r)) + '</title></path>';
-        }).join('');
-        Shared.getEl('worldMap').innerHTML = '<svg viewBox="' + WORLD_VIEWBOX + '" role="img" aria-label="World map">' + paths + '</svg>';
-
-        var legend = Shared.getEl('mapLegend');
-        if (!rows.length) {
-            // The empty state sits in the same frame as the table, so the layout does not jump between views.
-            var picked = Object.keys(mapShown).filter(function (k) { return mapShown[k]; });
-            var empty = picked.length === 3 ? 'Nothing from the internet yet.'
-                : picked.length > 1 ? 'Nothing from the internet for these yet.'
-                : { people: 'No users from the internet yet.', failed: 'No failed sign-ins.', blocked: 'Nothing blocked yet.' }[picked[0]];
-            legend.innerHTML = '<div class="ra-table-wrap ra-empty">' + esc(empty) + '</div>';
-        } else {
-            legend.innerHTML = '<div class="ra-table-wrap"><table class="ra-table"><thead><tr><th>Country</th>' +
-                (mapShown.people ? countHeading('Users', 'person') : '') +
-                (mapShown.failed ? countHeading('Failures', 'warning') : '') +
-                (mapShown.blocked ? countHeading('Blocked', 'block') : '') +
-                '<th>Last</th></tr></thead><tbody>' +
-                rows.map(function (r) {
-                    return '<tr><td>' + esc(r.name) + '</td>' +
-                        (mapShown.people ? '<td class="ra-num">' + r.users + '</td>' : '') +
-                        (mapShown.failed ? '<td class="ra-num">' + r.failures + '</td>' : '') +
-                        (mapShown.blocked ? '<td class="ra-num">' + r.blocked + '</td>' : '') +
-                        '<td>' + esc(agoShort(r.last)) + '</td></tr>';
-                }).join('') + '</tbody></table></div>';
+    // apply
+    // Draws everything the People reply holds apart from the Activity rows, which its table draws.
+    function apply(d) {
+        data = d || {};
+        renderMap();
+        banned.setRows(data.Banned || []);
+        activity.setColumnHidden('area', !showsArea());
+        var options = countryFilterOptions(data, ((lastFilters.place || [])[0]) || '');
+        var key = JSON.stringify(options);
+        if (key !== placeOptions) {
+            placeOptions = key;
+            activity.setFilterOptions('place', options);
         }
-
-        [['mapPeople', 'people'], ['mapFailed', 'failed'], ['mapBlocked', 'blocked']].forEach(function (b) {
-            var button = Shared.getEl(b[0]);
-            button.className = 'raised emby-button ' + (mapShown[b[1]] ? 'jpk-button-submit' : 'jpk-secondary');
-            button.setAttribute('aria-pressed', mapShown[b[1]] ? 'true' : 'false');
-        });
+        var note = '';
+        if (data.Settings && data.Settings.Enabled === false) note = 'History is off, so nothing new is recorded. Turn it on under Advanced.';
+        else if (data.Recording === false) note = 'History is recorded while remote access is on.';
+        showText(Shared, 'peopleOff', note);
     }
 
-    function load() {
-        var query = [];
-        if (filterType) query.push('type=' + encodeURIComponent(filterType));
-        if (filterCountry) query.push('place=' + encodeURIComponent(filterCountry));
-        return Shared.apiRequest('People' + (query.length ? '?' + query.join('&') : ''), 'GET').then(function (d) {
-            data = d || {};
-            renderMap();
-            renderBanned();
-            renderActivity();
-            var note = '';
-            if (data.Settings && data.Settings.Enabled === false) note = 'History is off, so nothing new is recorded. Turn it on under Advanced.';
-            else if (data.Recording === false) note = 'History is recorded while remote access is on.';
-            showText(Shared, 'peopleOff', note);
+    // fetchActivity
+    // Loads the People reply for the Activity table's filters and draws the rest of the page from it.
+    function fetchActivity(query) {
+        lastFilters = (query && query.filters) || {};
+        return Shared.apiRequest(activityQuery(lastFilters), 'GET').then(function (d) {
+            apply(d);
+            return (d && d.Activity) || [];
         }).catch(function () {
-            Shared.getEl('activity').innerHTML = '<div class="ra-table-wrap ra-empty">Could not load Remote Access.</div>';
+            Shared.setStatus('activityStatus', 'Could not load Remote Access.', true, { timeout: 0 });
+            return [];
         });
     }
 
+    // setBusy
+    // Turns every row button off while a change is sent, and back on after.
     function setBusy(on) {
         busy = on;
         Array.prototype.slice.call(view.querySelectorAll('[data-unban], [data-block], [data-unblock], [data-unblock-country]')).forEach(function (b) {
@@ -294,155 +162,155 @@ export default function (view) {
         });
     }
 
-    // Posts one change, reports it under the Activity heading and reloads.
+    // post
+    // Sends one change, reports it under the Activity heading and reloads.
     function post(path, done, failed) {
         if (busy) return;
         setBusy(true);
         Shared.apiRequest(path, 'POST').then(function () {
             Shared.setStatus('activityStatus', done, false);
         }).catch(function (err) {
-            return errorText(err, failed).then(function (message) {
+            return problemText(err, failed).then(function (message) {
                 Shared.setStatus('activityStatus', message, true);
             });
         }).then(function () {
             setBusy(false);
-            return load();
+            activity.reload();
         });
     }
 
-    function setBlocked(ip, block) {
-        post('People/' + (block ? 'Block' : 'Unblock') + '?ip=' + encodeURIComponent(ip),
-            (block ? 'Blocked ' : 'Unblocked ') + ip + '.', 'Could not ' + (block ? 'block ' : 'unblock ') + ip + '.');
-    }
-
-    function unban(ip) {
-        post('People/Unban?ip=' + encodeURIComponent(ip), 'Unbanned ' + ip + '.', 'Could not unban ' + ip + '.');
-    }
-
-    function onActivityClick(e) {
-        if (busy) return;
-        var lift = e.target.closest('[data-unban]');
-        if (lift) {
-            unban(lift.getAttribute('data-unban'));
-            return;
-        }
-
-        var block = e.target.closest('[data-block]');
-        if (block) {
-            setBlocked(block.getAttribute('data-block'), true);
-            return;
-        }
-
-        var unblock = e.target.closest('[data-unblock]');
-        if (unblock) {
-            setBlocked(unblock.getAttribute('data-unblock'), false);
-            return;
-        }
-
-        var country = e.target.closest('[data-unblock-country]');
-        if (country) unblockCountry(country.getAttribute('data-unblock-country'), country.getAttribute('data-country'));
-    }
-
+    // unblockCountry
     // A country rule covers many people, so this one asks first.
     function unblockCountry(code, name) {
-        confirmDialog('Connections from ' + name + ' are allowed from now on. Individual blocked addresses stay blocked.', { title: 'Unblock ' + name, confirmText: 'Unblock' }).then(function (ok) {
+        confirmDialog('Unblock ' + name + '? Individual blocked addresses stay blocked.', { title: 'Unblock Country', confirmText: 'Unblock' }).then(function (ok) {
             if (ok) post('People/UnblockCountry?code=' + encodeURIComponent(code), 'Unblocked ' + name + '.', 'Could not unblock ' + name + '.');
         });
     }
 
-    // Turns a kind on or off. The last one picked stays on, so the map always shows something.
-    function toggleKind(kind) {
-        var others = Object.keys(mapShown).some(function (k) { return k !== kind && mapShown[k]; });
-        if (mapShown[kind] && !others) return;
-        mapShown[kind] = !mapShown[kind];
-        renderMap();
-    }
-
-    function bind() {
-        Shared.getEl('activity').addEventListener('click', onActivityClick);
-        Shared.getEl('banned').addEventListener('click', onActivityClick);
-        Shared.getEl('filterType').addEventListener('change', function (e) { filterType = e.target.value; load(); });
-        Shared.getEl('filterCountry').addEventListener('change', function (e) { filterCountry = e.target.value; load(); });
-        Shared.getEl('mapPeople').addEventListener('click', function () { toggleKind('people'); });
-        Shared.getEl('mapFailed').addEventListener('click', function () { toggleKind('failed'); });
-        Shared.getEl('mapBlocked').addEventListener('click', function () { toggleKind('blocked'); });
-        Shared.getEl('btnCopyShare').addEventListener('click', function () {
-            Shared.copyWithFeedback(this, Shared.getEl('shareUrl').href, { copiedText: 'Copied' });
-        });
-        Shared.getEl('btnCopyQr').addEventListener('click', function () { copyQr(this); });
-        Shared.getEl('btnShare').addEventListener('click', function () {
-            var url = Shared.getEl('shareUrl').href;
-            navigator.share({ title: 'Jellyfin', url: url }).catch(function () { /* closed without sharing */ });
-        });
-    }
-
-    // The QR code as a PNG, drawn from the server's SVG at a size that prints and scans well.
-    function qrPng() {
-        var shown = Shared.getEl('shareQr').querySelector('svg');
-        if (!shown) return Promise.reject(new Error('No code'));
-        // A copy with a fixed size, since the shown code only has a viewBox and would draw at the browser's default.
-        var svg = shown.cloneNode(true);
-        svg.setAttribute('width', '600');
-        svg.setAttribute('height', '600');
-        var url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)], { type: 'image/svg+xml' }));
-        return new Promise(function (resolve, reject) {
-            var img = new Image();
-            img.onload = function () {
-                var canvas = document.createElement('canvas');
-                canvas.width = canvas.height = 600;
-                var ctx = canvas.getContext('2d');
-                ctx.fillStyle = '#fff';
-                ctx.fillRect(0, 0, 600, 600);
-                ctx.drawImage(img, 0, 0, 600, 600);
-                URL.revokeObjectURL(url);
-                canvas.toBlob(function (blob) { return blob ? resolve(blob) : reject(new Error('No image')); }, 'image/png');
-            };
-            img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('No image')); };
-            img.src = url;
-        });
-    }
-
-    // Copies the code as an image. Browsers that cannot put images on the clipboard, as on a plain http:// page,
-    // save it as a file instead.
-    function copyQr(button) {
-        var label = button.querySelector('span:last-child');
-        var original = label.textContent;
-        function done(text) {
-            label.textContent = text;
-            setTimeout(function () { label.textContent = original; }, 1500);
+    // onRowAction
+    // Runs the button a row holds, for the Banned and Activity tables.
+    function onRowAction(e) {
+        if (busy) return;
+        var b = e.target.closest('button[data-unban], button[data-block], button[data-unblock], button[data-unblock-country]');
+        if (!b || b.disabled) return;
+        e.stopPropagation();
+        var ip;
+        if ((ip = b.getAttribute('data-unban'))) {
+            post('People/Unban?ip=' + encodeURIComponent(ip), 'Unbanned ' + ip + '.', 'Could not unban ' + ip + '.');
+        } else if ((ip = b.getAttribute('data-block'))) {
+            post('People/Block?ip=' + encodeURIComponent(ip), 'Blocked ' + ip + '.', 'Could not block ' + ip + '.');
+        } else if ((ip = b.getAttribute('data-unblock'))) {
+            post('People/Unblock?ip=' + encodeURIComponent(ip), 'Unblocked ' + ip + '.', 'Could not unblock ' + ip + '.');
+        } else {
+            unblockCountry(b.getAttribute('data-unblock-country'), b.getAttribute('data-country'));
         }
-        qrPng().then(function (blob) {
-            if (navigator.clipboard && window.ClipboardItem && window.isSecureContext) {
-                return navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(function () { done('Copied'); });
-            }
-            var link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'jellyfin-qr.png';
-            link.click();
-            setTimeout(function () { URL.revokeObjectURL(link.href); }, 1000);
-            done('Saved');
-        }).catch(function () { done('Copy failed'); });
     }
 
-    // The address people use from the internet, with its QR code. Hidden until Remote Access has a public name.
+    // buildShare
+    // The share card, a fixed section with the address as a QR code and its kind as a badge.
+    function buildShare() {
+        var body = Shared.getEl('shareBody');
+        share = createCollapsibleSection({ title: 'Share Your Server', collapsible: false, badge: { label: 'Public', color: 'green' }, content: body });
+        body.classList.remove('hidden');
+        Shared.getEl('shareHost').appendChild(share.element);
+        qr = createQrCode({ label: 'QR code for your server\'s address', fileName: 'jellyfin-qr.png' });
+        Shared.getEl('shareQr').appendChild(qr.element);
+    }
+
+    // loadShare
+    // The address people use from the internet. The card stays hidden until Remote Access has a public name.
     function loadShare() {
         return Shared.apiRequest('Share', 'GET').then(function (s) {
-            var url = s && s.Url;
-            Shared.setVisible('shareCard', !!url);
+            var url = (s && s.Url) || '';
+            Shared.setVisible('shareHost', !!url);
             if (!url) return;
-            var link = Shared.getEl('shareUrl');
-            link.href = url;
-            link.textContent = url.replace(/^https:\/\//, '');
-            // Markup made by the server's own QR encoder from the address alone.
-            Shared.getEl('shareQr').innerHTML = s.QrSvg || '';
-            var badge = Shared.getEl('shareBadge');
-            badge.className = 'jpk-badge ' + (s.HomeOnly ? 'orange' : 'green');
-            badge.textContent = s.HomeOnly ? 'Home only' : 'Public';
+            qr.setValue(url);
+            share.setBadge(s.HomeOnly ? { label: 'Home Only', color: 'orange' } : { label: 'Public', color: 'green' });
             Shared.setVisible('shareNote', !s.HomeOnly);
             Shared.setVisible('shareHomeOnly', !!s.HomeOnly);
             Shared.setVisible('btnShare', typeof navigator.share === 'function');
         }).catch(function () {
-            Shared.setVisible('shareCard', false);
+            Shared.setVisible('shareHost', false);
+        });
+    }
+
+    // buildTables
+    // The world map and its country table, the Banned table and the Activity table.
+    function buildTables() {
+        map = createWorldMap({
+            layers: MAP_LAYERS.map(function (l) { return { key: l.key, label: l.label, color: l.color }; }),
+            label: 'Where visitors came from',
+            onLayersChange: showLayers
+        });
+        Shared.getEl('worldMap').appendChild(map.element);
+
+        var counts = MAP_LAYERS.map(function (l) {
+            return { key: l.column, label: l.label, icon: l.icon, align: 'end' };
+        });
+        countries = createDataTable({
+            columns: [{ key: 'name', label: 'Country' }].concat(counts, [
+                { key: 'last', label: 'Last', value: function (r) { return new Date(r.last); }, render: renderRelative('last') }
+            ]),
+            rows: [],
+            rowKey: 'code',
+            selectable: true,
+            label: 'Countries',
+            emptyText: 'Nothing from the internet yet.'
+        });
+        Shared.getEl('countryTable').appendChild(countries.element);
+        linkWorldMap(map, countries, { field: 'code', rowKey: 'code' });
+
+        banned = createDataTable({
+            columns: [
+                { key: 'Ip', label: 'IP', render: function (b) { return mono(b.Ip); } },
+                { key: 'Country', label: 'Country', value: function (b) { return b.Country || 'Unknown'; } },
+                { key: 'Failures', label: 'Failures', align: 'end', icon: 'warning' },
+                { key: 'BannedUtc', label: 'Banned', value: function (b) { return new Date(b.BannedUtc); }, render: renderRelative('BannedUtc') },
+                { key: 'UntilUtc', label: 'Ends', value: function (b) { return b.UntilUtc ? new Date(b.UntilUtc) : null; }, render: renderRelative('UntilUtc', { emptyText: 'Until Lifted' }) },
+                { key: 'action', label: 'Action', sortable: false, width: '7rem', render: function (b) { return rowButton('Unban', 'secondary', { unban: b.Ip }, '', 'Unban ' + b.Ip); } }
+            ],
+            rows: [],
+            rowKey: 'Ip',
+            label: 'Banned addresses',
+            emptyText: 'No banned addresses.'
+        });
+        Shared.getEl('banned').appendChild(banned.element);
+
+        activity = createDataTable({
+            columns: [
+                { key: 'Type', label: 'Type', render: function (r) { return badge(TYPE_COLORS[r.Type] || 'gray', r.Type); } },
+                { key: 'User', label: 'User' },
+                { key: 'Ip', label: 'IP', render: function (r) { return mono(r.Ip); } },
+                { key: 'Device', label: 'Device' },
+                { key: 'Host', label: 'Address', value: function (r) { return shortHost(r.Host); } },
+                { key: 'place', label: 'Country', value: place },
+                { key: 'area', label: 'Area', hidden: true, value: function (r) { return r.IsLocal ? '' : r.City || ''; } },
+                { key: 'LastUtc', label: 'Last Seen', value: function (r) { return new Date(r.LastUtc); }, render: renderRelative('LastUtc') },
+                { key: 'action', label: 'Action', sortable: false, width: '7rem', render: action }
+            ],
+            fetch: fetchActivity,
+            rowKey: function (r) { return r.Type + '|' + r.Ip + '|' + r.User + '|' + r.Host; },
+            filters: [
+                { name: 'type', label: 'Types', options: ['User', 'Failure', 'Blocked', 'Seen'].map(function (t) { return { value: t, label: t }; }) },
+                { name: 'place', label: 'Countries', options: [{ value: 'local', label: 'Local' }] }
+            ],
+            label: 'Activity',
+            emptyText: 'Nothing recorded yet.'
+        });
+        Shared.getEl('activity').appendChild(activity.element);
+
+        Shared.getEl('banned').addEventListener('click', onRowAction, true);
+        Shared.getEl('activity').addEventListener('click', onRowAction, true);
+    }
+
+    // bind
+    // Builds the page's components once.
+    function bind() {
+        buildShare();
+        buildTables();
+        builtThisShow = true;
+        Shared.getEl('btnShare').addEventListener('click', function () {
+            navigator.share({ title: 'Jellyfin', url: qr.getValue() }).catch(function () { /* closed without sharing */ });
         });
     }
 
@@ -455,8 +323,9 @@ export default function (view) {
         bind: bind,
         load: function (shared, page) {
             loadShare();
-            load();
-            page.createPoller(load, 30000).start(false);
+            if (!builtThisShow) activity.reload();
+            builtThisShow = false;
+            page.createPoller(function () { activity.reload(); }, 30000).start(false);
         }
     }).shared;
 }

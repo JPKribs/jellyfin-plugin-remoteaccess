@@ -10,9 +10,9 @@ break in. There is no separate reverse proxy to run.
 
 ## Setup
 
-Setup is the six numbered steps of the **Configuration** tab: **Proxy on**, **Address**, **Certificate**,
-**Router**, **Trust the Proxy** and **Reachable from outside**. When every step is done, the summary at the top
-says **Ready to share**. The [Beginner's Guide](BeginnersGuide.md) walks through them from the start, including
+Setup is the six numbered steps of the **Configuration** tab: **Proxy On**, **Address**, **Certificate**,
+**Router**, **Trust the Proxy** and **Reachable From Outside**. When every step is done, the bar at the top reads
+6 of 6 done and a note gives the address Jellyfin can be reached at. The [Beginner's Guide](BeginnersGuide.md) walks through them from the start, including
 what you need first: a name kept pointed at your home by [the DDNS record](Records.md), a public IP that is not
 shared through CGNAT, and on Linux or in Docker access to ports 80 and 443. The [Settings Reference](Settings.md#configuration) lists each step's settings.
 
@@ -102,7 +102,7 @@ answers over UPnP or NAT-PMP. Without one, compare the addresses yourself as in
 
 ## Test from Outside
 
-Step 6, **Reachable from outside**, checks your address the way a visitor would. **Test from Outside** asks
+Step 6, **Reachable From Outside**, checks your address the way a visitor would. **Test from Outside** asks
 [check-host.net](https://check-host.net) to connect to your public name on port 443 from up to three places around
 the world. It can take 20 seconds.
 
@@ -124,7 +124,7 @@ Change how often it runs, or disable it, under **Dashboard > Scheduled Tasks**. 
     Only the hostname and the port are sent to check-host.net, when you select **Test from Outside** and each
     time the **Verify External Access** task runs. Disable the task to send them only when you ask.
 
-![Step 6, Reachable from outside](screenshots/Outside%20Test.png)
+![Step 6, Reachable From Outside](screenshots/Outside%20Test.png)
 
 ## Certificates
 

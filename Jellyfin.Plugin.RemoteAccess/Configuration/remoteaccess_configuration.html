@@ -11,243 +11,197 @@
                         <h1 class="sectionTitle">Configuration</h1>
                     </div>
 
-                    <!-- Where the setup stands: steps done, one bar segment per step, and what to do next. -->
-                    <div id="summary" class="ra-summary" aria-live="polite">
-                        <div class="ra-summary-head">
-                            <span id="summaryTitle" class="ra-summary-title">Checking...</span>
-                            <span id="summaryBadge" class="jpk-badge gray hidden"></span>
-                        </div>
-                        <div id="summaryBar" class="ra-summary-bar" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-                        <div class="ra-summary-text"><span id="summaryText"></span> <button type="button" id="summaryOpen" class="ra-summary-link hidden"></button></div>
-                    </div>
-                    <div id="folderProblem" class="jpk-error hidden"></div>
-                    <div id="everyoneLocal" class="jpk-warn hidden"></div>
-                    <div id="countryNote" class="jpk-info hidden"></div>
+                    <!-- Summary -->
+                    <!-- What the steps add up to, when the proxy is off or every step is done. -->
+                    <div id="summaryNote" class="base-info hidden"></div>
+                    <div id="folderProblem" class="base-error hidden"></div>
+                    <div id="everyoneLocal" class="base-warn hidden"></div>
+                    <div id="countryNote" class="base-info hidden"></div>
 
-                    <div class="ra-steps">
+                    <div id="checklist"></div>
+                    <div id="stepBodies" class="hidden">
 
-                        <!-- Step 1: the proxy itself -->
-                        <div class="jpk-collapsible-section ra-step" id="stepPower" data-state="gray">
-                            <button type="button" class="jpk-collapsible-header" data-target="bodyPower" aria-expanded="true" aria-controls="bodyPower">
-                                <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconPower" aria-hidden="true">1</span>Proxy on</span>
-                                <span class="jpk-badge gray" id="statePower"></span>
-                                <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
-                            </button>
-                            <div class="jpk-collapsible-content" id="bodyPower">
-                                <div class="ra-step-text" id="textPower" aria-live="polite"></div>
-                                <div class="checkboxContainer checkboxContainer-withDescription">
-                                    <label class="emby-checkbox-label">
-                                        <input type="checkbox" is="emby-checkbox" id="enabled" />
-                                        <span class="checkboxLabel">Enabled</span>
-                                    </label>
-                                    <div class="fieldDescription checkboxFieldDescription">Starts the proxy when you save.</div>
-                                </div>
+                        <!-- Proxy On -->
+                        <div id="bodyPower">
+                            <div class="fieldDescription" id="textPower" role="status"></div>
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input type="checkbox" is="emby-checkbox" id="enabled" />
+                                    <span class="checkboxLabel">Enabled</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">Starts the proxy when you save.</div>
                             </div>
                         </div>
 
-                        <!-- Step 2: the address, with the DDNS record that keeps it current -->
-                        <div class="jpk-collapsible-section ra-step" id="stepAddress" data-state="gray">
-                            <button type="button" class="jpk-collapsible-header" data-target="bodyAddress" aria-expanded="true" aria-controls="bodyAddress">
-                                <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconAddress" aria-hidden="true">2</span>Address</span>
-                                <span class="jpk-badge gray" id="stateAddress"></span>
-                                <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
-                            </button>
-                            <div class="jpk-collapsible-content" id="bodyAddress">
-                                <div class="ra-step-text" id="textAddress" aria-live="polite"></div>
-                                <div id="nameDetails" class="jpk-record-card hidden">
-                                    <div class="jpk-record-row"><span class="jpk-record-label">Name</span><span id="nameHostname" class="jpk-mono"></span></div>
-                                    <div class="jpk-record-row"><span class="jpk-record-label">Points to</span><span id="nameAddresses" class="jpk-mono"></span></div>
-                                    <div id="namePublicRow" class="jpk-record-row"><span class="jpk-record-label">This server</span><span id="namePublic" class="jpk-mono"></span></div>
-                                </div>
+                        <!-- Address -->
+                        <!-- The DDNS record that keeps the address current. -->
+                        <div id="bodyAddress">
+                            <div class="fieldDescription" id="textAddress" role="status"></div>
+                            <div id="nameDetails" class="base-record-card hidden">
+                                <div class="base-record-row"><span class="base-record-label">Name</span><span id="nameHostname" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label">Points to</span><span id="nameAddresses" class="base-mono"></span></div>
+                                <div id="namePublicRow" class="base-record-row"><span class="base-record-label">This server</span><span id="namePublic" class="base-mono"></span></div>
+                            </div>
 
-                                <div id="extraRecords" class="jpk-warn hidden"></div>
-                                <div id="loadError" class="jpk-error hidden"></div>
-                                <div class="ra-step-text"><strong>Use the most limited token your provider allows.</strong></div>
+                            <div id="extraRecords" class="base-warn hidden"></div>
+                            <div id="loadError" class="base-error hidden"></div>
+                            <div class="fieldDescription"><strong>Use the most limited token your provider allows.</strong></div>
 
-                                <div class="selectContainer">
-                                    <label class="selectLabel" for="recProvider">Provider</label>
-                                    <select id="recProvider" class="jpk-selector-dropdown"></select>
-                                </div>
-                                <div id="providerHint" class="jpk-info"></div>
+                            <div class="selectContainer">
+                                <label class="selectLabel" for="recProvider">Provider</label>
+                                <select is="emby-select" id="recProvider"></select>
+                            </div>
+                            <div id="providerHint" class="base-info"></div>
+                            <div class="inputContainer">
+                                <label for="recHostname">Hostname / domain</label>
+                                <input is="emby-input" type="text" id="recHostname" autocomplete="off" placeholder="home.example.com" />
+                                <div id="recHostnameDescription" class="fieldDescription">The name people use to reach Jellyfin.</div>
+                            </div>
+                            <div class="inputContainer">
+                                <label for="recLogin">Login / username / key</label>
+                                <input is="emby-input" type="text" id="recLogin" autocomplete="off" />
+                                <button is="emby-button" type="button" id="btnClearLogin" class="raised base-button secondary small hidden" title="Remove the saved value when saved" aria-label="Clear the saved login">
+                                    <span>Clear saved value</span>
+                                </button>
+                            </div>
+                            <div class="inputContainer">
+                                <label for="recPassword">Password / token / secret</label>
+                                <input is="emby-input" type="password" id="recPassword" autocomplete="off" />
+                                <button is="emby-button" type="button" id="btnClearPassword" class="raised base-button secondary small hidden" title="Remove the saved value when saved" aria-label="Clear the saved password">
+                                    <span>Clear saved value</span>
+                                </button>
+                            </div>
+                            <div class="inputContainer">
+                                <label for="recZone">Zone</label>
+                                <input is="emby-input" type="text" id="recZone" autocomplete="off" placeholder="example.com" />
+                            </div>
+
+                            <!-- How the record last went -->
+                            <div id="recStatusCard" class="base-record-card">
+                                <div class="base-record-row"><span class="base-record-label">Public IP</span><span id="stIp" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label">Last update</span><span id="stChecked" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label">Result</span><span id="stResult" class="base-mono"></span></div>
+                            </div>
+                            <div id="detectionWarning" class="base-warn hidden"></div>
+                            <div class="ra-button-row">
+                                <button is="emby-button" type="button" id="btnRunNow" class="raised base-button secondary small" title="Update Now">
+                                    <span class="material-icons" aria-hidden="true">sync</span>
+                                    <span>Update Now</span>
+                                </button>
+                            </div>
+                            <span id="runStatus" class="base-status-text" role="status"></span>
+                        </div>
+
+                        <!-- Certificate -->
+                        <div id="bodyCertificate">
+                            <div class="fieldDescription" id="textCertificate" role="status"></div>
+                            <div class="selectContainer">
+                                <label class="selectLabel" for="certMode">Source</label>
+                                <select is="emby-select" id="certMode">
+                                    <option value="Automatic">Let's Encrypt</option>
+                                    <option value="PemFiles">PEM files</option>
+                                    <option value="Pkcs12File">PKCS#12 file</option>
+                                    <option value="SelfSigned">Self-signed</option>
+                                    <option value="None">None</option>
+                                </select>
+                                <div id="certModeDescription" class="fieldDescription"></div>
+                            </div>
+                            <div id="certTermsField" class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input type="checkbox" is="emby-checkbox" id="certTerms" />
+                                    <span class="checkboxLabel">I accept the Let's Encrypt terms</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">Required before a certificate is requested. Read the <a href="https://letsencrypt.org/repository/" target="_blank" rel="noopener noreferrer" class="button-link">Let's Encrypt Subscriber Agreement</a>.</div>
+                            </div>
+                            <div id="certMethod" class="base-info hidden"></div>
+                            <div id="certFileFields">
                                 <div class="inputContainer">
-                                    <label for="recHostname">Hostname / domain</label>
-                                    <input is="emby-input" type="text" id="recHostname" autocomplete="off" placeholder="home.example.com" />
-                                    <div id="recHostnameDescription" class="fieldDescription">The name people use to reach Jellyfin.</div>
+                                    <label for="certPath">Certificate file</label>
+                                    <input is="emby-input" type="text" id="certPath" autocomplete="off" />
+                                    <div id="certPathDescription" class="fieldDescription"></div>
+                                </div>
+                                <div id="certKeyField" class="inputContainer">
+                                    <label for="certKeyPath">Private key file</label>
+                                    <input is="emby-input" type="text" id="certKeyPath" autocomplete="off" />
+                                    <div class="fieldDescription">For example privkey.pem.</div>
                                 </div>
                                 <div class="inputContainer">
-                                    <label for="recLogin">Login / username / key</label>
-                                    <input is="emby-input" type="text" id="recLogin" autocomplete="off" />
-                                    <button is="emby-button" type="button" id="btnClearLogin" class="raised jpk-secondary hidden jpk-button-small" title="Remove the saved value when saved" aria-label="Clear the saved login">
-                                        <span>Clear saved value</span>
-                                    </button>
+                                    <label for="certPassword">Password</label>
+                                    <input is="emby-input" type="password" id="certPassword" autocomplete="new-password" />
+                                    <div class="fieldDescription">The file's password if it has one, stored encrypted.</div>
                                 </div>
-                                <div class="inputContainer">
-                                    <label for="recPassword">Password / token / secret</label>
-                                    <input is="emby-input" type="password" id="recPassword" autocomplete="off" />
-                                    <button is="emby-button" type="button" id="btnClearPassword" class="raised jpk-secondary hidden jpk-button-small" title="Remove the saved value when saved" aria-label="Clear the saved password">
-                                        <span>Clear saved value</span>
-                                    </button>
-                                </div>
-                                <div class="inputContainer">
-                                    <label for="recZone">Zone</label>
-                                    <input is="emby-input" type="text" id="recZone" autocomplete="off" placeholder="example.com" />
-                                </div>
-
-                                <!-- How the record last went -->
-                                <div id="recStatusCard" class="jpk-record-card">
-                                    <div class="jpk-record-row"><span class="jpk-record-label">Public IP</span><span id="stIp" class="jpk-mono"></span></div>
-                                    <div class="jpk-record-row"><span class="jpk-record-label">Last update</span><span id="stChecked" class="jpk-mono"></span></div>
-                                    <div class="jpk-record-row"><span class="jpk-record-label">Result</span><span id="stResult" class="jpk-mono"></span></div>
-                                </div>
-                                <div id="detectionWarning" class="jpk-warn hidden"></div>
-                                <div class="ra-button-row">
-                                    <button is="emby-button" type="button" id="btnRunNow" class="raised jpk-icon-btn jpk-secondary jpk-button-small" title="Update Now">
-                                        <span class="material-icons" aria-hidden="true">sync</span>
-                                        <span>Update Now</span>
-                                    </button>
-                                </div>
-                                <span id="runStatus" class="jpk-status-text" aria-live="polite"></span>
                             </div>
-                        </div>
-
-                        <!-- Step 3: the certificate -->
-                        <div class="jpk-collapsible-section ra-step" id="stepCertificate" data-state="gray">
-                            <button type="button" class="jpk-collapsible-header" data-target="bodyCertificate" aria-expanded="true" aria-controls="bodyCertificate">
-                                <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconCertificate" aria-hidden="true">3</span>Certificate</span>
-                                <span class="jpk-badge gray" id="stateCertificate"></span>
-                                <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
-                            </button>
-                            <div class="jpk-collapsible-content" id="bodyCertificate">
-                                <div class="ra-step-text" id="textCertificate" aria-live="polite"></div>
-                                <div class="selectContainer">
-                                    <label class="selectLabel" for="certMode">Source</label>
-                                    <select id="certMode" class="jpk-selector-dropdown">
-                                        <option value="Automatic">Let's Encrypt</option>
-                                        <option value="PemFiles">PEM files</option>
-                                        <option value="Pkcs12File">PKCS#12 file</option>
-                                        <option value="SelfSigned">Self-signed</option>
-                                        <option value="None">None</option>
-                                    </select>
-                                    <div id="certModeDescription" class="fieldDescription"></div>
-                                </div>
-                                <div id="certTermsField" class="checkboxContainer checkboxContainer-withDescription">
-                                    <label class="emby-checkbox-label">
-                                        <input type="checkbox" is="emby-checkbox" id="certTerms" />
-                                        <span class="checkboxLabel">I accept the Let's Encrypt terms</span>
-                                    </label>
-                                    <div class="fieldDescription checkboxFieldDescription">Required before a certificate is requested. Read the <a href="https://letsencrypt.org/repository/" target="_blank" rel="noopener noreferrer" class="button-link">Let's Encrypt Subscriber Agreement</a>.</div>
-                                </div>
-                                <div id="certMethod" class="jpk-info hidden"></div>
-                                <div id="certFileFields">
-                                    <div class="inputContainer">
-                                        <label for="certPath">Certificate file</label>
-                                        <input is="emby-input" type="text" id="certPath" autocomplete="off" />
-                                        <div id="certPathDescription" class="fieldDescription"></div>
-                                    </div>
-                                    <div id="certKeyField" class="inputContainer">
-                                        <label for="certKeyPath">Private key file</label>
-                                        <input is="emby-input" type="text" id="certKeyPath" autocomplete="off" />
-                                        <div class="fieldDescription">For example privkey.pem.</div>
-                                    </div>
-                                    <div class="inputContainer">
-                                        <label for="certPassword">Password</label>
-                                        <input is="emby-input" type="password" id="certPassword" autocomplete="new-password" />
-                                        <div class="fieldDescription">The file's password if it has one, stored encrypted.</div>
-                                    </div>
-                                </div>
-                                <div id="certStatus" class="jpk-record-card hidden">
-                                    <div class="jpk-record-row"><span class="jpk-record-label">Covers</span><span id="certNames" class="jpk-mono"></span></div>
-                                    <div class="jpk-record-row"><span class="jpk-record-label">Expires</span><span id="certExpires" class="jpk-mono"></span></div>
-                                    <div class="jpk-record-row"><span class="jpk-record-label">Issued by</span><span id="certIssuer" class="jpk-mono"></span></div>
-                                    <div id="certRootExpiresRow" class="jpk-record-row hidden"><span class="jpk-record-label">Root expires</span><span id="certRootExpires" class="jpk-mono"></span></div>
-                                    <div id="certRootFingerprintRow" class="jpk-record-row hidden"><span class="jpk-record-label">Root SHA-256</span><span id="certRootFingerprint" class="jpk-mono ra-fingerprint"></span></div>
-                                </div>
-                                <div id="certProblem" class="jpk-warn hidden"></div>
-                                <div id="certRootField" class="hidden">
-                                    <div class="fieldDescription">Install it on each device that should trust this server.</div>
-                                    <div class="ra-button-row">
-                                        <button is="emby-button" type="button" id="btnDownloadRoot" class="raised jpk-secondary jpk-button-small">
-                                            <span>Download Root Certificate</span>
-                                        </button>
-                                    </div>
+                            <div id="certStatus" class="base-record-card hidden">
+                                <div class="base-record-row"><span class="base-record-label">Covers</span><span id="certNames" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label">Expires</span><span id="certExpires" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label">Issued by</span><span id="certIssuer" class="base-mono"></span></div>
+                                <div id="certRootExpiresRow" class="base-record-row hidden"><span class="base-record-label">Root expires</span><span id="certRootExpires" class="base-mono"></span></div>
+                                <div id="certRootFingerprintRow" class="base-record-row hidden"><span class="base-record-label">Root SHA-256</span><span id="certRootFingerprint" class="base-mono ra-fingerprint"></span></div>
+                            </div>
+                            <div id="certProblem" class="base-warn hidden"></div>
+                            <div id="certRootField" class="hidden">
+                                <div class="fieldDescription">Install it on each device that should trust this server.</div>
+                                <div class="ra-button-row">
+                                    <button is="emby-button" type="button" id="btnDownloadRoot" class="raised base-button secondary small">
+                                        <span>Download Root Certificate</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Step 4: the router -->
-                        <div class="jpk-collapsible-section ra-step" id="stepRouter" data-state="gray">
-                            <button type="button" class="jpk-collapsible-header" data-target="bodyRouter" aria-expanded="true" aria-controls="bodyRouter">
-                                <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconRouter" aria-hidden="true">4</span>Router</span>
-                                <span class="jpk-badge gray" id="stateRouter"></span>
-                                <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
-                            </button>
-                            <div class="jpk-collapsible-content" id="bodyRouter">
-                                <div class="ra-step-text" id="textRouter" aria-live="polite"></div>
-                                <div id="routerError" class="jpk-error hidden"></div>
-                                <div id="routerManual" class="hidden">
-                                    <div id="routerInstruction" class="jpk-record-card"></div>
-                                </div>
-                                <div class="ra-button-row">
-                                    <button is="emby-button" type="button" id="btnRouterRetry" class="raised jpk-secondary jpk-button-small">
-                                        <span>Try Again</span>
-                                    </button>
-                                </div>
-                                <span id="routerStatus" class="jpk-status-text" aria-live="polite"></span>
+                        <!-- Router -->
+                        <div id="bodyRouter">
+                            <div class="fieldDescription" id="textRouter" role="status"></div>
+                            <div id="routerError" class="base-error hidden"></div>
+                            <div id="routerManual" class="hidden">
+                                <div id="routerInstruction" class="base-record-card"></div>
                             </div>
+                            <div class="ra-button-row">
+                                <button is="emby-button" type="button" id="btnRouterRetry" class="raised base-button secondary small">
+                                    <span>Try Again</span>
+                                </button>
+                            </div>
+                            <span id="routerStatus" class="base-status-text" role="status"></span>
                         </div>
 
-                        <!-- Step 5: Jellyfin trusts the proxy -->
-                        <div class="jpk-collapsible-section ra-step" id="stepTrust" data-state="gray">
-                            <button type="button" class="jpk-collapsible-header" data-target="bodyTrust" aria-expanded="true" aria-controls="bodyTrust">
-                                <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconTrust" aria-hidden="true">5</span>Trust the Proxy</span>
-                                <span class="jpk-badge gray" id="stateTrust"></span>
-                                <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
-                            </button>
-                            <div class="jpk-collapsible-content" id="bodyTrust">
-                                <div class="ra-step-text" id="textTrust" aria-live="polite"></div>
-                                <div class="fieldDescription">Restarts Jellyfin once.</div>
-                                <div id="trustError" class="jpk-error hidden"></div>
-                                <div id="jellyfinExposed" class="jpk-warn hidden"></div>
-                                <div class="ra-button-row">
-                                    <button is="emby-button" type="button" id="btnTrust" class="raised jpk-button-submit jpk-button-small">
-                                        <span>Trust the Proxy</span>
-                                    </button>
-                                    <button is="emby-button" type="button" id="btnRestore" class="raised jpk-button-destructive hidden jpk-button-small">
-                                        <span>Undo</span>
-                                    </button>
-                                </div>
-                                <span id="trustStatus" class="jpk-status-text" aria-live="polite"></span>
+                        <!-- Trust the Proxy -->
+                        <div id="bodyTrust">
+                            <div class="fieldDescription" id="textTrust" role="status"></div>
+                            <div class="fieldDescription">Restarts Jellyfin once.</div>
+                            <div id="trustError" class="base-error hidden"></div>
+                            <div id="jellyfinExposed" class="base-warn hidden"></div>
+                            <div class="ra-button-row">
+                                <button is="emby-button" type="button" id="btnTrust" class="raised base-button primary small">
+                                    <span>Trust the Proxy</span>
+                                </button>
+                                <button is="emby-button" type="button" id="btnRestore" class="raised base-button destructive small hidden">
+                                    <span>Undo</span>
+                                </button>
                             </div>
+                            <span id="trustStatus" class="base-status-text" role="status"></span>
                         </div>
 
-                        <!-- Step 6: a test from outside -->
-                        <div class="jpk-collapsible-section ra-step" id="stepReach" data-state="gray">
-                            <button type="button" class="jpk-collapsible-header" data-target="bodyReach" aria-expanded="true" aria-controls="bodyReach">
-                                <span class="jpk-collapsible-title jpk-step-title"><span class="jpk-step-number" id="iconReach" aria-hidden="true">6</span>Reachable from outside</span>
-                                <span class="jpk-badge gray" id="stateReach"></span>
-                                <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
-                            </button>
-                            <div class="jpk-collapsible-content" id="bodyReach">
-                                <div class="ra-step-text" id="textReach" aria-live="polite"></div>
-                                <div id="reachNodes" class="jpk-record-card hidden"></div>
-                                <div class="fieldDescription">Sends your address to check-host.net, which tries it from other countries.</div>
-                                <div class="ra-button-row">
-                                    <button is="emby-button" type="button" id="btnReach" class="raised jpk-secondary jpk-button-small">
-                                        <span>Test from Outside</span>
-                                    </button>
-                                </div>
-                                <span id="reachStatus" class="jpk-status-text" aria-live="polite"></span>
+                        <!-- Reachable From Outside -->
+                        <div id="bodyReach">
+                            <div class="fieldDescription" id="textReach" role="status"></div>
+                            <div id="reachNodes" class="base-record-card hidden"></div>
+                            <div class="fieldDescription">Sends your address to check-host.net, which tries it from other countries.</div>
+                            <div class="ra-button-row">
+                                <button is="emby-button" type="button" id="btnReach" class="raised base-button secondary small">
+                                    <span>Test from Outside</span>
+                                </button>
                             </div>
+                            <span id="reachStatus" class="base-status-text" role="status"></span>
                         </div>
 
                     </div>
 
                     <!-- Saves every step: the record in step 2 and the proxy settings. -->
                     <div class="inputContainer">
-                        <button is="emby-button" type="button" id="btnSave" class="raised jpk-button-submit block">
+                        <button is="emby-button" type="button" id="btnSave" class="raised base-button primary fill">
                             <span>Save</span>
                         </button>
-                        <span id="saveStatus" class="jpk-status-text" aria-live="polite"></span>
+                        <span id="saveStatus" class="base-status-text" role="status"></span>
                     </div>
 
                 </div>
@@ -257,27 +211,4 @@
 
     <link rel="stylesheet" href="configurationpage?name=remoteaccess_jpkribs_shared.css">
     <link rel="stylesheet" href="configurationpage?name=remoteaccess_common.css">
-    <style>
-        #RemoteAccessConfigurationPage #summary { font-size: 1.05em; }
-        #RemoteAccessConfigurationPage .ra-summary { margin: 1em 0 var(--jpk-field-gap); padding: 1em 1.1em; background: var(--jpk-surface); border: 1px solid var(--jpk-border); border-radius: 8px; }
-        #RemoteAccessConfigurationPage .ra-summary-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75em; flex-wrap: wrap; }
-        #RemoteAccessConfigurationPage .ra-summary-title { font-size: 1.15em; font-weight: 500; }
-        #RemoteAccessConfigurationPage .ra-summary-bar { display: flex; gap: 4px; margin: 0.8em 0; }
-        #RemoteAccessConfigurationPage .ra-summary-bar > span { flex: 1 1 0; height: 6px; border-radius: 3px; background: var(--jpk-gray-bg); }
-        #RemoteAccessConfigurationPage .ra-summary-bar > span[data-state="green"] { background: var(--jpk-green-fg); }
-        #RemoteAccessConfigurationPage .ra-summary-bar > span[data-state="amber"] { background: var(--jpk-orange-fg); }
-        #RemoteAccessConfigurationPage .ra-summary-bar > span[data-state="red"] { background: var(--jpk-red-fg); }
-        #RemoteAccessConfigurationPage .ra-summary-text { line-height: 1.5; opacity: 0.9; }
-        #RemoteAccessConfigurationPage .ra-summary-link { background: none; border: 0; padding: 0; font: inherit; color: var(--jpk-accent); cursor: pointer; }
-        #RemoteAccessConfigurationPage .ra-summary-link:hover { text-decoration: underline; }
-        #RemoteAccessConfigurationPage .ra-steps { margin-top: 1em; }
-        /* The step header carries its state as a badge before the fold arrow, and its number takes the state's colour. */
-        #RemoteAccessConfigurationPage .ra-step .jpk-collapsible-header .jpk-badge { margin-right: 0.8em; }
-        #RemoteAccessConfigurationPage .ra-step .jpk-step-number { flex: 0 0 auto; }
-        #RemoteAccessConfigurationPage .ra-step[data-state="green"] .jpk-step-number { color: var(--jpk-green-fg); background: var(--jpk-green-bg); }
-        #RemoteAccessConfigurationPage .ra-step[data-state="amber"] .jpk-step-number { color: var(--jpk-orange-fg); background: var(--jpk-orange-bg); }
-        #RemoteAccessConfigurationPage .ra-step[data-state="red"] .jpk-step-number { color: var(--jpk-red-fg); background: var(--jpk-red-bg); }
-        #RemoteAccessConfigurationPage .ra-step-text { margin: 0 0 1em; line-height: 1.5; }
-        #RemoteAccessConfigurationPage #routerInstruction { line-height: 1.6; }
-    </style>
 </div>

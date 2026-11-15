@@ -1,5 +1,8 @@
-import { createConfigPage, confirmDialog } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
-import { PLUGIN_ID, TABS, errorText, showText, trustTheProxy, routerInstructionHtml, routerStateText, loadProviders, primaryRecord, readDdnsSecret, recordNames, saveProxyHostnames } from './configurationpage?name=remoteaccess_tabs.js';
+// remoteaccess_configuration.js
+// The Configuration tab, a Setup Checklist from turning the proxy on to a test from outside.
+
+import { createConfigPage, confirmDialog, createSetupChecklist } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { PLUGIN_ID, TABS, problemText, showText, trustTheProxy, routerInstructionHtml, routerStateText, loadProviders, primaryRecord, readDdnsSecret, recordNames, saveProxyHostnames, stepState } from './configurationpage?name=remoteaccess_tabs.js';
 
 // The Configuration tab: a checklist from turning the proxy on to a test from outside. Each step holds only what
 // most people need: the proxy switch, the one DDNS record whose name is the proxy's address, the certificate, the
@@ -57,6 +60,8 @@ export default function (view) {
 
     var SECRET_IDS = ['recLogin', 'recPassword'];
     var CLEAR_BUTTONS = { recLogin: 'btnClearLogin', recPassword: 'btnClearPassword' };
+    // The Setup Checklist that holds the steps, built once in bind.
+    var checklist = null;
 
     // The plugin's own config endpoints send a kept marker in place of a stored credential and encrypt a typed one
     // on save, so secrets never reach the browser.
@@ -134,16 +139,10 @@ export default function (view) {
         setField('recZone', spec.z);
     }
 
+    // Binds a credential field. Its clear button shows while a value is stored, and marks it for removal on the
+    // next save. Typing a new value still replaces it.
     function bindSecret(id, stored) {
-        Shared.bindSecretField(id, stored);
-        Shared.setVisible(CLEAR_BUTTONS[id], stored);
-    }
-
-    // Marks a stored credential for removal on the next save. Typing a new value still replaces it.
-    function clearSecret(id) {
-        Shared.clearSecretField(id);
-        Shared.getEl(id).placeholder = 'Cleared when saved';
-        Shared.setVisible(CLEAR_BUTTONS[id], false);
+        Shared.bindSecretField(id, stored, { clearButton: Shared.getEl(CLEAR_BUTTONS[id]) });
     }
 
     // The record fields as typed, to tell whether they changed.
@@ -152,7 +151,7 @@ export default function (view) {
             provider: Shared.getEl('recProvider').value,
             hostname: Shared.getEl('recHostname').value.trim(),
             zone: Shared.getEl('recZone').value.trim(),
-            secrets: SECRET_IDS.map(function (id) { var el = Shared.getEl(id); return [el.value, !!el.dataset.jpkSecretCleared]; })
+            secrets: SECRET_IDS.map(function (id) { var el = Shared.getEl(id); return [el.value, !!el.dataset.baseSecretCleared]; })
         });
     }
 
@@ -207,10 +206,10 @@ export default function (view) {
         else if (!r.LastCheckedUtc) text = 'Not sent yet';
         else {
             text = r.LastStatus || (r.LastSuccess ? 'OK' : 'Failed');
-            tone = r.LastSuccess ? ' jpk-ok' : ' jpk-bad';
+            tone = r.LastSuccess ? ' base-ok' : ' base-bad';
         }
         result.textContent = text;
-        result.className = 'jpk-mono' + tone;
+        result.className = 'base-mono' + tone;
     }
 
     // The record to save: the server's copy with the fields from this page. A record never saved starts from the
@@ -241,7 +240,7 @@ export default function (view) {
         if (!recordNeedsSave()) return Promise.resolve();
         var provider = Shared.getEl('recProvider').value;
         if (specFor(provider).h && !Shared.getEl('recHostname').value.trim() && (record || hasRecordInput())) {
-            setStepOpen('Address', true);
+            setStepOpen('Address');
             return Promise.reject(pageError('Enter the hostname in step 2.'));
         }
 
@@ -309,7 +308,7 @@ export default function (view) {
         var button = Shared.getEl('btnRunNow');
         if (button.disabled) return;
         button.disabled = true;
-        Shared.setStatus('runStatus', 'Updating...', false, { timeout: 0 });
+        Shared.setStatus('runStatus', 'Updating…', false, { timeout: 0 });
         Shared.apiRequest('RunNow', 'POST').then(function (outcome) {
             return getConfig().catch(function () { return null; }).then(function (fresh) {
                 var result = runMessage(outcome, fresh);
@@ -330,7 +329,7 @@ export default function (view) {
                 }
             });
         }).catch(function (err) {
-            return errorText(err, 'Update failed.').then(function (text) {
+            return problemText(err, 'Update failed.').then(function (text) {
                 Shared.setStatus('runStatus', text, true, { timeout: 0 });
             });
         }).then(function () {
@@ -449,15 +448,15 @@ export default function (view) {
         // Let's Encrypt is only used once its terms are accepted, so with the proxy on the box has to be ticked to
         // choose it.
         if (Shared.getEl('enabled').checked && Shared.getEl('certMode').value === 'Automatic' && !Shared.getEl('certTerms').checked) {
-            Shared.setStatus('saveStatus', 'Tick I accept the Let\'s Encrypt terms in step 3, or choose another certificate source.', true, { timeout: 0 });
-            setStepOpen('Certificate', true);
+            Shared.setStatus('saveStatus', 'Turn on I accept the Let\'s Encrypt terms in step 3, or select another certificate source.', true, { timeout: 0 });
+            setStepOpen('Certificate');
             return Promise.resolve(false);
         }
 
         var button = Shared.getEl('btnSave');
         if (button.disabled) return Promise.resolve(false);
         setSaving(true);
-        Shared.setStatus('saveStatus', 'Saving...', false);
+        Shared.setStatus('saveStatus', 'Saving…', false);
         var recordSaved = false;
         var changedRecord = recordNeedsSave();
         var before = [];
@@ -473,7 +472,7 @@ export default function (view) {
             Shared.setStatus('saveStatus', 'Saved.', false);
             return true;
         }).catch(function (err) {
-            var reply = err && err.pageText ? Promise.resolve(err.pageText) : errorText(err, 'Save failed.');
+            var reply = err && err.pageText ? Promise.resolve(err.pageText) : problemText(err, 'Save failed.');
             return reply.then(function (text) {
                 var prefix = !recordSaved ? (changedRecord ? 'The record was not saved. ' : '')
                     : changedRecord ? 'The record was saved, but the proxy settings were not. ' : '';
@@ -491,7 +490,7 @@ export default function (view) {
         var button = Shared.getEl('btnRouterRetry');
         if (button.disabled) return;
         button.disabled = true;
-        Shared.setStatus('routerStatus', 'Asking the router...', false, { timeout: 0 });
+        Shared.setStatus('routerStatus', 'Asking the router…', false, { timeout: 0 });
         Shared.apiRequest('Proxy/Router/Refresh', 'POST').then(function (r) {
             var text = !r ? 'Done.'
                 : r.Mapped ? routerStateText(r)
@@ -520,7 +519,7 @@ export default function (view) {
     function restore() {
         var button = Shared.getEl('btnRestore');
         if (button.disabled) return;
-        confirmDialog('Jellyfin\'s network settings go back to how they were, and internet visitors through the proxy are turned away. Jellyfin restarts once.', { title: 'Undo', confirmText: 'Undo', destructive: true }).then(function (ok) {
+        confirmDialog('Undo Trust the Proxy? Jellyfin\'s network settings go back to how they were, internet visitors through the proxy are turned away, and Jellyfin restarts once.', { title: 'Undo Trust the Proxy', confirmText: 'Undo', destructive: true }).then(function (ok) {
             if (!ok) return;
             button.disabled = true;
             Shared.apiRequest('Proxy/Restore', 'POST').then(function (result) {
@@ -569,15 +568,13 @@ export default function (view) {
 
     // The steps in order. The key names the step's elements: step, body, icon, state and text followed by the key.
     var STEPS = [
-        { key: 'Power', title: 'Proxy on' },
+        { key: 'Power', title: 'Proxy On' },
         { key: 'Address', title: 'Address' },
         { key: 'Certificate', title: 'Certificate' },
         { key: 'Router', title: 'Router' },
         { key: 'Trust', title: 'Trust the Proxy' },
-        { key: 'Reach', title: 'Reachable from outside' }
+        { key: 'Reach', title: 'Reachable From Outside' }
     ];
-
-    var BADGES = { green: 'green', amber: 'orange', red: 'red', gray: 'gray' };
 
     // The last test from outside run from this page, kept until the status carries a newer one.
     var lastReach = null;
@@ -610,7 +607,7 @@ export default function (view) {
     }
 
     function assessPower(st) {
-        if (st.Running) return step('green', 'Running', 'Running on ports ' + st.HttpPort + ' and ' + st.HttpsPort + '.');
+        if (st.Running) return step('green', 'Running', 'On ports ' + st.HttpPort + ' and ' + st.HttpsPort + '.');
         if (st.Enabled) return step('red', 'Not running', st.Error || 'The proxy is turned on but is not running.');
         return step('gray', 'Off', 'Turn it on to reach Jellyfin securely from the internet. Step 2 works without it.');
     }
@@ -715,7 +712,7 @@ export default function (view) {
     function assessReach(st) {
         if (!st.Enabled) return idleStep();
         var reach = currentReach(st);
-        if (!reach || (reach.Reachable == null && !reach.Error)) return step('gray', 'Not tested', 'Not tested yet.');
+        if (!reach || (reach.Reachable == null && !reach.Error)) return step('gray', 'Not tested', 'Select Test from Outside below.');
         var when = formatTime(reach.CheckedUtc);
         var nodes = reach.Nodes || [];
         var ok = nodes.filter(function (x) { return x.Ok; }).length;
@@ -725,68 +722,43 @@ export default function (view) {
         return step('amber', 'Test failed', 'The test could not run. ' + reach.Error);
     }
 
-    // Steps fold with the shared collapsible sections. This opens or folds one from code.
-    function setStepOpen(key, open) {
-        var head = Shared.getEl('step' + key).querySelector('.jpk-collapsible-header');
-        head.classList.toggle('collapsed', !open);
-        head.setAttribute('aria-expanded', open ? 'true' : 'false');
-        Shared.getEl('body' + key).classList.toggle('collapsed', !open);
+    // Opens a step, such as the one a save problem points to.
+    function setStepOpen(key) {
+        if (checklist) checklist.open(key);
     }
 
-    // On the first render of a visit, open every step that is not done and fold the rest away.
-    function arrange(results) {
+    // Writes each step's state into the checklist, and its word and reason at the top of its body, such as
+    // Not pointed here. On the first render of a visit the first step that needs something opens.
+    function renderSteps(results) {
+        var states = {};
+        STEPS.forEach(function (s, i) {
+            states[s.key] = stepState(results[i]);
+            var box = Shared.getEl('text' + s.key);
+            var word = document.createElement('strong');
+            word.textContent = results[i].word + '.';
+            box.replaceChildren(word, document.createTextNode(results[i].text ? ' ' + results[i].text : ''));
+        });
+        checklist.setValue(states);
         if (arranged) return;
         arranged = true;
-        STEPS.forEach(function (s, i) { setStepOpen(s.key, results[i].state !== 'green' && !results[i].idle); });
+        var first = STEPS.filter(function (s) { return states[s.key] === 'attention' || states[s.key] === 'todo'; })[0];
+        if (first) checklist.open(first.key);
     }
 
-    function renderStep(key, result) {
-        var li = Shared.getEl('step' + key);
-        li.setAttribute('data-state', result.state);
-        var badge = Shared.getEl('state' + key);
-        badge.className = 'jpk-badge ' + BADGES[result.state];
-        badge.textContent = result.word;
-        Shared.getEl('text' + key).textContent = result.text;
-    }
-
-    // The summary above the steps: how many are done, a bar segment per step, and the next one to look at.
+    // The note above the checklist, for someone using only Dynamic DNS or once every step is done.
     function renderSummary(st, results) {
-        var segments = Shared.getEl('summaryBar').children;
-        var done = 0;
-        var first = -1;
-        results.forEach(function (r, i) {
-            segments[i].setAttribute('data-state', st.Enabled ? r.state : 'gray');
-            if (r.state === 'green') done++;
-            else if (first < 0) first = i;
-        });
-        // Someone using only Dynamic DNS is not asked to finish the proxy steps.
+        var box = Shared.getEl('summaryNote');
+        var done = results.every(function (r) { return r.state === 'green'; });
+        var text = '';
+        box.className = 'base-info';
         if (!st.Enabled) {
-            summary('The proxy is off', 'gray', 'DDNS only', 'The DDNS record in step 2 still keeps your address pointed at this server.', -1);
-            return -1;
+            text = 'The proxy is off. The DDNS record in step 2 still keeps your address pointed at this server.';
+            box.className = 'base-neutral';
+        } else if (done) {
+            text = st.PublicUrl ? 'Jellyfin can be reached from outside your network at ' + st.PublicUrl + '.' : 'Jellyfin can be reached from outside your network.';
+            box.className = 'base-success';
         }
-        if (first < 0) {
-            summary('Ready to share', 'green', 'All set', st.PublicUrl
-                ? 'Jellyfin can be reached from outside your network at ' + st.PublicUrl + '.'
-                : 'Jellyfin can be reached from outside your network.', -1);
-            return first;
-        }
-        var r = results[first];
-        summary(done + ' of ' + results.length + ' steps done', BADGES[r.state],
-            r.state === 'gray' ? 'Not done' : 'Needs attention',
-            STEPS[first].title + ': ' + r.text, first);
-        return first;
-    }
-
-    function summary(title, color, word, text, step) {
-        Shared.getEl('summaryTitle').textContent = title;
-        var badge = Shared.getEl('summaryBadge');
-        badge.className = 'jpk-badge ' + color;
-        badge.textContent = word;
-        Shared.getEl('summaryText').textContent = text;
-        var open = Shared.getEl('summaryOpen');
-        open.textContent = step >= 0 ? 'Open step ' + (step + 1) : '';
-        open.setAttribute('data-step', step >= 0 ? STEPS[step].key : '');
-        Shared.setVisible('summaryOpen', step >= 0);
+        show('summaryNote', text);
     }
 
     function renderAddressDetails(st, result) {
@@ -848,12 +820,12 @@ export default function (view) {
         Shared.setVisible(box, nodes.length > 0);
         if (!nodes.length) { box.innerHTML = ''; return; }
         var when = formatTime(reach.CheckedUtc);
-        var title = '<div class="jpk-record-row"><strong>Outside check</strong>' +
-            '<span class="jpk-record-label">' + Shared.escapeHtml(when) + '</span></div>';
+        var title = '<div class="base-record-row"><strong>Outside check</strong>' +
+            '<span class="base-record-label">' + Shared.escapeHtml(when) + '</span></div>';
         box.innerHTML = title + nodes.map(function (x) {
-            var badge = '<span class="jpk-badge ' + (x.Ok ? 'green' : 'red') + '">' + (x.Ok ? 'Reached' : 'Failed') + '</span>';
-            var error = !x.Ok && x.Error ? '<span class="jpk-record-label">' + Shared.escapeHtml(x.Error) + '</span> ' : '';
-            return '<div class="jpk-record-row"><span>' + Shared.escapeHtml(x.Location || 'Unknown') + '</span>' +
+            var badge = Shared.badge(x.Ok ? 'green' : 'red', x.Ok ? 'Reached' : 'Failed');
+            var error = !x.Ok && x.Error ? '<span class="base-record-label">' + Shared.escapeHtml(x.Error) + '</span> ' : '';
+            return '<div class="base-record-row"><span>' + Shared.escapeHtml(x.Location || 'Unknown') + '</span>' +
                 '<span>' + error + badge + '</span></div>';
         }).join('');
     }
@@ -863,8 +835,7 @@ export default function (view) {
         lastStatus = st;
         var results = [assessPower(st), assessAddress(st), assessCertificate(st), assessRouter(st), assessTrust(st), assessReach(st)];
         renderSummary(st, results);
-        STEPS.forEach(function (s, i) { renderStep(s.key, results[i]); });
-        arrange(results);
+        renderSteps(results);
 
         show('folderProblem', st.FolderProblem);
         show('everyoneLocal', st.Enabled && st.EveryoneLooksLocal
@@ -917,7 +888,7 @@ export default function (view) {
         var button = Shared.getEl('btnReach');
         if (button.disabled) return;
         button.disabled = true;
-        Shared.setStatus('reachStatus', 'Testing from outside, which can take 20 seconds...', false, { timeout: 0 });
+        Shared.setStatus('reachStatus', 'Testing from outside, which can take 20 seconds…', false, { timeout: 0 });
         Shared.apiRequest('Proxy/Reachability', 'POST').then(function (result) {
             if (result) lastReach = result;
             Shared.setStatus('reachStatus', '', false);
@@ -952,22 +923,20 @@ export default function (view) {
             // Wait for the record, so the address step is not judged before it is known.
             return recordsDone.then(function () { render(results[1]); });
         }).catch(function () {
-            summary('Status unavailable', 'red', 'Error', 'Could not load the proxy status.', -1);
+            Shared.getEl('summaryNote').className = 'base-error';
+            show('summaryNote', 'Could not load the proxy status.');
         });
     }
 
     function bind() {
-        Shared.getEl('summaryOpen').addEventListener('click', function () {
-            var key = this.getAttribute('data-step');
-            if (!key) return;
-            setStepOpen(key, true);
-            Shared.getEl('step' + key).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        checklist = createSetupChecklist({
+            steps: STEPS.map(function (s) { return { key: s.key, title: s.title, state: 'todo', content: Shared.getEl('body' + s.key) }; }),
+            navLabel: 'Setup progress'
         });
+        Shared.getEl('checklist').appendChild(checklist.element);
 
         // Step 2: the record and Update Now.
         Shared.getEl('recProvider').addEventListener('change', onProviderChange);
-        Shared.getEl('btnClearLogin').addEventListener('click', function () { clearSecret('recLogin'); });
-        Shared.getEl('btnClearPassword').addEventListener('click', function () { clearSecret('recPassword'); });
         Shared.getEl('btnRunNow').addEventListener('click', runNow);
 
         // Steps 3 to 6.
@@ -979,7 +948,6 @@ export default function (view) {
         Shared.getEl('btnReach').addEventListener('click', testReach);
 
         Shared.getEl('btnSave').addEventListener('click', save);
-        Shared.initCollapsibles();
     }
 
     Shared = createConfigPage(view, {

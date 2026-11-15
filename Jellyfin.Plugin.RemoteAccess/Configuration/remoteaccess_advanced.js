@@ -1,6 +1,8 @@
-import { createConfigPage, confirmDialog, createChipSelect } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
-import { PLUGIN_ID, TABS, errorText, showText, loadProviders, primaryRecord, recordNames, otherAddresses, addressLines, saveProxyHostnames } from './configurationpage?name=remoteaccess_tabs.js';
-import { COUNTRY_CODES, WORLD } from './configurationpage?name=remoteaccess_worldmap.js';
+// remoteaccess_advanced.js
+// The Advanced tab: Dynamic DNS tuning, the record's finer settings, addresses, security, blocking, history and limits.
+
+import { createConfigPage, confirmDialog, createChipSelect, COUNTRY_CODES, WORLD } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { PLUGIN_ID, TABS, problemText, showText, loadProviders, primaryRecord, recordNames, otherAddresses, addressLines, saveProxyHostnames } from './configurationpage?name=remoteaccess_tabs.js';
 
 export default function (view) {
     'use strict';
@@ -169,7 +171,7 @@ export default function (view) {
     // A setting left unset shows the default it runs with, except an Auto one, which stays empty.
     function fill(advanced) {
         advanced = advanced || {};
-        if (countries) countries.setValue(advanced.Countries || []);
+        if (countries) countries.setValue((advanced.Countries || []).map(function (code) { return { value: code, label: countryName(code) }; }));
         fields().forEach(function (el) {
             var v = advanced[el.dataset.adv];
             if (v == null && defaults && !isAuto(el.dataset.adv)) v = defaults[el.dataset.adv];
@@ -220,7 +222,7 @@ export default function (view) {
         loc = loc || {};
         var status;
         if (loc.Detail === 'Off') status = 'Location lookups are off.';
-        else if (loc.Downloading) status = 'Downloading the location database...';
+        else if (loc.Downloading) status = 'Downloading the location database…';
         else if (loc.Loaded) status = 'The location database is ready. It was built ' + new Date(loc.BuiltUtc).toLocaleDateString() + ' and is refreshed weekly by the Refresh Locations scheduled task.';
         else if (loc.Error) status = loc.Error;
         else status = 'The location database has not been downloaded yet.';
@@ -237,7 +239,7 @@ export default function (view) {
     }
 
     function updateLocation() {
-        Shared.setStatus('historyStatus', 'Downloading...', false, { timeout: 0 });
+        Shared.setStatus('historyStatus', 'Downloading…', false, { timeout: 0 });
         Shared.apiRequest('People/Location/Update', 'POST').then(function (st) {
             Shared.setStatus('historyStatus', st && st.Loaded ? 'The location database is up to date.' : (st && st.Error) || 'The update did not finish.', !(st && st.Loaded));
             showLocationStatus(st);
@@ -247,7 +249,7 @@ export default function (view) {
     }
 
     function clearHistory() {
-        confirmDialog('Every recorded visit, sign-in and refusal is deleted, and the block list is kept. This cannot be undone.', { title: 'Clear History', confirmText: 'Clear', destructive: true }).then(function (ok) {
+        confirmDialog('Clear the history? Every recorded visit, sign-in and refusal is deleted, and the block list is kept. This cannot be undone.', { title: 'Clear History', confirmText: 'Clear', destructive: true }).then(function (ok) {
             if (!ok) return;
             Shared.apiRequest('People/History', 'DELETE').then(function () {
                 Shared.setStatus('historyStatus', 'History cleared.', false);
@@ -394,7 +396,7 @@ export default function (view) {
         confirmDialog('Remove ' + label + '? This server stops keeping it pointed here, and the proxy stops answering on it. Other addresses stay. This cannot be undone.', { title: 'Remove Record', confirmText: 'Remove', destructive: true }).then(function (ok) {
             if (!ok) return;
             button.disabled = true;
-            Shared.setStatus('recordStatus', 'Removing...', false, { timeout: 0 });
+            Shared.setStatus('recordStatus', 'Removing…', false, { timeout: 0 });
             var before = [];
             var removed = false;
             namesNow().then(function (names) {
@@ -416,7 +418,7 @@ export default function (view) {
                 }
                 Shared.setStatus('recordStatus', 'Removed.', false);
             }).catch(function (err) {
-                return errorText(err, removed ? 'The proxy\'s addresses were not updated.' : 'Remove failed.').then(function (text) {
+                return problemText(err, removed ? 'The proxy\'s addresses were not updated.' : 'Remove failed.').then(function (text) {
                     Shared.setStatus('recordStatus', removed ? 'The record was removed, but the proxy\'s addresses were not updated. ' + text : text, true, { timeout: 0 });
                 });
             }).then(function () {
@@ -442,7 +444,7 @@ export default function (view) {
         confirmDialog('Let\'s Encrypt is asked for a new certificate now, even if the current one is fine. The current one keeps working until the new one is ready.', { title: 'Request a New Certificate', confirmText: 'Request' }).then(function (ok) {
             if (!ok) return;
             button.disabled = true;
-            Shared.setStatus('certRequestStatus', 'Requesting...', false, { timeout: 0 });
+            Shared.setStatus('certRequestStatus', 'Requesting…', false, { timeout: 0 });
             Shared.apiRequest('Proxy/Certificate/Request', 'POST').then(function (result) {
                 Shared.setStatus('certRequestStatus', (result && result.Message) || 'Done.', !(result && result.Ok), { timeout: 0 });
             }).catch(function () {
@@ -480,7 +482,7 @@ export default function (view) {
             fillRecord(primaryRecord(result.Records), (result.Records || []).length);
             return '';
         }).catch(function (err) {
-            return errorText(err, 'Save failed.');
+            return problemText(err, 'Save failed.');
         });
     }
 
@@ -540,7 +542,7 @@ export default function (view) {
         var button = Shared.getEl('btnSaveAdvanced');
         if (button.disabled) return;
         button.disabled = true;
-        Shared.setStatus('advancedStatus', 'Saving...', false);
+        Shared.setStatus('advancedStatus', 'Saving…', false);
         var raChanged = raDirty() || recordDirty() || extraCount > 0;
         var before = [];
         var raError = '';
@@ -604,7 +606,7 @@ export default function (view) {
             var text = 'Saved.' + (skipped ? ' The history settings did not load, so they were not saved.' : '') + (restartNote ? ' ' + restartNote : '');
             return { ok: true, bad: skipped, keep: skipped || !!restartNote, text: text };
         }).catch(function (err) {
-            return errorText(err, 'Save failed.').then(function (text) {
+            return problemText(err, 'Save failed.').then(function (text) {
                 return { ok: false, bad: true, keep: true, text: text };
             });
         });
@@ -624,7 +626,7 @@ export default function (view) {
     }
 
     function restartProxy() {
-        Shared.setStatus('restartStatus', 'Restarting...', false);
+        Shared.setStatus('restartStatus', 'Restarting…', false);
         Shared.apiRequest('Proxy/Restart', 'POST').then(function (st) {
             var running = st && st.Running;
             Shared.setStatus('restartStatus', running ? 'The proxy is running.' : (st && st.Error) || 'The proxy is not running.', !running);

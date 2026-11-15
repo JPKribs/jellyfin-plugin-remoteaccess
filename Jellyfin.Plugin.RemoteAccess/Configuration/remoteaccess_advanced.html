@@ -11,14 +11,14 @@
                         <h1 class="sectionTitle">Advanced</h1>
                     </div>
 
-                    <div class="jpk-collapsible-section">
-                        <button type="button" class="jpk-collapsible-header collapsed" aria-expanded="false" aria-controls="advDynamicDns" data-target="advDynamicDns">
-                            <span class="jpk-collapsible-title">Dynamic DNS</span>
-                            <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
+                    <div class="base-collapsible-section">
+                        <button type="button" class="base-collapsible-header collapsed" aria-expanded="false" aria-controls="advDynamicDns" data-target="advDynamicDns">
+                            <span class="base-collapsible-title">Dynamic DNS</span>
+                            <span class="base-collapsible-icon" aria-hidden="true"></span>
                         </button>
-                        <div id="advDynamicDns" class="jpk-collapsible-content collapsed">
+                        <div id="advDynamicDns" class="base-collapsible-content collapsed">
                             <div class="fieldDescription">How the DDNS records find this server's public IP and when they send it. Set how often updates run in <strong>Scheduled Tasks</strong> under <strong>Update DDNS</strong>.</div>
-                            <div id="raLoadError" class="jpk-error hidden"></div>
+                            <div id="raLoadError" class="base-error hidden"></div>
                             <div class="inputContainer">
                                 <label for="ipv4Url">IPv4 Detection URLs</label>
                                 <textarea id="ipv4Url" class="emby-input" autocomplete="off" rows="4"></textarea>
@@ -38,7 +38,7 @@
                             <div class="fieldDescription">Skips private, loopback and CGNAT addresses, so a mistaken detection is never published.</div>
                             <div class="selectContainer">
                                 <label class="selectLabel" for="forceUpdateHours">Force update</label>
-                                <select id="forceUpdateHours" class="jpk-selector-dropdown">
+                                <select is="emby-select" id="forceUpdateHours">
                                     <option value="0">Off</option>
                                     <option value="1">Every 1 hour</option>
                                     <option value="3">Every 3 hours</option>
@@ -54,7 +54,7 @@
                             </div>
                             <div class="selectContainer">
                                 <label class="selectLabel" for="backoffAfterFailures">Back off after failures</label>
-                                <select id="backoffAfterFailures" class="jpk-selector-dropdown">
+                                <select is="emby-select" id="backoffAfterFailures">
                                     <option value="0">Off</option>
                                     <option value="3">3 failures</option>
                                     <option value="5">5 failures</option>
@@ -64,7 +64,7 @@
                             </div>
                             <div class="selectContainer">
                                 <label class="selectLabel" for="backoffHours">Back off duration</label>
-                                <select id="backoffHours" class="jpk-selector-dropdown">
+                                <select is="emby-select" id="backoffHours">
                                     <option value="1">1 hour</option>
                                     <option value="6">6 hours</option>
                                     <option value="12">12 hours</option>
@@ -81,8 +81,8 @@
 
                             <h3>Record</h3>
                             <div id="recordIntro" class="fieldDescription"></div>
-                            <div id="recordEmpty" class="jpk-info hidden">No record yet. Add one in step 2, Address, on <a href="#/configurationpage?name=remoteaccess_configuration" class="button-link">Configuration</a>.</div>
-                            <div id="extraRecords" class="jpk-warn hidden"></div>
+                            <div id="recordEmpty" class="base-info hidden">No record yet. Add one in step 2, Address, on <a href="#/configurationpage?name=remoteaccess_configuration" class="button-link">Configuration</a>.</div>
+                            <div id="extraRecords" class="base-warn hidden"></div>
                             <div id="recordFields" class="hidden">
                                 <div class="checkboxContainer checkboxContainer-withDescription">
                                     <label class="emby-checkbox-label">
@@ -144,21 +144,21 @@
                                     </label>
                                 </div>
                                 <div class="ra-button-row">
-                                    <button is="emby-button" type="button" id="btnRemoveRecord" class="raised jpk-button-destructive jpk-button-small">
+                                    <button is="emby-button" type="button" id="btnRemoveRecord" class="raised base-button destructive small">
                                         <span>Remove Record</span>
                                     </button>
                                 </div>
-                                <span id="recordStatus" class="jpk-status-text" aria-live="polite"></span>
+                                <span id="recordStatus" class="base-status-text" aria-live="polite"></span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="jpk-collapsible-section">
-                        <button type="button" class="jpk-collapsible-header collapsed" aria-expanded="false" aria-controls="advAddresses" data-target="advAddresses">
-                            <span class="jpk-collapsible-title">Addresses</span>
-                            <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
+                    <div class="base-collapsible-section">
+                        <button type="button" class="base-collapsible-header collapsed" aria-expanded="false" aria-controls="advAddresses" data-target="advAddresses">
+                            <span class="base-collapsible-title">Addresses</span>
+                            <span class="base-collapsible-icon" aria-hidden="true"></span>
                         </button>
-                        <div id="advAddresses" class="jpk-collapsible-content collapsed">
+                        <div id="advAddresses" class="base-collapsible-content collapsed">
                             <div class="inputContainer">
                                 <label for="hostnames">Other addresses</label>
                                 <textarea id="hostnames" class="emby-input" autocomplete="off" rows="3" placeholder="media.example.com"></textarea>
@@ -166,7 +166,7 @@
                             </div>
                             <div class="selectContainer">
                                 <label class="selectLabel" for="advAutoPortForwarding">Automatic port forwarding</label>
-                                <select id="advAutoPortForwarding" class="jpk-selector-dropdown" data-adv="AutoPortForwarding" data-kind="bool">
+                                <select is="emby-select" id="advAutoPortForwarding" data-adv="AutoPortForwarding" data-kind="bool">
                                     <option value="true">On</option>
                                     <option value="false">Off</option>
                                 </select>
@@ -175,15 +175,15 @@
                         </div>
                     </div>
 
-                    <div class="jpk-collapsible-section">
-                        <button type="button" class="jpk-collapsible-header collapsed" aria-expanded="false" aria-controls="advSecurity" data-target="advSecurity">
-                            <span class="jpk-collapsible-title">Security</span>
-                            <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
+                    <div class="base-collapsible-section">
+                        <button type="button" class="base-collapsible-header collapsed" aria-expanded="false" aria-controls="advSecurity" data-target="advSecurity">
+                            <span class="base-collapsible-title">Security</span>
+                            <span class="base-collapsible-icon" aria-hidden="true"></span>
                         </button>
-                        <div id="advSecurity" class="jpk-collapsible-content collapsed">
+                        <div id="advSecurity" class="base-collapsible-content collapsed">
                             <div class="selectContainer">
                                 <label class="selectLabel" for="advJellyfinLoopbackOnly">Only through the proxy</label>
-                                <select id="advJellyfinLoopbackOnly" class="jpk-selector-dropdown" data-adv="JellyfinLoopbackOnly" data-kind="bool">
+                                <select is="emby-select" id="advJellyfinLoopbackOnly" data-adv="JellyfinLoopbackOnly" data-kind="bool">
                                     <option value="true">On</option>
                                     <option value="false">Off</option>
                                 </select>
@@ -191,7 +191,7 @@
                             </div>
                             <div class="selectContainer">
                                 <label class="selectLabel" for="advHstsEnabled">Always use HTTPS</label>
-                                <select id="advHstsEnabled" class="jpk-selector-dropdown" data-adv="HstsEnabled" data-kind="bool">
+                                <select is="emby-select" id="advHstsEnabled" data-adv="HstsEnabled" data-kind="bool">
                                     <option value="true">On</option>
                                     <option value="false">Off</option>
                                 </select>
@@ -204,7 +204,7 @@
                             </div>
                             <div class="selectContainer">
                                 <label class="selectLabel" for="advSameOriginFramesOnly">Block embedding</label>
-                                <select id="advSameOriginFramesOnly" class="jpk-selector-dropdown" data-adv="SameOriginFramesOnly" data-kind="bool">
+                                <select is="emby-select" id="advSameOriginFramesOnly" data-adv="SameOriginFramesOnly" data-kind="bool">
                                     <option value="true">On</option>
                                     <option value="false">Off</option>
                                 </select>
@@ -217,20 +217,20 @@
                             </div>
                             <div id="certRequestDescription" class="fieldDescription">Renewal is automatic, so use this only to replace a Let's Encrypt certificate now, such as after its key leaked. It works while the proxy runs with Let's Encrypt as the source.</div>
                             <div class="ra-button-row">
-                                <button is="emby-button" type="button" id="btnRequestCert" class="raised jpk-secondary jpk-button-small">
+                                <button is="emby-button" type="button" id="btnRequestCert" class="raised base-button secondary small">
                                     <span>Request a New Certificate</span>
                                 </button>
                             </div>
-                            <span id="certRequestStatus" class="jpk-status-text" aria-live="polite"></span>
+                            <span id="certRequestStatus" class="base-status-text" aria-live="polite"></span>
                         </div>
                     </div>
 
-                    <div class="jpk-collapsible-section">
-                        <button type="button" class="jpk-collapsible-header collapsed" aria-expanded="false" aria-controls="advCountries" data-target="advCountries">
-                            <span class="jpk-collapsible-title">Blocking</span>
-                            <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
+                    <div class="base-collapsible-section">
+                        <button type="button" class="base-collapsible-header collapsed" aria-expanded="false" aria-controls="advCountries" data-target="advCountries">
+                            <span class="base-collapsible-title">Blocking</span>
+                            <span class="base-collapsible-icon" aria-hidden="true"></span>
                         </button>
-                        <div id="advCountries" class="jpk-collapsible-content collapsed">
+                        <div id="advCountries" class="base-collapsible-content collapsed">
                             <div class="fieldDescription">These only apply to the internet, never to your own or trusted networks.</div>
                             <div class="inputContainer">
                                 <label for="advBlockedAddresses">Blocked addresses</label>
@@ -254,7 +254,7 @@
                             </div>
                             <div class="selectContainer">
                                 <label class="selectLabel" for="advCountryMode">Country rule</label>
-                                <select id="advCountryMode" class="jpk-selector-dropdown" data-adv="CountryMode" data-kind="enum">
+                                <select is="emby-select" id="advCountryMode" data-adv="CountryMode" data-kind="enum">
                                     <option value="ServerCountry">Server country only</option>
                                     <option value="Block">Block these countries</option>
                                     <option value="AllowOnly">Allow only these countries</option>
@@ -262,13 +262,13 @@
                                 </select>
                                 <div id="countryModeDescription" class="fieldDescription"></div>
                             </div>
-                            <div id="countryPickerField" style="margin-bottom: 1.8em;">
+                            <div id="countryPickerField">
                                 <h3 class="checkboxListLabel">Countries</h3>
                                 <div id="countryPicker"></div>
                             </div>
                             <div class="selectContainer">
                                 <label class="selectLabel" for="advBlockUnknownCountries">Unknown addresses</label>
-                                <select id="advBlockUnknownCountries" class="jpk-selector-dropdown" data-adv="BlockUnknownCountries" data-kind="bool">
+                                <select is="emby-select" id="advBlockUnknownCountries" data-adv="BlockUnknownCountries" data-kind="bool">
                                     <option value="true">Block</option>
                                     <option value="false">Allow</option>
                                 </select>
@@ -276,25 +276,25 @@
                             </div>
                             <div class="selectContainer">
                                 <label class="selectLabel" for="advBlockWithoutDatabase">Without the location database</label>
-                                <select id="advBlockWithoutDatabase" class="jpk-selector-dropdown" data-adv="BlockWithoutDatabase" data-kind="bool">
+                                <select is="emby-select" id="advBlockWithoutDatabase" data-adv="BlockWithoutDatabase" data-kind="bool">
                                     <option value="true">Block</option>
                                     <option value="false">Allow</option>
                                 </select>
                                 <div class="fieldDescription">What to do while the location database is missing or downloading. <span data-default="BlockWithoutDatabase" data-unit="allowblock"></span></div>
                             </div>
-                            <div id="countryStatus" class="jpk-info"></div>
+                            <div id="countryStatus" class="base-info"></div>
                         </div>
                     </div>
 
-                    <div class="jpk-collapsible-section">
-                        <button type="button" class="jpk-collapsible-header collapsed" aria-expanded="false" aria-controls="advHistory" data-target="advHistory">
-                            <span class="jpk-collapsible-title">History</span>
-                            <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
+                    <div class="base-collapsible-section">
+                        <button type="button" class="base-collapsible-header collapsed" aria-expanded="false" aria-controls="advHistory" data-target="advHistory">
+                            <span class="base-collapsible-title">History</span>
+                            <span class="base-collapsible-icon" aria-hidden="true"></span>
                         </button>
-                        <div id="advHistory" class="jpk-collapsible-content collapsed">
+                        <div id="advHistory" class="base-collapsible-content collapsed">
                             <div class="selectContainer">
                                 <label class="selectLabel" for="historyEnabled">Recording</label>
-                                <select id="historyEnabled" class="jpk-selector-dropdown">
+                                <select is="emby-select" id="historyEnabled">
                                     <option value="true">On</option>
                                     <option value="false">Off</option>
                                 </select>
@@ -307,35 +307,35 @@
                             </div>
                             <div class="selectContainer">
                                 <label class="selectLabel" for="locationDetail">Location</label>
-                                <select id="locationDetail" class="jpk-selector-dropdown">
+                                <select is="emby-select" id="locationDetail">
                                     <option value="Country">Country</option>
                                     <option value="City">Country and city</option>
                                     <option value="Off">Off</option>
                                 </select>
                                 <div id="locationDescription" class="fieldDescription"></div>
                             </div>
-                            <div id="locationStatus" class="jpk-info"></div>
+                            <div id="locationStatus" class="base-info"></div>
                             <div class="ra-button-row">
-                                <button is="emby-button" type="button" id="btnUpdateLocation" class="raised jpk-secondary">
+                                <button is="emby-button" type="button" id="btnUpdateLocation" class="raised base-button secondary">
                                     <span>Refresh Locations</span>
                                 </button>
-                                <button is="emby-button" type="button" id="btnDeleteAll" class="raised jpk-button-destructive">
+                                <button is="emby-button" type="button" id="btnDeleteAll" class="raised base-button destructive">
                                     <span>Clear History</span>
                                 </button>
                             </div>
-                            <span id="historyStatus" class="jpk-status-text" aria-live="polite"></span>
+                            <span id="historyStatus" class="base-status-text" aria-live="polite"></span>
                         </div>
                     </div>
 
-                    <div class="jpk-collapsible-section">
-                        <button type="button" class="jpk-collapsible-header collapsed" aria-expanded="false" aria-controls="advPerformance" data-target="advPerformance">
-                            <span class="jpk-collapsible-title">Performance</span>
-                            <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
+                    <div class="base-collapsible-section">
+                        <button type="button" class="base-collapsible-header collapsed" aria-expanded="false" aria-controls="advPerformance" data-target="advPerformance">
+                            <span class="base-collapsible-title">Performance</span>
+                            <span class="base-collapsible-icon" aria-hidden="true"></span>
                         </button>
-                        <div id="advPerformance" class="jpk-collapsible-content collapsed">
+                        <div id="advPerformance" class="base-collapsible-content collapsed">
                             <div class="selectContainer">
                                 <label class="selectLabel" for="advEnableHttp2">HTTP/2</label>
-                                <select id="advEnableHttp2" class="jpk-selector-dropdown" data-adv="EnableHttp2" data-kind="bool">
+                                <select is="emby-select" id="advEnableHttp2" data-adv="EnableHttp2" data-kind="bool">
                                     <option value="true">On</option>
                                     <option value="false">Off</option>
                                 </select>
@@ -364,12 +364,12 @@
                         </div>
                     </div>
 
-                    <div class="jpk-collapsible-section">
-                        <button type="button" class="jpk-collapsible-header collapsed" aria-expanded="false" aria-controls="advTimeouts" data-target="advTimeouts">
-                            <span class="jpk-collapsible-title">Timeouts</span>
-                            <span class="jpk-collapsible-icon" aria-hidden="true">&#9660;</span>
+                    <div class="base-collapsible-section">
+                        <button type="button" class="base-collapsible-header collapsed" aria-expanded="false" aria-controls="advTimeouts" data-target="advTimeouts">
+                            <span class="base-collapsible-title">Timeouts</span>
+                            <span class="base-collapsible-icon" aria-hidden="true"></span>
                         </button>
-                        <div id="advTimeouts" class="jpk-collapsible-content collapsed">
+                        <div id="advTimeouts" class="base-collapsible-content collapsed">
                             <div class="inputContainer">
                                 <label for="advKeepAliveSeconds">Idle connections</label>
                                 <input is="emby-input" type="number" id="advKeepAliveSeconds" data-adv="KeepAliveSeconds" data-kind="int" min="5" max="3600" step="1" />
@@ -399,20 +399,20 @@
                     </div>
 
                     <div class="inputContainer">
-                        <button is="emby-button" type="button" id="btnSaveAdvanced" class="raised jpk-button-submit block">
+                        <button is="emby-button" type="button" id="btnSaveAdvanced" class="raised base-button primary fill">
                             <span>Save</span>
                         </button>
-                        <span id="advancedStatus" class="jpk-status-text" aria-live="polite"></span>
+                        <span id="advancedStatus" class="base-status-text" aria-live="polite"></span>
                     </div>
                     <div class="ra-button-row">
-                        <button is="emby-button" type="button" id="btnResetAdvanced" class="raised jpk-secondary">
+                        <button is="emby-button" type="button" id="btnResetAdvanced" class="raised base-button secondary">
                             <span>Reset to Defaults</span>
                         </button>
-                        <button is="emby-button" type="button" id="btnRestartProxy" class="raised jpk-secondary">
+                        <button is="emby-button" type="button" id="btnRestartProxy" class="raised base-button secondary">
                             <span>Restart Proxy</span>
                         </button>
                     </div>
-                    <span id="restartStatus" class="jpk-status-text" aria-live="polite"></span>
+                    <span id="restartStatus" class="base-status-text" aria-live="polite"></span>
 
                 </div>
             </form>

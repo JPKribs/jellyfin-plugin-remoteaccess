@@ -358,8 +358,8 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
             };
         }
 
-        // Modules the pages import: the shared page helpers, the world map and the shared page styles.
-        foreach (var module in new[] { "remoteaccess_tabs.js", "remoteaccess_worldmap.js", "remoteaccess_common.css" })
+        // Modules the pages import: the shared page helpers and the shared page styles.
+        foreach (var module in new[] { "remoteaccess_tabs.js", "remoteaccess_common.css" })
         {
             yield return new PluginPageInfo
             {

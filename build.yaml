@@ -1,7 +1,7 @@
 ---
 name: "Remote Access"
 guid: "8150dce5-6153-4924-a985-a6927be95baa"
-version: "12.4.4.10"
+version: "12.4.4.11"
 targetAbi: "12.4.0.0"
 framework: "net10.0"
 overview: "Reach your server from anywhere: Dynamic DNS and a secure HTTPS proxy, inside Jellyfin."
@@ -20,9 +20,15 @@ artifacts:
 - "MaxMind.Db.dll"
 - "Certes.dll"
 - "BouncyCastle.Cryptography.dll"
-- "QRCoder.dll"
 changelog:
+  changed:
+  - The Configuration steps are a checklist. A bar counts the steps that are done, each step says Done, Needs Attention, To Do or Optional, and the first step that needs something opens on its own
+  - The Dashboard's map mixes the colours of users, failed sign-ins and blocked visitors in each country, and selecting a country selects its row in the table beside it
+  - The Banned and Activity tables sort by any column, and their times keep themselves up to date
+  - The share card's QR code is drawn in the page, with Copy Image, Download and a copy button for the address
   fixed:
-  - The arrows on collapsible sections are back to their usual size
+  - Countries saved in the country rule showed as two-letter codes under Advanced. They show their names
   developer:
-  - Uses JPKribs.Jellyfin.Base 2026.11.13.3
+  - Uses JPKribs.Jellyfin.Base 2026.11.17, whose world map, setup checklist, data tables, QR code and log sanitizer replace the plugin's own
+  - The QRCoder package is no longer shipped
+  - Contributor guides in starthere.md and skills/, and tests for the page modules under Jellyfin.Plugin.RemoteAccess.Tests/js

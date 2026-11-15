@@ -1,6 +1,8 @@
+// remoteaccess_tabs.js
+// What every Remote Access page shares, kept in one place so the pages never disagree.
+
 import { confirmDialog, SECRET_KEPT } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
 
-// What every Remote Access page shares, kept in one place so the pages never disagree.
 export const PLUGIN_ID = '8150dce5-6153-4924-a985-a6927be95baa';
 
 // The tab bar. Each page passes its own position here as its tabIndex.
@@ -10,8 +12,16 @@ export const TABS = [
     { href: 'configurationpage?name=remoteaccess_advanced', name: 'Advanced' }
 ];
 
-// Reads the problems out of a failed save, or falls back to a generic message.
-export function errorText(err, fallback) {
+// problemText
+// Reads the problems out of a failed save, which this plugin's endpoints list in Errors, or falls back to a message.
+//
+// Inputs
+// err [any]: The rejected request.
+// fallback [string]: The message when the reply names no problem.
+//
+// Output
+// [Promise<string>]: The message to show.
+export function problemText(err, fallback) {
     if (err && typeof err.json === 'function') {
         return err.json().then(function (body) {
             return body && body.Errors && body.Errors.length ? body.Errors.join(' ') : fallback;
@@ -36,7 +46,7 @@ export function trustTheProxy(shared, statusId, prepare) {
         if (!ok) return false;
         return Promise.resolve(prepare ? prepare() : true).then(function (ready) {
             if (!ready) return false;
-            shared.setStatus(statusId, 'Checking the proxy can reach Jellyfin...', false, { timeout: 0 });
+            shared.setStatus(statusId, 'Checking the proxy can reach Jellyfin…', false, { timeout: 0 });
             return shared.apiRequest('Proxy/TakeOver', 'POST').then(function (result) {
                 var worked = !!(result && result.Success);
                 shared.setStatus(statusId, (result && result.Message) || 'Done.', !worked, { timeout: 0 });
@@ -59,7 +69,7 @@ export function routerInstructionHtml(shared, st) {
         ? 'Forward TCP ports <strong>80</strong> and <strong>443</strong> to ' + target + '.'
         : 'Forward TCP port <strong>443</strong> to ' + target + ' port <strong>' + st.HttpsPort + '</strong>, and port <strong>80</strong> to port <strong>' + st.HttpPort + '</strong>.';
     var test = st.PublicUrl
-        ? '<br>Then open <span class="jpk-mono">' + shared.escapeHtml(st.PublicUrl) + '</span> on a phone with Wi-Fi turned off.'
+        ? '<br>Then open <span class="base-mono">' + shared.escapeHtml(st.PublicUrl) + '</span> on a phone with Wi-Fi turned off.'
         : '';
     // Port 80 sends http:// links on to HTTPS, and is where Let's Encrypt checks the address.
     var httpCheck = cert.Mode === 'Automatic' && (st.Acme || {}).Method !== 'Dns';
@@ -133,7 +143,7 @@ export function readDdnsSecret(shared, id) {
     var el = shared.getEl(id);
     var value = shared.readSecretField(id);
     if (value === SECRET_KEPT) return DDNS_KEPT;
-    if (!value && el.dataset.jpkSecretCleared) return DDNS_CLEAR;
+    if (!value && el.dataset.baseSecretCleared) return DDNS_CLEAR;
     return value;
 }
 
@@ -183,4 +193,118 @@ export function saveProxyHostnames(shared, namesBefore, others, mutate) {
         fresh.Hostnames = proxyHostnames(results[0], kept);
         return shared.apiRequest('Proxy/Settings', 'POST', fresh);
     });
+}
+
+// ===== The Dashboard's map and country table =====
+
+// The map's layers, one per kind of count, in the colors the Activity badges use for the same kinds.
+export const MAP_LAYERS = [
+    { key: 'people', label: 'Users', color: 'blue', field: 'PeopleByCountry', column: 'users', icon: 'person' },
+    { key: 'failed', label: 'Failures', color: 'red', field: 'FailedByCountry', column: 'failures', icon: 'warning' },
+    { key: 'blocked', label: 'Blocked', color: 'purple', field: 'BlockedByCountry', column: 'blocked', icon: 'block' }
+];
+
+// countryCounts
+// Turns the People totals into the world map's counts, by country code and then by layer.
+//
+// Inputs
+// data [object]: The People reply, with PeopleByCountry, FailedByCountry and BlockedByCountry.
+//
+// Output
+// [object]: { CODE: { people, failed, blocked } } with only the kinds that have a count.
+export function countryCounts(data) {
+    var counts = {};
+    MAP_LAYERS.forEach(function (layer) {
+        ((data && data[layer.field]) || []).forEach(function (t) {
+            if (!t || !t.CountryCode || !t.Count) return;
+            (counts[t.CountryCode] = counts[t.CountryCode] || {})[layer.key] = t.Count;
+        });
+    });
+    return counts;
+}
+
+// countryRows
+// One row per country for the table beside the map, counting only the layers that are on, most first.
+//
+// Inputs
+// data [object]: The People reply.
+// active [string[]]: The map layers that are on.
+//
+// Output
+// [object[]]: Rows of { code, name, users, failures, blocked, total, last }, without countries that have nothing.
+export function countryRows(data, active) {
+    var rows = {};
+    MAP_LAYERS.forEach(function (layer) {
+        if ((active || []).indexOf(layer.key) < 0) return;
+        ((data && data[layer.field]) || []).forEach(function (t) {
+            if (!t || !t.CountryCode || !t.Count) return;
+            var r = rows[t.CountryCode] || (rows[t.CountryCode] = {
+                code: t.CountryCode, name: t.Country || t.CountryCode, users: 0, failures: 0, blocked: 0, total: 0, last: t.LastUtc
+            });
+            r[layer.column] = t.Count;
+            r.total += t.Count;
+            if (Date.parse(t.LastUtc) > Date.parse(r.last)) r.last = t.LastUtc;
+        });
+    });
+    return Object.keys(rows).map(function (k) { return rows[k]; }).sort(function (x, y) {
+        return y.total - x.total || x.name.localeCompare(y.name);
+    });
+}
+
+// countryFilterOptions
+// The choices of the Activity table's country filter: your network, then every country with any activity, from
+// the full totals rather than the rows shown, by name.
+//
+// Inputs
+// data [object]: The People reply.
+// picked [string]: The country picked now, kept as a choice even when it has dropped out of the totals.
+//
+// Output
+// [object[]]: Options of { value, label }.
+export function countryFilterOptions(data, picked) {
+    var names = {};
+    MAP_LAYERS.forEach(function (layer) {
+        ((data && data[layer.field]) || []).forEach(function (t) {
+            if (t && t.CountryCode) names[t.CountryCode] = t.Country || t.CountryCode;
+        });
+    });
+    if (picked && picked !== 'local' && !names[picked]) names[picked] = picked;
+    var codes = Object.keys(names).sort(function (a, b) { return names[a].localeCompare(names[b]); });
+    return [{ value: 'local', label: 'Local' }].concat(codes.map(function (c) { return { value: c, label: names[c] }; }));
+}
+
+// activityQuery
+// The path the Activity table asks for. The server applies the filters, so a flood of one kind never hides another
+// behind the row limit.
+//
+// Inputs
+// filters [object]: The Activity table's filters by name, each a list of picked values.
+//
+// Output
+// [string]: The People path with its query.
+export function activityQuery(filters) {
+    var type = ((filters && filters.type) || [])[0] || '';
+    var place = ((filters && filters.place) || [])[0] || '';
+    var query = [];
+    if (type) query.push('type=' + encodeURIComponent(type));
+    if (place) query.push('place=' + encodeURIComponent(place));
+    return 'People' + (query.length ? '?' + query.join('&') : '');
+}
+
+// ===== The Configuration checklist =====
+
+// stepState
+// The Setup Checklist state for a step's assessment. Green is done, orange and red need attention, a step that waits
+// for the proxy is optional, and anything else is still to do.
+//
+// Inputs
+// result [object]: { state, idle } where state is green, amber, red or gray.
+//
+// Output
+// [string]: done, attention, optional or todo.
+export function stepState(result) {
+    if (!result) return 'todo';
+    if (result.state === 'green') return 'done';
+    if (result.state === 'amber' || result.state === 'red') return 'attention';
+    return result.idle ? 'optional' : 'todo';
 }

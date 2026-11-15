@@ -8,21 +8,22 @@ with its default and range.
 
 ### Dashboard
 
-Who reaches the server, from where, and what was turned away: the share card with **Copy URL**, **Copy Image** and
+Who reaches the server, from where, and what was turned away: the share card with **Copy Image**, **Download** and
 **Share**, a map and table of **Locations**, the **Banned** list and the **Activity** list. See
 [Dashboard & Monitoring](Dashboard.md).
 
 ### Configuration
 
-Everything needed to reach Jellyfin from outside, as six numbered steps. Each step shows its state on the right,
-such as **Ready** or **Forward by hand**, and opens to show its settings. Steps that are not done yet open on their
-own. The summary at the top counts the steps that are done, with a bar for each step in its colour. It explains
-the first step that needs attention, with **Open step** to jump to it, or says **Ready to share** once all six are
-done. Under it, a note names the countries that can connect, with a link to change them in **Advanced > Blocking**.
+Everything needed to reach Jellyfin from outside, as a checklist of six numbered steps. Each step shows **Done**,
+**Needs Attention**, **To Do** or **Optional** on the right, and opens to show what it found, such as **Ready** or
+**Forward by hand**, and its settings. The first step that needs something opens on its own. The bar at the top
+counts the steps that are done, with a segment for each step in its colour that opens that step. A note says when
+the proxy is off, or where Jellyfin can be reached once every step is done. Another names the countries that can
+connect, with a link to change them in **Advanced > Blocking**. Steps 3 to 6 are **Optional** while the proxy is off.
 
 ![Configuration tab](screenshots/Configuration.png)
 
-1. **Proxy on**: tick **Enabled** to start the proxy.
+1. **Proxy On**: turn on **Enabled** to start the proxy.
 2. **Address**: the one DDNS record, with only **Provider**, **Hostname** and the credentials that provider asks
    for. A card shows the public IP, the last update and its result, with **Update Now**. See
    [The DDNS Record](Records.md).
@@ -30,7 +31,7 @@ done. Under it, a note names the countries that can connect, with a link to chan
 4. **Router**: the ports to forward by hand when the router does not, **Try Again**, and a warning when your
    provider shares your public address.
 5. **Trust the Proxy**: lets Jellyfin see each visitor's real address. **Undo** puts it back.
-6. **Reachable from outside**: **Test from Outside** checks that the internet can reach your address.
+6. **Reachable From Outside**: **Test from Outside** checks that the internet can reach your address.
 
 **Save** at the bottom keeps every step, the record in step 2 included. Steps 1 and 3 to 6 are explained in
 [Remote Access](RemoteAccess.md).

@@ -22,3 +22,17 @@ jobs:
     uses: jellyfin/jellyfin-meta-plugins/.github/workflows/test.yaml@master
     with:
       dotnet-version: 10.0.x
+
+  # The page module tests load Base's bundle from the restored package, so restore first.
+  js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: dotnet restore Jellyfin.Plugin.RemoteAccess/Jellyfin.Plugin.RemoteAccess.csproj
+      - run: node --import ./Jellyfin.Plugin.RemoteAccess.Tests/js/register.mjs --test 'Jellyfin.Plugin.RemoteAccess.Tests/js/*.test.mjs'

@@ -88,7 +88,7 @@ If your home has no IPv6, turn off **Update IPv6** under **Advanced > Dynamic DN
 
 ## 3. Turn on Remote Access
 
-1. Step 1, **Proxy on**: tick **Enabled**.
+1. Step 1, **Proxy On**: turn on **Enabled**.
 2. Step 3, **Certificate**: keep **Let's Encrypt** and tick **I accept the Let's Encrypt terms**.
 3. Select **Save**.
 

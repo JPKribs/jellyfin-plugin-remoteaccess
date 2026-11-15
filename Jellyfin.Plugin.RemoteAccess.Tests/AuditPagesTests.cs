@@ -9,6 +9,7 @@ using Jellyfin.Plugin.RemoteAccess.Models;
 using Jellyfin.Plugin.RemoteAccess.Providers;
 using Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
 using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
@@ -221,10 +222,10 @@ public class AuditPagesTests
     }
 
     [Fact]
-    public void SanitizeForLog_StripsWhatXmlCannotHold()
+    public void SanitizeForLog_LeavesNothingXmlCannotHold()
     {
-        var text = FormatUtilities.SanitizeForLog("a\u0001b￾c\uD800d\uDC00e\r\nf", 100);
-        Assert.Equal("abcdef", text);
+        var text = FormatUtilities.SanitizeForLog("a\u0001b\uFFFEc\uD800d\uDC00e\r\nf", 100);
+        Assert.Equal("abc\uFFFDd\uFFFDef", text);
         Assert.Null(XmlText.FindInvalid(new DNSRecord { LastStatus = text }));
         Assert.Equal("[empty]", FormatUtilities.SanitizeForLog(null));
     }
