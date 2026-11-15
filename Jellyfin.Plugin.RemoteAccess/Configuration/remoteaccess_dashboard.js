@@ -23,6 +23,9 @@ export default function (view) {
     // The Activity filters of the last request, so the country filter keeps the country picked.
     var lastFilters = {};
     var placeOptions = '';
+    // The Activity rows of the last request, which the table shows a page at a time.
+    var activityRows = [];
+    var ACTIVITY_PAGE = 50;
     // The Activity table loads itself when it is built, so the first show does not ask again.
     var builtThisShow = false;
 
@@ -140,16 +143,29 @@ export default function (view) {
         showText(Shared, 'peopleOff', note);
     }
 
+    // pageOf
+    // One page of the Activity rows, as the table asks for it while it scrolls.
+    function pageOf(query) {
+        var size = (query && query.pageSize) || ACTIVITY_PAGE;
+        var start = (Math.max(1, (query && query.page) || 1) - 1) * size;
+        return { Items: activityRows.slice(start, start + size), TotalCount: activityRows.length };
+    }
+
     // fetchActivity
-    // Loads the People reply for the Activity table's filters and draws the rest of the page from it.
+    // Loads the People reply for the Activity table's filters and draws the rest of the page from it. Later pages
+    // come from the rows already loaded, since the server sends them all at once.
     function fetchActivity(query) {
+        // Base counts pages from 1.
+        if (query && query.page > 1) return Promise.resolve(pageOf(query));
         lastFilters = (query && query.filters) || {};
         return Shared.apiRequest(activityQuery(lastFilters), 'GET').then(function (d) {
             apply(d);
-            return (d && d.Activity) || [];
+            activityRows = (d && d.Activity) || [];
+            return pageOf(query);
         }).catch(function () {
             Shared.setStatus('activityStatus', 'Could not load Remote Access.', true, { timeout: 0 });
-            return [];
+            activityRows = [];
+            return pageOf(query);
         });
     }
 
@@ -294,6 +310,8 @@ export default function (view) {
                 { name: 'type', label: 'Types', options: ['User', 'Failure', 'Blocked', 'Seen'].map(function (t) { return { value: t, label: t }; }) },
                 { name: 'place', label: 'Countries', options: [{ value: 'local', label: 'Local' }] }
             ],
+            pageSize: ACTIVITY_PAGE,
+            maxHeight: '32rem',
             label: 'Activity',
             emptyText: 'Nothing recorded yet.'
         });
