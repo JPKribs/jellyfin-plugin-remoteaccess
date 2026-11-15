@@ -9,6 +9,14 @@
     "category": "Administration",
     "versions": [
       {
+        "version": "12.4.4.13",
+        "changelog": "\n## Fixed\n- The Action column of the Dashboard's Activity and Banned tables could sit outside the table on a narrower screen. It stays inside",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://github.com/JPKribs/jellyfin-plugin-remoteaccess/releases/download/v12.4.4.13/jellyfin-plugin-remoteaccess-12.4.4.13.zip",
+        "checksum": "5e6501a2e33ce888ea89ae8d33a43d76",
+        "timestamp": "2026-11-15T22:34:55Z"
+      },
+      {
         "version": "12.4.4.12",
         "changelog": "\n## Changed\n- Labels on Configuration and Advanced are in Title Case and name one thing, with notes moved to their descriptions. Hostname, Login and Password replace the labels with slashes\n- On and off settings under Advanced are checkboxes, such as Automatic Port Forwarding, Always Use HTTPS and Record History\n- Provider fields are in Title Case, such as API Token or Key\n- The Dashboard tables give each column a width that suits it, so addresses and devices are cut off less\n- Docs headings are in Title Case",
         "targetAbi": "12.4.0.0",
