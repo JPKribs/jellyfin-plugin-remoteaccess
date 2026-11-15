@@ -1,7 +1,7 @@
 ---
 name: "Remote Access"
 guid: "8150dce5-6153-4924-a985-a6927be95baa"
-version: "12.4.4.12"
+version: "12.4.4.13"
 targetAbi: "12.4.0.0"
 framework: "net10.0"
 overview: "Reach your server from anywhere: Dynamic DNS and a secure HTTPS proxy, inside Jellyfin."
@@ -21,9 +21,5 @@ artifacts:
 - "Certes.dll"
 - "BouncyCastle.Cryptography.dll"
 changelog:
-  changed:
-  - Labels on Configuration and Advanced are in Title Case and name one thing, with notes moved to their descriptions. Hostname, Login and Password replace the labels with slashes
-  - On and off settings under Advanced are checkboxes, such as Automatic Port Forwarding, Always Use HTTPS and Record History
-  - Provider fields are in Title Case, such as API Token or Key
-  - The Dashboard tables give each column a width that suits it, so addresses and devices are cut off less
-  - Docs headings are in Title Case
+  fixed:
+  - The Action column of the Dashboard's Activity and Banned tables could sit outside the table on a narrower screen. It stays inside

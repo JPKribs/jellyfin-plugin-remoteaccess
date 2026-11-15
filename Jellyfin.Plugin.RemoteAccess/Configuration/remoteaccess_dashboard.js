@@ -248,8 +248,8 @@ export default function (view) {
             return { key: l.column, label: l.label, icon: l.icon, align: 'end' };
         });
         countries = createDataTable({
-            columns: [{ key: 'name', label: 'Country', width: 'minmax(8rem, 1fr)' }].concat(counts, [
-                { key: 'last', label: 'Last', width: '9rem', value: function (r) { return new Date(r.last); }, render: renderRelative('last') }
+            columns: [{ key: 'name', label: 'Country', width: '1fr' }].concat(counts, [
+                { key: 'last', label: 'Last', width: '8rem', value: function (r) { return new Date(r.last); }, render: renderRelative('last') }
             ]),
             rows: [],
             rowKey: 'code',
@@ -262,12 +262,12 @@ export default function (view) {
 
         banned = createDataTable({
             columns: [
-                { key: 'Ip', label: 'IP', width: 'minmax(9rem, 1.2fr)', render: function (b) { return mono(b.Ip); } },
-                { key: 'Country', label: 'Country', width: 'minmax(6rem, 1fr)', value: function (b) { return b.Country || 'Unknown'; } },
+                { key: 'Ip', label: 'IP', width: '1.2fr', render: function (b) { return mono(b.Ip); } },
+                { key: 'Country', label: 'Country', width: '1fr', value: function (b) { return b.Country || 'Unknown'; } },
                 { key: 'Failures', label: 'Failures', align: 'end', icon: 'warning' },
-                { key: 'BannedUtc', label: 'Banned', width: '9rem', value: function (b) { return new Date(b.BannedUtc); }, render: renderRelative('BannedUtc') },
-                { key: 'UntilUtc', label: 'Ends', width: '8rem', value: function (b) { return b.UntilUtc ? new Date(b.UntilUtc) : null; }, render: renderRelative('UntilUtc', { emptyText: 'Until Lifted' }) },
-                { key: 'action', label: 'Action', sortable: false, width: '6rem', render: function (b) { return rowButton('Unban', 'secondary', { unban: b.Ip }, '', 'Unban ' + b.Ip); } }
+                { key: 'BannedUtc', label: 'Banned', width: '8rem', value: function (b) { return new Date(b.BannedUtc); }, render: renderRelative('BannedUtc') },
+                { key: 'UntilUtc', label: 'Ends', width: '7rem', value: function (b) { return b.UntilUtc ? new Date(b.UntilUtc) : null; }, render: renderRelative('UntilUtc', { emptyText: 'Until Lifted' }) },
+                { key: 'action', label: 'Action', sortable: false, width: '5.5rem', render: function (b) { return rowButton('Unban', 'secondary', { unban: b.Ip }, '', 'Unban ' + b.Ip); } }
             ],
             rows: [],
             rowKey: 'Ip',
@@ -278,15 +278,15 @@ export default function (view) {
 
         activity = createDataTable({
             columns: [
-                { key: 'Type', label: 'Type', width: '6rem', render: function (r) { return badge(TYPE_COLORS[r.Type] || 'gray', r.Type); } },
-                { key: 'User', label: 'User', width: 'minmax(5rem, 0.8fr)' },
-                { key: 'Ip', label: 'IP', width: 'minmax(9rem, 1.2fr)', render: function (r) { return mono(r.Ip); } },
-                { key: 'Device', label: 'Device', width: 'minmax(6rem, 1.2fr)' },
-                { key: 'Host', label: 'Address', width: 'minmax(6rem, 1.2fr)', value: function (r) { return shortHost(r.Host); } },
-                { key: 'place', label: 'Country', width: 'minmax(5rem, 0.8fr)', value: place },
-                { key: 'area', label: 'Area', width: 'minmax(5rem, 0.8fr)', hidden: true, value: function (r) { return r.IsLocal ? '' : r.City || ''; } },
-                { key: 'LastUtc', label: 'Last Seen', width: '8.5rem', value: function (r) { return new Date(r.LastUtc); }, render: renderRelative('LastUtc') },
-                { key: 'action', label: 'Action', sortable: false, width: '6rem', render: action }
+                { key: 'Type', label: 'Type', width: '5.5rem', render: function (r) { return badge(TYPE_COLORS[r.Type] || 'gray', r.Type); } },
+                { key: 'User', label: 'User', width: '0.8fr' },
+                { key: 'Ip', label: 'IP', width: '1.2fr', render: function (r) { return mono(r.Ip); } },
+                { key: 'Device', label: 'Device', width: '1.2fr' },
+                { key: 'Host', label: 'Address', width: '1.2fr', value: function (r) { return shortHost(r.Host); } },
+                { key: 'place', label: 'Country', width: '0.8fr', value: place },
+                { key: 'area', label: 'Area', width: '0.8fr', hidden: true, value: function (r) { return r.IsLocal ? '' : r.City || ''; } },
+                { key: 'LastUtc', label: 'Last Seen', width: '7.5rem', value: function (r) { return new Date(r.LastUtc); }, render: renderRelative('LastUtc') },
+                { key: 'action', label: 'Action', sortable: false, width: '5.5rem', render: action }
             ],
             fetch: fetchActivity,
             rowKey: function (r) { return r.Type + '|' + r.Ip + '|' + r.User + '|' + r.Host; },
