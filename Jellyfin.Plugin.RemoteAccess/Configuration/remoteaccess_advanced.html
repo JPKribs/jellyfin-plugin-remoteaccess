@@ -314,10 +314,10 @@
                             </div>
                             <div id="locationStatus" class="base-info"></div>
                             <div class="base-button-row">
-                                <button is="emby-button" type="button" id="btnUpdateLocation" class="raised base-button secondary">
+                                <button is="emby-button" type="button" id="btnUpdateLocation" class="raised base-button secondary fill">
                                     <span>Refresh Locations</span>
                                 </button>
-                                <button is="emby-button" type="button" id="btnDeleteAll" class="raised base-button destructive">
+                                <button is="emby-button" type="button" id="btnDeleteAll" class="raised base-button destructive fill">
                                     <span>Clear History</span>
                                 </button>
                             </div>
@@ -395,21 +395,18 @@
                         </div>
                     </div>
 
-                    <div class="inputContainer">
-                        <button is="emby-button" type="button" id="btnSaveAdvanced" class="raised base-button primary fill">
-                            <span>Save</span>
-                        </button>
-                        <span id="advancedStatus" class="base-status-text" aria-live="polite"></span>
-                    </div>
+                    <!-- Save -->
+                    <!-- Reset and Restart go with the Save, in one row directly above it. -->
+                    <span id="restartStatus" class="base-status-text" role="status"></span>
                     <div class="base-button-row">
-                        <button is="emby-button" type="button" id="btnResetAdvanced" class="raised base-button secondary">
+                        <button is="emby-button" type="button" id="btnResetAdvanced" class="raised base-button secondary fill">
                             <span>Reset to Defaults</span>
                         </button>
-                        <button is="emby-button" type="button" id="btnRestartProxy" class="raised base-button secondary">
+                        <button is="emby-button" type="button" id="btnRestartProxy" class="raised base-button secondary fill">
                             <span>Restart Proxy</span>
                         </button>
                     </div>
-                    <span id="restartStatus" class="base-status-text" aria-live="polite"></span>
+                    <div id="saveBar"></div>
 
                 </div>
             </form>

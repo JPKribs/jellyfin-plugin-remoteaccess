@@ -1,7 +1,7 @@
 // remoteaccess_advanced.js
 // The Advanced tab: Dynamic DNS tuning, the record's finer settings, addresses, security, blocking, history and limits.
 
-import { createConfigPage, confirmDialog, createChipSelect, COUNTRY_CODES, WORLD } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { createConfigPage, confirmDialog, createChipSelect, createSaveBar, COUNTRY_CODES, WORLD } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
 import { PLUGIN_ID, TABS, problemText, showText, loadProviders, primaryRecord, recordNames, otherAddresses, addressLines, saveProxyHostnames } from './configurationpage?name=remoteaccess_tabs.js';
 
 export default function (view) {
@@ -26,6 +26,8 @@ export default function (view) {
     var countryDatabaseLoaded = true;
     // The proxy settings as last loaded or saved, for the certificate request.
     var proxySettings = null;
+    // The Save Bar at the bottom of the page, built once in bind.
+    var saveBar = null;
     // The Dynamic DNS fine-tuning, saved through the DDNS configuration rather than the proxy settings. The form
     // as last loaded or saved, to tell whether it changed. Null until loaded.
     var raBaseline = null;
@@ -519,58 +521,55 @@ export default function (view) {
                 fillHostnames((results[1] && results[1].Hostnames) || [], names);
             });
         }).catch(function () {
-            Shared.setStatus('advancedStatus', 'Could not load settings.', true);
+            saveBar.setState('failed', 'Could not load the settings. Reload the page.');
         });
     }
 
+    // save
+    // The Save Bar's onSave. Turning on Only Through the Proxy can cut off whoever uses Jellyfin's own address, this
+    // page included, so it is confirmed first.
+    //
+    // Output
+    // [Promise]: Resolves once saved, or rejects with an Error whose message the Save Bar shows.
     function save() {
         // Without the saved values to compare against, every field would look changed and be written empty.
-        if (!settingsLoaded) {
-            Shared.setStatus('advancedStatus', 'The settings did not load. Reload the page before saving.', true, { timeout: 0 });
-            return;
-        }
+        if (!settingsLoaded) return Promise.reject(new Error('The settings did not load. Reload the page before saving.'));
 
-        // Turning this on can cut off whoever is using Jellyfin's own address, this page included, so it is confirmed.
         var current = read();
         var effective = function (v) { return v == null ? !!(defaults && defaults.JellyfinLoopbackOnly) : v; };
-        if (effective(current.JellyfinLoopbackOnly) && !effective(loaded.JellyfinLoopbackOnly)) {
-            confirmDialog('Turn on Only Through the Proxy? Everyone, at home too, reaches Jellyfin only through your Remote Access address, so apps and casting that use the server\'s own address stop working. Use Undo before disabling the plugin, and see Recovery in the documentation if you lose access.', { title: 'Only Through the Proxy', confirmText: 'Turn On' }).then(function (ok) {
-                if (ok) doSave();
-            });
-            return;
-        }
-
-        doSave();
+        if (!effective(current.JellyfinLoopbackOnly) || effective(loaded.JellyfinLoopbackOnly)) return doSave();
+        return confirmDialog('Turn on Only Through the Proxy? Everyone, at home too, reaches Jellyfin only through your Remote Access address, so apps and casting that use the server\'s own address stop working. Use Undo before disabling the plugin, and see Recovery in the documentation if you lose access.', { title: 'Only Through the Proxy', confirmText: 'Turn On' }).then(function (ok) {
+            if (!ok) throw new Error('Nothing was saved.');
+            return doSave();
+        });
     }
 
+    // doSave
+    // Saves the Dynamic DNS settings and the record first, so the proxy's addresses follow the record's names as now
+    // saved, then the proxy and history settings. Each goes to its own endpoint, so one failing never stops the other.
+    //
+    // Output
+    // [Promise]: Resolves once both saved, or rejects with an Error that names what was not saved.
     function doSave() {
-        var button = Shared.getEl('btnSaveAdvanced');
-        if (button.disabled) return;
-        button.disabled = true;
-        Shared.setStatus('advancedStatus', 'Saving…', false);
         var raChanged = raDirty() || recordDirty() || extraCount > 0;
         var before = [];
         var raError = '';
-        // The DDNS settings and the record save first, so the proxy's addresses follow the record's names as now
-        // saved. Each save goes to its own endpoint, so one failing never stops the other, and both are reported.
-        namesNow().then(function (names) {
+        return namesNow().then(function (names) {
             before = names;
             return saveDdns();
         }).then(function (error) {
             raError = error;
             return saveProxy(before);
         }).then(function (proxy) {
-            if (!raError) {
-                var done = proxy.ok || !raChanged ? proxy.text
-                    : 'The proxy settings were not saved. ' + proxy.text + ' The Dynamic DNS settings were saved.';
-                Shared.setStatus('advancedStatus', done, proxy.bad, proxy.keep ? { timeout: 0 } : undefined);
+            if (!raError && proxy.ok) {
+                saveBar.setDirty(false);
+                // A restart note or skipped history settings follow the saved line, once the Save Bar has drawn it.
+                if (proxy.keep) setTimeout(function () { saveBar.setState(proxy.bad ? 'failed' : 'saved', proxy.text); }, 0);
                 return;
             }
-            var text = (proxy.ok ? proxy.text : 'The proxy settings were not saved. ' + proxy.text) +
-                ' The Dynamic DNS settings were not saved. ' + raError;
-            Shared.setStatus('advancedStatus', text, true, { timeout: 0 });
-        }).then(function () {
-            button.disabled = false;
+            var text = !raError ? 'The proxy settings were not saved. ' + proxy.text + (raChanged ? ' The Dynamic DNS settings were saved.' : '')
+                : (proxy.ok ? proxy.text : 'The proxy settings were not saved. ' + proxy.text) + ' The Dynamic DNS settings were not saved. ' + raError;
+            throw new Error(text);
         });
     }
 
@@ -608,7 +607,7 @@ export default function (view) {
             // History settings that never loaded were not sent, so the page does not claim to have saved them.
             var skipped = !historyLoaded;
             loadHistory();
-            var text = 'Saved.' + (skipped ? ' The history settings did not load, so they were not saved.' : '') + (restartNote ? ' ' + restartNote : '');
+            var text = 'Changes saved.' + (skipped ? ' The history settings did not load, so they were not saved.' : '') + (restartNote ? ' ' + restartNote : '');
             return { ok: true, bad: skipped, keep: skipped || !!restartNote, text: text };
         }).catch(function (err) {
             return problemText(err, 'Save failed.').then(function (text) {
@@ -645,7 +644,11 @@ export default function (view) {
         Shared.getEl('countryPicker').appendChild(countries.element);
         Shared.getEl('advCountryMode').addEventListener('change', showCountryMode);
         Shared.getEl('advBlockWithoutDatabase').addEventListener('change', showCountryMode);
-        Shared.getEl('btnSaveAdvanced').addEventListener('click', save);
+        saveBar = createSaveBar({ fill: true, form: Shared.getEl('RemoteAccessAdvancedForm'), onSave: save });
+        Shared.getEl('saveBar').appendChild(saveBar.element);
+        ['input', 'change'].forEach(function (type) {
+            view.addEventListener(type, function () { saveBar.setDirty(isDirty()); });
+        });
         Shared.getEl('btnResetAdvanced').addEventListener('click', reset);
         Shared.getEl('btnRestartProxy').addEventListener('click', restartProxy);
         Shared.getEl('locationDetail').addEventListener('change', showLocationNote);

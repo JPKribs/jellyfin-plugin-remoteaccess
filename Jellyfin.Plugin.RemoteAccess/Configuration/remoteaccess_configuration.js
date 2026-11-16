@@ -1,7 +1,7 @@
 // remoteaccess_configuration.js
 // The Configuration tab, a Setup Checklist from turning the proxy on to a test from outside.
 
-import { createConfigPage, confirmDialog, createSetupChecklist } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { createConfigPage, confirmDialog, createSetupChecklist, createSaveBar } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
 import { PLUGIN_ID, TABS, problemText, showText, trustTheProxy, routerInstructionHtml, routerStateText, loadProviders, primaryRecord, readDdnsSecret, recordNames, saveProxyHostnames, stepState } from './configurationpage?name=remoteaccess_tabs.js';
 
 // The Configuration tab: a checklist from turning the proxy on to a test from outside. Each step holds only what
@@ -60,8 +60,9 @@ export default function (view) {
 
     var SECRET_IDS = ['recLogin', 'recPassword'];
     var CLEAR_BUTTONS = { recLogin: 'btnClearLogin', recPassword: 'btnClearPassword' };
-    // The Setup Checklist that holds the steps, built once in bind.
+    // The Setup Checklist that holds the steps, and the Save Bar under them, built once in bind.
     var checklist = null;
+    var saveBar = null;
 
     // The plugin's own config endpoints send a kept marker in place of a stored credential and encrypt a typed one
     // on save, so secrets never reach the browser.
@@ -439,24 +440,27 @@ export default function (view) {
     }
 
     function setSaving(on) {
-        ['btnSave', 'btnRunNow'].forEach(function (id) { Shared.getEl(id).disabled = on; });
+        Shared.getEl('btnRunNow').disabled = on;
     }
 
     // Saves every step: the record first, when it changed, then the proxy settings onto the freshest ones so
     // changes made on the other tabs are kept. The proxy answers on the record's names and the other addresses.
+    // save
+    // Saves every step, the Save Bar's onSave. The record goes first, when it changed, then the proxy settings onto
+    // the freshest ones so changes made on the other tabs are kept. The proxy answers on the record's names and the
+    // other addresses.
+    //
+    // Output
+    // [Promise]: Resolves once saved, or rejects with an Error whose message the Save Bar shows.
     function save() {
         // Let's Encrypt is only used once its terms are accepted, so with the proxy on the box has to be ticked to
         // choose it.
         if (Shared.getEl('enabled').checked && Shared.getEl('certMode').value === 'Automatic' && !Shared.getEl('certTerms').checked) {
-            Shared.setStatus('saveStatus', 'Turn on Accept the Let\'s Encrypt Terms in step 3, or select another certificate source.', true, { timeout: 0 });
             setStepOpen('Certificate');
-            return Promise.resolve(false);
+            return Promise.reject(new Error('Turn on Accept the Let\'s Encrypt Terms in step 3, or select another certificate source.'));
         }
 
-        var button = Shared.getEl('btnSave');
-        if (button.disabled) return Promise.resolve(false);
         setSaving(true);
-        Shared.setStatus('saveStatus', 'Saving…', false);
         var recordSaved = false;
         var changedRecord = recordNeedsSave();
         var before = [];
@@ -469,20 +473,17 @@ export default function (view) {
         }).then(function (result) {
             if (result && result.Settings) fill(result.Settings);
             if (result && result.Status) render(result.Status);
-            Shared.setStatus('saveStatus', 'Saved.', false);
-            return true;
+            saveBar.setDirty(false);
         }).catch(function (err) {
-            var reply = err && err.pageText ? Promise.resolve(err.pageText) : problemText(err, 'Save failed.');
+            var reply = err && err.pageText ? Promise.resolve(err.pageText) : problemText(err, 'Could not save.');
             return reply.then(function (text) {
                 var prefix = !recordSaved ? (changedRecord ? 'The record was not saved. ' : '')
                     : changedRecord ? 'The record was saved, but the proxy settings were not. ' : '';
-                Shared.setStatus('saveStatus', prefix + text, true, { timeout: 0 });
-                return false;
+                throw new Error(prefix + text);
             });
-        }).then(function (ok) {
+        }).finally(function () {
             setSaving(false);
             refresh();
-            return ok;
         });
     }
 
@@ -510,7 +511,7 @@ export default function (view) {
         var button = Shared.getEl('btnTrust');
         if (button.disabled) return;
         button.disabled = true;
-        trustTheProxy(Shared, 'trustStatus', save).then(function () {
+        trustTheProxy(Shared, 'trustStatus', function () { return saveBar.save(); }).then(function () {
             button.disabled = false;
             refresh();
         });
@@ -947,7 +948,11 @@ export default function (view) {
         Shared.getEl('btnRestore').addEventListener('click', restore);
         Shared.getEl('btnReach').addEventListener('click', testReach);
 
-        Shared.getEl('btnSave').addEventListener('click', save);
+        saveBar = createSaveBar({ fill: true, form: Shared.getEl('RemoteAccessConfigurationForm'), onSave: save });
+        Shared.getEl('saveBar').appendChild(saveBar.element);
+        ['input', 'change'].forEach(function (type) {
+            view.addEventListener(type, function () { saveBar.setDirty(isDirty()); });
+        });
     }
 
     Shared = createConfigPage(view, {

@@ -31,6 +31,7 @@ How to write, comment, and test code in this plugin. It covers C#, JavaScript, H
 | Text from outside, for a log or the settings file | `FormatUtilities.SanitizeForLog` |
 | The clock | `TimeProvider`, and `UtcTime` for stored times |
 | Config page lifecycle | `createConfigPage` |
+| Saving a page | `createSaveBar` with `fill: true`, per [style.md](style.md#saving) |
 | Dialogs | `confirmDialog`, `promptDialog`, `openDialog` |
 | A setup in steps that each have a state | `createSetupChecklist` |
 | Counts by country | `createWorldMap` and `linkWorldMap`, with `COUNTRY_CODES` and `WORLD` for country names |
