@@ -288,7 +288,7 @@ Every page and section Save is the same:
 
 1. It is Base's `createSaveBar` with `fill: true`. Its button reads **Save**, never **Save Settings** or a noun.
 2. The Save Bar is the last element of what it saves. Nothing sits beside it or below it in that section.
-3. Any other actions that belong with that Save, such as **Reset to Defaults**, **Restart**, or **Test**, go in one `<div class="base-button-row">` directly above it. Each is `raised base-button secondary fill`, or `destructive fill` for one that deletes or resets data. A select that belongs there stays a normal `emby-select` in the row. No `small` buttons in that row.
+3. Any other actions that belong with that Save, such as **Reset to Defaults**, **Restart**, or **Test**, go in one `<div class="base-button-row">` directly above it. Each is `raised base-button secondary fill`, or `destructive fill` for one that deletes or resets data. A select that belongs there stays a normal `emby-select` in the row. No `small` buttons in that row. Base spaces that row. Its buttons have no margin of their own, so their edges line up with the Save Bar's, the row sits one `--base-gap-narrow` above the Save Bar, and its buttons use the same font weight as Save. A plugin adds no margin, gap, or weight of its own.
 4. Never hand place a Save button, a small Save, a Save Bar without `fill`, or a status line or unsaved indicator of its own beside it. No plugin CSS positions a Save or its neighbours.
 
 * Call `setDirty` on the Save Bar on every input and change, from `createChangeTracker` or the page's own check.
