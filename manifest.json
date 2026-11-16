@@ -9,6 +9,14 @@
     "category": "Administration",
     "versions": [
       {
+        "version": "12.4.4.17",
+        "changelog": "\n## Fixed\n- The buttons above Save were inset from it, touched it, and used a different weight. They line up with Save, sit just above it, and match it\n\n## Developer\n- Uses JPKribs.Jellyfin.Base 2026.11.19",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://github.com/JPKribs/jellyfin-plugin-remoteaccess/releases/download/v12.4.4.17/jellyfin-plugin-remoteaccess-12.4.4.17.zip",
+        "checksum": "940a186f7717c9e640eeddf6d7e32827",
+        "timestamp": "2026-11-16T04:31:17Z"
+      },
+      {
         "version": "12.4.4.16",
         "changelog": "\n## Changed\n- Configuration and Advanced save with the same Save bar as the other JPKribs plugins, which says when there are unsaved changes and shows why a save failed\n- Reset to Defaults and Restart Proxy sit in one row directly above Save, and share its width\n\n## Fixed\n- The buttons in Advanced's History section were narrow. They share the row again",
         "targetAbi": "12.4.0.0",
