@@ -9,6 +9,14 @@
     "category": "Administration",
     "versions": [
       {
+        "version": "12.4.4.18",
+        "changelog": "\n## Developer\n- Uses JPKribs.Jellyfin.Base 2026.11.20, which replaces no local code and leaves every page looking the same",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://github.com/JPKribs/jellyfin-plugin-remoteaccess/releases/download/v12.4.4.18/jellyfin-plugin-remoteaccess-12.4.4.18.zip",
+        "checksum": "08053324ec6e390fd00e4c69c4c85be2",
+        "timestamp": "2026-11-16T09:28:45Z"
+      },
+      {
         "version": "12.4.4.17",
         "changelog": "\n## Fixed\n- The buttons above Save were inset from it, touched it, and used a different weight. They line up with Save, sit just above it, and match it\n\n## Developer\n- Uses JPKribs.Jellyfin.Base 2026.11.19",
         "targetAbi": "12.4.0.0",
