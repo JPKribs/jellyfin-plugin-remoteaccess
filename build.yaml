@@ -1,7 +1,7 @@
 ---
 name: "Remote Access"
 guid: "8150dce5-6153-4924-a985-a6927be95baa"
-version: "12.4.4.17"
+version: "12.4.4.18"
 targetAbi: "12.4.0.0"
 framework: "net10.0"
 overview: "Reach your server from anywhere: Dynamic DNS and a secure HTTPS proxy, inside Jellyfin."
@@ -21,7 +21,5 @@ artifacts:
 - "Certes.dll"
 - "BouncyCastle.Cryptography.dll"
 changelog:
-  fixed:
-  - The buttons above Save were inset from it, touched it, and used a different weight. They line up with Save, sit just above it, and match it
   developer:
-  - Uses JPKribs.Jellyfin.Base 2026.11.19
+  - Uses JPKribs.Jellyfin.Base 2026.11.20, which replaces no local code and leaves every page looking the same
