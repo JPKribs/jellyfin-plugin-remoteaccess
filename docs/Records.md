@@ -24,7 +24,7 @@ the next time you save, and the page says how many.
 ## Credentials
 
 Credentials are encrypted when saved, and never sent back to the browser. A saved one shows as **Saved, leave
-blank to keep**. Leaving the field blank keeps it, and **Clear saved value** under the field removes it. Use the
+blank to keep**. Leaving the field blank keeps it, and **Clear Saved Value** under the field removes it. Use the
 most limited token your provider offers. See [Security & Storage](Security.md).
 
 Changing the record's **Provider** or **Server Override** clears its saved credentials, so a saved password is

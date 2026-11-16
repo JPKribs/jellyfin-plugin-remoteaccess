@@ -34,7 +34,7 @@ How to write, comment, and test code in this plugin. It covers C#, JavaScript, H
 | Dialogs | `confirmDialog`, `promptDialog`, `openDialog` |
 | A setup in steps that each have a state | `createSetupChecklist` |
 | Counts by country | `createWorldMap` and `linkWorldMap`, with `COUNTRY_CODES` and `WORLD` for country names |
-| Tables | `createDataTable`, with `renderRelative` for times |
+| Tables | `createDataTable`, with `width: 'auto'` for short columns, `widthKey` so widths stick, and `renderRelative` for times |
 | A link to hand to a phone | `createQrCode` |
 | A framed section with a header | `createCollapsibleSection`, with `collapsible: false` for one that is always open |
 | Picking several values | `createChipSelect` |

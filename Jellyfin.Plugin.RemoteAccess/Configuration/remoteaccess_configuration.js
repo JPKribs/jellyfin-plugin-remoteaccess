@@ -99,7 +99,7 @@ export default function (view) {
         var html = Shared.escapeHtml(hint);
         if (prov) {
             var url = 'https://github.com/JPKribs/jellyfin-plugin-remoteaccess/blob/master/docs/providers/' + encodeURIComponent(prov) + '.md';
-            html += ' <a href="' + url + '" target="_blank" rel="noopener">Setup guide</a>';
+            html += ' <a class="ra-link" href="' + url + '" target="_blank" rel="noopener">Setup Guide</a>';
         }
         Shared.getEl('providerHint').innerHTML = html;
     }
@@ -121,7 +121,7 @@ export default function (view) {
     var ID_PROVIDERS = ['DnsMadeEasy', 'Sitelutions'];
 
     // Whether the record's hostname can be the proxy's address. A provider without a hostname field, or one keyed
-    // by a record id, needs the name under Other addresses instead.
+    // by a record id, needs the name under Other Addresses instead.
     function namesTheProxy(provider) {
         return !!specFor(provider).h && ID_PROVIDERS.indexOf(provider) < 0;
     }
@@ -881,7 +881,7 @@ export default function (view) {
             html = 'Visitors from ' + countryList(chosen, 'ra-country-blocked') + ' are refused.';
         }
         Shared.setVisible('countryNote', !!html);
-        if (html) box.innerHTML = html + ' Change this in <a href="#/configurationpage?name=remoteaccess_advanced">Advanced &gt; Blocking</a>.';
+        if (html) box.innerHTML = html + ' Change this in <a class="ra-link" href="#/configurationpage?name=remoteaccess_advanced">Advanced &gt; Blocking</a>.';
     }
 
     function testReach() {

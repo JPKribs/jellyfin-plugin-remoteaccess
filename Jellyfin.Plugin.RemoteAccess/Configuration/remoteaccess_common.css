@@ -17,3 +17,8 @@
 .ra-country-known { color: var(--base-green-fg); }
 .ra-country-unknown { color: var(--base-orange-fg); }
 .ra-country-blocked { color: var(--base-red-fg); }
+
+/* ra-link */
+/* A link inside a notice, in the notice's own text color and bold, so it reads on any notice's tint. */
+/* Example: <div class="base-info">Change this in <a class="ra-link" href="#">Advanced</a>.</div> */
+.ra-link { color: inherit; font-weight: 600; text-decoration: underline; }

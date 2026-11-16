@@ -398,7 +398,7 @@ export default function (view) {
         var button = Shared.getEl('btnRemoveRecord');
         if (button.disabled || !record) return;
         var label = record.Hostname || record.Name || 'the DDNS record';
-        confirmDialog('Remove ' + label + '? This server stops keeping it pointed here, and the proxy stops answering on it. Other addresses stay. This cannot be undone.', { title: 'Remove Record', confirmText: 'Remove', destructive: true }).then(function (ok) {
+        confirmDialog('Remove ' + label + '? This server stops keeping it pointed here, and the proxy stops answering on it. Other Addresses stay. This cannot be undone.', { title: 'Remove Record', confirmText: 'Remove', destructive: true }).then(function (ok) {
             if (!ok) return;
             button.disabled = true;
             Shared.setStatus('recordStatus', 'Removing…', false, { timeout: 0 });
@@ -446,7 +446,7 @@ export default function (view) {
     function requestCertificate() {
         var button = Shared.getEl('btnRequestCert');
         if (button.disabled || !certRequestable) return;
-        confirmDialog('Let\'s Encrypt is asked for a new certificate now, even if the current one is fine. The current one keeps working until the new one is ready.', { title: 'Request a New Certificate', confirmText: 'Request' }).then(function (ok) {
+        confirmDialog('Request a new certificate now? Let\'s Encrypt issues one even if the current one is fine, and the current one keeps working until the new one is ready.', { title: 'Request a New Certificate', confirmText: 'Request' }).then(function (ok) {
             if (!ok) return;
             button.disabled = true;
             Shared.setStatus('certRequestStatus', 'Requesting…', false, { timeout: 0 });
@@ -534,7 +534,7 @@ export default function (view) {
         var current = read();
         var effective = function (v) { return v == null ? !!(defaults && defaults.JellyfinLoopbackOnly) : v; };
         if (effective(current.JellyfinLoopbackOnly) && !effective(loaded.JellyfinLoopbackOnly)) {
-            confirmDialog('Everyone, at home too, will reach Jellyfin only through your Remote Access address, so apps and casting that use the server\'s own address stop working. Use Undo before disabling the plugin, and see Recovery in the documentation if you lose access.', { title: 'Only Through the Proxy', confirmText: 'Turn On' }).then(function (ok) {
+            confirmDialog('Turn on Only Through the Proxy? Everyone, at home too, reaches Jellyfin only through your Remote Access address, so apps and casting that use the server\'s own address stop working. Use Undo before disabling the plugin, and see Recovery in the documentation if you lose access.', { title: 'Only Through the Proxy', confirmText: 'Turn On' }).then(function (ok) {
                 if (ok) doSave();
             });
             return;
@@ -621,7 +621,7 @@ export default function (view) {
     var KEPT_ON_RESET = ['TrustedNetworks', 'BlockedAddresses', 'CountryMode', 'Countries'];
 
     function reset() {
-        confirmDialog('Every limit and security setting goes back to its default, keeping trusted networks, the block list, country rules, other addresses, history and Dynamic DNS. Nothing changes until you save.', { title: 'Reset to Defaults', confirmText: 'Reset' }).then(function (ok) {
+        confirmDialog('Reset every limit and security setting to its default? Trusted networks, the block list, country rules, other addresses, history and Dynamic DNS are kept, and nothing changes until you save.', { title: 'Reset to Defaults', confirmText: 'Reset' }).then(function (ok) {
             if (!ok) return;
             var current = read();
             var kept = {};

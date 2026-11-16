@@ -40,8 +40,8 @@ export function showText(shared, id, text) {
 // Trust the Proxy, as step 5 of the Configuration tab offers it: confirm, run an optional step first such as saving
 // the form, then ask Jellyfin to trust the proxy. Resolves to true once Jellyfin answered that it worked.
 export function trustTheProxy(shared, statusId, prepare) {
-    var message = 'Jellyfin adds this machine to its known proxies, turns on remote access and restarts once. Its ports stay the same. ' +
-        'Forward only ports 80 and 443 to this server: anyone who can reach Jellyfin\'s own ports directly gets past the proxy.';
+    var message = 'Trust the proxy? Jellyfin adds this machine to its known proxies, turns on remote access and restarts once, with its ports unchanged. ' +
+        'Forward only ports 80 and 443 to this server, since anyone who reaches Jellyfin\'s own ports directly gets past the proxy.';
     return confirmDialog(message, { title: 'Trust the Proxy', confirmText: 'Trust' }).then(function (ok) {
         if (!ok) return false;
         return Promise.resolve(prepare ? prepare() : true).then(function (ready) {

@@ -1,7 +1,7 @@
 ---
 name: "Remote Access"
 guid: "8150dce5-6153-4924-a985-a6927be95baa"
-version: "12.4.4.14"
+version: "12.4.4.15"
 targetAbi: "12.4.0.0"
 framework: "net10.0"
 overview: "Reach your server from anywhere: Dynamic DNS and a secure HTTPS proxy, inside Jellyfin."
@@ -22,4 +22,12 @@ artifacts:
 - "BouncyCastle.Cryptography.dll"
 changelog:
   changed:
-  - The Dashboard's Activity table has a fixed height and scrolls, loading 50 more rows each time it reaches the end
+  - Dashboard table columns can be dragged wider or narrower, a double-click fits a column to its widest value, and each table remembers its widths
+  - Short columns in the Banned and Countries tables size to their values, and a cut-off value shows in full on hover
+  - On a narrow screen, a table scrolls sideways inside its frame instead of pushing a column outside it
+  - Every confirm asks its question first, such as "Reset every limit and security setting to its default?"
+  - Links inside notices are bold in the notice's own color, so they read on any notice
+  fixed:
+  - The Clear Saved Value buttons under credential fields were not in Title Case
+  developer:
+  - Uses JPKribs.Jellyfin.Base 2026.11.18 for column sizing and resizing, hover text on clipped cells, and the narrow-screen section header, which replace the plugin's fixed column widths
