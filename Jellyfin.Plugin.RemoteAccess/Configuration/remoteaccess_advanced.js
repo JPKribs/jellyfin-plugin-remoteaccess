@@ -645,7 +645,7 @@ export default function (view) {
         Shared.getEl('advCountryMode').addEventListener('change', showCountryMode);
         Shared.getEl('advBlockWithoutDatabase').addEventListener('change', showCountryMode);
         saveBar = createSaveBar({ fill: true, form: Shared.getEl('RemoteAccessAdvancedForm'), onSave: save });
-        Shared.getEl('saveBar').appendChild(saveBar.element);
+        Shared.getEl('saveBar').replaceWith(saveBar.element);
         ['input', 'change'].forEach(function (type) {
             view.addEventListener(type, function () { saveBar.setDirty(isDirty()); });
         });

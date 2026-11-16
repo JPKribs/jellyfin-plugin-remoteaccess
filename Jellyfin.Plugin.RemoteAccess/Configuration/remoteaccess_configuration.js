@@ -949,7 +949,7 @@ export default function (view) {
         Shared.getEl('btnReach').addEventListener('click', testReach);
 
         saveBar = createSaveBar({ fill: true, form: Shared.getEl('RemoteAccessConfigurationForm'), onSave: save });
-        Shared.getEl('saveBar').appendChild(saveBar.element);
+        Shared.getEl('saveBar').replaceWith(saveBar.element);
         ['input', 'change'].forEach(function (type) {
             view.addEventListener(type, function () { saveBar.setDirty(isDirty()); });
         });
