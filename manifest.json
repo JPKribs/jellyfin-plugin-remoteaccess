@@ -3,7 +3,7 @@
     "guid": "8150dce5-6153-4924-a985-a6927be95baa",
     "name": "Remote Access",
     "overview": "Reach your server from anywhere.",
-    "description": "Remote Access keeps your DNS records pointed at your server and can put an HTTPS proxy with automatic certificates in front of Jellyfin. It is being actively tested.",
+    "description": "Remote Access keeps your DNS records pointed at your server and can put an HTTPS proxy with automatic certificates in front of Jellyfin.",
     "imageUrl": "https://raw.githubusercontent.com/JPKribs/jellyfin-plugin-remoteaccess/refs/heads/master/Jellyfin.Plugin.RemoteAccess/Assets/Logo.png",
     "owner": "JPKribs",
     "category": "Administration",
