@@ -1,7 +1,7 @@
 ---
 name: "Remote Access"
 guid: "8150dce5-6153-4924-a985-a6927be95baa"
-version: "12.4.4.20"
+version: "12.4.5.0"
 targetAbi: "12.4.0.0"
 framework: "net10.0"
 overview: "Reach your server from anywhere."
@@ -18,7 +18,17 @@ artifacts:
 - "Certes.dll"
 - "BouncyCastle.Cryptography.dll"
 changelog:
+  added:
+  - The pages, messages, scheduled tasks and activity log are translated. Jellyfin's own words come in every language Jellyfin has, and the plugin's own words are ready for translation
+  changed:
+  - Labels, buttons, headings, options and activity log names are in sentence case, as Jellyfin writes them, such as Update now and Trust the proxy
+  - The activity log is written in the server's display language, summed entries such as 3 DNS records updated included
+  - Problems a save reports, such as a port out of range, follow the page's language, and so do the provider hints and field labels
+  - The Save bar, tables, QR code, country picker and setup checklist use Base's own words, translated
+  fixed:
+  - A record that recovered after one failed attempt was logged as 1 failed attempts. It reads 1 failed attempt
   developer:
-  - Raises every GitHub Action in the workflows to its latest major version, pinned to a commit digest
-  - Builds the docs with Python 3.15 and mkdocs-material 9.8.2
-  - Renovate brings every update in one pull request, with Base on its own, and leaves the packages Jellyfin ships to the Jellyfin version
+  - Uses JPKribs.Jellyfin.Base 12.4.1, which translates its own components, reads the page's language with BaseTranslations.RequestLanguage and builds activity summaries from keys. Base 12.4.0 came first, for the translations build
+  - The project is organized into Api, Configuration, Web, Assets, Models, Services, Tasks and Utilities, with the pages under Web
+  - Strings live in Localization/en-us.json, Jellyfin strings are declared in the project file, and Localization/casing.json lists the names and acronyms kept as written
+  - A test checks that every key the pages use is built in
