@@ -18,17 +18,8 @@ artifacts:
 - "Certes.dll"
 - "BouncyCastle.Cryptography.dll"
 changelog:
-  added:
-  - The pages, messages, scheduled tasks and activity log are translated. Jellyfin's own words come in every language Jellyfin has, and the plugin's own words are ready for translation
-  changed:
-  - Labels, buttons, headings, options and activity log names are in sentence case, as Jellyfin writes them, such as Update now and Trust the proxy
-  - The activity log is written in the server's display language, summed entries such as 3 DNS records updated included
-  - Problems a save reports, such as a port out of range, follow the page's language, and so do the provider hints and field labels
-  - The Save bar, tables, QR code, country picker and setup checklist use Base's own words, translated
   fixed:
-  - A record that recovered after one failed attempt was logged as 1 failed attempts. It reads 1 failed attempt
+  - The Types and Countries filters on the Activity table offered All Types and All Countries. They read All types and All countries
   developer:
-  - Uses JPKribs.Jellyfin.Base 12.4.1, which translates its own components, reads the page's language with BaseTranslations.RequestLanguage and builds activity summaries from keys. Base 12.4.0 came first, for the translations build
-  - The project is organized into Api, Configuration, Web, Assets, Models, Services, Tasks and Utilities, with the pages under Web
-  - Strings live in Localization/en-us.json, Jellyfin strings are declared in the project file, and Localization/casing.json lists the names and acronyms kept as written
-  - A test checks that every key the pages use is built in
+  - Uses JPKribs.Jellyfin.Base 12.4.2, which writes the labels it fills into its own text in sentence case, such as All types on a filter
+  - Sync Branches also runs when the release draft or publish workflow finishes, so the commits they push to master reach unstable at once
