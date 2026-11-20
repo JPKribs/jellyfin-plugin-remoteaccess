@@ -5,7 +5,7 @@ In step 2, **Address**, of the **Configuration** tab, set **Provider** to **Free
 - **Hostname**: the record to update.
 - **Username**: your afraid.org username.
 - **Password**: your afraid.org password.
-- **Server Override**: leave blank to use FreeDNS's own server.
+- **Server override**: leave blank to use FreeDNS's own server.
 
 FreeDNS is the service at afraid.org.
 

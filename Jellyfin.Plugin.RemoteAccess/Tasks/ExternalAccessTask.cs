@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace Jellyfin.Plugin.RemoteAccess.Tasks;
 
 /// <summary>
-/// Runs the same outside check as step 6's Test from Outside on a schedule, so a router or provider change that
+/// Runs the same outside check as step 6's Test from outside on a schedule, so a router or provider change that
 /// closes port 443 shows up in the activity log before people report it. The error is written once when the
 /// failure starts and an entry when it clears, not on every run. A check that could not run at all, such as when
 /// the outside service is busy, says nothing about the port and changes neither.

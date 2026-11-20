@@ -141,7 +141,7 @@ export function showText(shared, id, text) {
     shared.setVisible(el, !!text);
 }
 
-// Trust the Proxy, as step 5 of the Configuration tab offers it: confirm, run an optional step first such as saving
+// Trust the proxy, as step 5 of the Configuration tab offers it: confirm, run an optional step first such as saving
 // the form, then ask Jellyfin to trust the proxy. Resolves to true once Jellyfin answered that it worked.
 export function trustTheProxy(shared, statusId, prepare) {
     var options = { title: t.tr('HeaderTrustProxy'), confirmText: t.tr('ButtonTrust') };

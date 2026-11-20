@@ -5,6 +5,6 @@ In step 2, **Address**, of the **Configuration** tab, set **Provider** to **DonD
 - **Host**: the host.
 - **User**: your DonDominio API user.
 - **API Key**: your DonDominio API key. Turn on the API in your DonDominio account first.
-- **Server Override**: leave blank to use DonDominio's own server.
+- **Server override**: leave blank to use DonDominio's own server.
 
 _Ported from ddclient's `nic_dondominio_update`._

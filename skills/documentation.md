@@ -50,7 +50,7 @@ Remove compatibility notes for Jellyfin versions the plugin no longer supports. 
 
 ### UI Names
 
-* Write a label exactly as the page shows it, in bold. **Ban Window**.
+* Write a label exactly as the page shows it, in bold. **Ban window**.
 * Write a path through the UI with `>` between the steps, in bold. **Remote Access > Advanced > Blocking**.
 * Write a tab as its label, in bold. **Dashboard**, **Configuration**, **Advanced**.
 * Quote activity log names and on-screen messages in double quotes. "Nothing recorded yet."
@@ -95,14 +95,14 @@ A provider page follows `docs/contributors/PROVIDERS.md`.
 List settings as bullets in the order the page shows them. Start each with the label in bold and follow it with a verb.
 
 ```markdown
-* **Ban Window** counts failed sign-ins over this many minutes.
+* **Ban window** counts failed sign-ins over this many minutes.
 ```
 
 When a page has many settings with defaults, use a table instead.
 
 | Setting | What it does | Default |
 | :--- | :--- | :--- |
-| **Ban Window** | Counts failed sign-ins over this many minutes | 15 |
+| **Ban window** | Counts failed sign-ins over this many minutes | 15 |
 
 Table cells have no closing period. Keep them to one sentence.
 
@@ -112,7 +112,7 @@ Write trouble as a table of what the reader sees and what to do.
 
 | Reason | What to do |
 | :--- | :--- |
-| *name* does not point anywhere yet | Wait a few minutes after creating the record, then select **Update Now** |
+| *name* does not point anywhere yet | Wait a few minutes after creating the record, then select **Update now** |
 
 Put the exact on-screen text in the first column. Use italics for a placeholder inside it, such as *server*.
 
@@ -170,7 +170,7 @@ Save every capture as PNG. Crop out the browser frame and the Jellyfin header un
 
 * Save to `docs/screenshots/`.
 * Name the file in Title Case after what it shows, with spaces. `Share Card.png`, `Router Step.png`.
-* Link with `%20` for spaces and alt text that names the subject. `![Share Card](screenshots/Share%20Card.png)`.
+* Link with `%20` for spaces and alt text that names the subject. `![Share card](screenshots/Share%20Card.png)`.
 * Place two related shots side by side in a table whose header row holds the captions.
 
 ```markdown

@@ -524,7 +524,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
         var backup = Path.Join(_configuration.CommonApplicationPaths?.ConfigurationDirectoryPath ?? string.Empty, BackupFileName);
         _logger.LogError(
             "Only through the proxy is on and the proxy is not working, so Jellyfin still listens on this machine only. It stays closed to your network and the internet until the proxy works again. "
-            + "To turn the proxy off by hand: 1. Create an empty file named DISABLE at {DisableFlag} 2. Restart Jellyfin. The proxy stays off and Jellyfin's network settings go back to how they were before Trust the Proxy. Jellyfin may restart once more on its own. "
+            + "To turn the proxy off by hand: 1. Create an empty file named DISABLE at {DisableFlag} 2. Restart Jellyfin. The proxy stays off and Jellyfin's network settings go back to how they were before Trust the proxy. Jellyfin may restart once more on its own. "
             + "3. Once the proxy is fixed, delete the DISABLE file and restart Jellyfin to turn the proxy on again. If Jellyfin cannot be reached after that, stop Jellyfin and copy {Backup} over {Network}. "
             + "WARNING: until the proxy is on again, make sure your router forwards no ports to this server. Remove every port forwarding rule for this server, including ports 80, 443, 8096 and 8920. With the proxy off, a forwarded port reaches Jellyfin directly with none of the proxy's protection. "
             + "The proxy failed because: {Problem}",

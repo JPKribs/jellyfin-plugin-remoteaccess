@@ -19,7 +19,7 @@ Folders in `Jellyfin.Plugin.RemoteAccess/`. The namespace matches the folder.
 | `Providers/` | The DNS providers, one class each under `Implementations/`, and their shared base. |
 | `Services/` | IP detection, DNS lookup, and the update run. |
 | `Services/People/` | History, bans, the block list, country rules, and locations. |
-| `Services/Proxy/` | The HTTPS proxy, certificates, the router, and Trust the Proxy. |
+| `Services/Proxy/` | The HTTPS proxy, certificates, the router, and Trust the proxy. |
 | `Tasks/` | The scheduled tasks. |
 | `Utilities/` | Static helpers and extension methods. |
 

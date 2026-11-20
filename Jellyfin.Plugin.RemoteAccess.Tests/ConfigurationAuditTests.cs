@@ -129,7 +129,7 @@ public class ConfigurationAuditTests
         Assert.Equal("Removed for gone.example.com (1) with Cloudflare (1)", removed.ShortOverview);
 
         var credentials = Assert.Single(_entries, e => e.Type == "RemoteAccess.RecordCredentialsChanged");
-        Assert.Equal("Credentials Changed for b.example.com", credentials.Name);
+        Assert.Equal("Credentials changed for b.example.com", credentials.Name);
         Assert.Equal("The login or password of the Cloudflare DNS record for b.example.com was changed", credentials.ShortOverview);
     }
 

@@ -151,7 +151,7 @@ public sealed class BlockingTests : IDisposable
         bans.RecordFailure(IPAddress.Parse("203.0.113.70"), options);
 
         var entry = Assert.Single(entries);
-        Assert.Equal("203.0.113.70 Banned", entry.Name);
+        Assert.Equal("203.0.113.70 banned", entry.Name);
         Assert.Equal("RemoteAccess.AddressBanned", entry.Type);
         Assert.Equal("2 failed sign-ins from an unknown country, banned for 30 minutes", entry.ShortOverview);
     }

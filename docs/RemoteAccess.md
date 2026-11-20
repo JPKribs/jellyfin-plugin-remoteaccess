@@ -10,8 +10,8 @@ break in. There is no separate reverse proxy to run.
 
 ## Setup
 
-Setup is the six numbered steps of the **Configuration** tab: **Proxy On**, **Address**, **Certificate**,
-**Router**, **Trust the Proxy** and **Reachable From Outside**. When every step is done, the bar at the top reads
+Setup is the six numbered steps of the **Configuration** tab: **Proxy on**, **Address**, **Certificate**,
+**Router**, **Trust the proxy** and **Reachable from outside**. When every step is done, the bar at the top reads
 6 of 6 done and a note gives the address Jellyfin can be reached at. The [Beginner's Guide](BeginnersGuide.md) walks through them from the start, including
 what you need first: a name kept pointed at your home by [the DDNS record](Records.md), a public IP that is not
 shared through CGNAT, and on Linux or in Docker access to ports 80 and 443. The [Settings Reference](Settings.md#configuration) lists each step's settings.
@@ -26,8 +26,8 @@ shared through CGNAT, and on Linux or in Docker access to ports 80 and 443. The 
 
 Do not forward Jellyfin's own ports. Internet traffic should only reach the proxy. If this server has a public
 address of its own, such as a VPS or a public IPv6 address, block Jellyfin's ports in its firewall too. Step 5,
-**Trust the Proxy**, warns when it finds one. To close that gap from the plugin instead, see
-[Only Through the Proxy](#only-through-the-proxy).
+**Trust the proxy**, warns when it finds one. To close that gap from the plugin instead, see
+[Only through the proxy](#only-through-the-proxy).
 
 ## Name Check
 
@@ -45,7 +45,7 @@ A name behind Cloudflare's orange cloud points at Cloudflare, so it shows as **N
 
 ## Automatic Port Forwarding
 
-**Automatic Port Forwarding**, under **Advanced > Addresses**, asks your router to forward the ports for you. It is
+**Automatic port forwarding**, under **Advanced > Addresses**, asks your router to forward the ports for you. It is
 on by default. Step 4, **Router**, shows how it went.
 
 * The plugin asks the router through NAT-PMP first, then UPnP. Most home routers support one of them, though some
@@ -58,14 +58,14 @@ on by default. Step 4, **Router**, shows how it went.
 * A port the router already forwards to another device is left alone. Step 4 says which port is taken. Remove that
   rule on the router, or forward by hand.
 * It only covers IPv4. For visitors over IPv6, allow ports 80 and 443 to this server in the router's firewall.
-* **Try Again** in step 4 asks the router once more straight away.
+* **Try again** in step 4 asks the router once more straight away.
 * Step 4 names the device that answered and says it forwards the ports. Any device on your network can answer a
   UPnP search, so step 4 also says when that device is not this server's default gateway, the usual router.
 * Each change is written to the activity log. See [Remote Access entries](Dashboard.md#remote-access-entries).
 
 When the router does not open the ports, or the setting is off, step 4 shows **Forward by hand** with the rule to
 add: TCP ports **80** and **443** to the address it shows. The server cannot see ports forwarded by hand, so step 4
-turns green once **Test from Outside** reaches the server.
+turns green once **Test from outside** reaches the server.
 
 ![Step 4, Router](screenshots/Router%20Step.png)
 
@@ -76,10 +76,10 @@ Step 4 reports what the device that answered says. To check the forward really i
 1. Note the device address step 4 names. On most home networks it is the router, such as `192.168.1.1`.
 2. Open your router's admin page, then its port forwarding, NAT or UPnP page.
 3. Look for two rules named **Jellyfin Remote Access**, TCP ports 80 and 443, going to the address step 4 shows.
-4. In step 6, select **Test from Outside**. It shows **Reachable** once a place outside your network gets through.
+4. In step 6, select **Test from outside**. It shows **Reachable** once a place outside your network gets through.
 
 If the router lists no such rules, or step 4 says the device is not this server's default gateway, another device
-answered for the router. Turn off **Automatic Port Forwarding** under **Advanced > Addresses**, forward the ports by
+answered for the router. Turn off **Automatic port forwarding** under **Advanced > Addresses**, forward the ports by
 hand, and look up the device at that address in the router's list of connected devices.
 
 ### Shared Addresses and CGNAT
@@ -102,7 +102,7 @@ answers over UPnP or NAT-PMP. Without one, compare the addresses yourself as in
 
 ## Test from Outside
 
-Step 6, **Reachable From Outside**, checks your address the way a visitor would. **Test from Outside** asks
+Step 6, **Reachable from outside**, checks your address the way a visitor would. **Test from outside** asks
 [check-host.net](https://check-host.net) to connect to your public name on port 443 from up to three places around
 the world. It can take 20 seconds.
 
@@ -114,17 +114,17 @@ the world. It can take 20 seconds.
 The test needs a public name for the proxy. A connection counts even when the country rule closes it at
 once, since the test is about the port.
 
-The **Verify External Access** scheduled task runs the same test every hour while the proxy is on, and updates
+The **Verify external access** scheduled task runs the same test every hour while the proxy is on, and updates
 step 6 with its result. When no place can connect, it writes an error to Jellyfin's activity log, once when the
 problem starts and once more when it clears. A test check-host.net could not run only goes to the server log.
 Change how often it runs, or disable it, under **Dashboard > Scheduled Tasks**. See
 [Scheduled tasks](Settings.md#scheduled-tasks).
 
 !!! note "What is sent"
-    Only the hostname and the port are sent to check-host.net, when you select **Test from Outside** and each
-    time the **Verify External Access** task runs. Disable the task to send them only when you ask.
+    Only the hostname and the port are sent to check-host.net, when you select **Test from outside** and each
+    time the **Verify external access** task runs. Disable the task to send them only when you ask.
 
-![Step 6, Reachable From Outside](screenshots/Outside%20Test.png)
+![Step 6, Reachable from outside](screenshots/Outside%20Test.png)
 
 ## Certificates
 
@@ -135,7 +135,7 @@ Change how often it runs, or disable it, under **Dashboard > Scheduled Tasks**. 
 | **PKCS#12 file** | You have a single `.pfx` or `.p12` file. |
 | **Self-signed** | No outside service at all. Each device has to trust it once, and TVs cannot. |
 
-Let's Encrypt is only contacted once **Accept the Let's Encrypt Terms** is ticked. The terms are the
+Let's Encrypt is only contacted once **Accept the Let's Encrypt terms** is ticked. The terms are the
 [Let's Encrypt Subscriber Agreement](https://letsencrypt.org/repository/).
 
 ### How Let's Encrypt Checks Your Address
@@ -151,14 +151,14 @@ check, and the Certificate step says which is in use:
 
 ### Renewal
 
-Certificates last 90 days. The **Refresh Certificate** scheduled task checks daily at 3:00, and saving the
+Certificates last 90 days. The **Refresh certificate** scheduled task checks daily at 3:00, and saving the
 Configuration tab checks too. Either one requests a new certificate when there is none, when it no longer covers your addresses, or
 within 30 days of expiry. A new certificate is used straight away.
 
 If Let's Encrypt refuses, the reason shows in step 3, **Certificate**, and in the activity log. The next try waits an hour,
 doubling up to a day, to stay within Let's Encrypt's limits. Changing the address tries again at once.
 
-To replace a certificate now, for example if its key may have leaked, select **Request a New Certificate** under
+To replace a certificate now, for example if its key may have leaked, select **Request a new certificate** under
 **Advanced > Security**. Let's Encrypt allows five copies of the same certificate a week.
 
 !!! tip "Testing first"
@@ -175,7 +175,7 @@ the root trusts every renewal, so you only install the root once per device.
 The root can only vouch for your proxy's names, the names under them, `localhost` and private addresses. A
 device that installed it never trusts it for any other site.
 
-1. In the Certificate step, select **Download Root Certificate**. It saves `remote-access-root.crt`, which
+1. In the Certificate step, select **Download root certificate**. It saves `remote-access-root.crt`, which
    holds no private key.
 2. Install it on each device as below. Before trusting it, check that the device shows the same SHA-256
    fingerprint as the Certificate step.
@@ -203,15 +203,15 @@ when that happens, and every device then needs the new root. Remove the old one 
 These are on by default, and each can be changed under **Advanced**.
 
 * **Your own network is never blocked.** Bans, the block list and country rules only apply to the internet.
-* **Country Rule**: only visitors from the country this server is in can connect, which blocks you abroad too.
+* **Country rule**: only visitors from the country this server is in can connect, which blocks you abroad too.
   See [Defaults worth knowing](Settings.md#defaults-worth-knowing) for how to add countries. Unblocking a country
   from the Dashboard also adds it. Country rules need the location database. While it is missing, everyone can
-  connect, or nobody can with **Without the Location Database** set to **Block**, and **Advanced > Blocking** says
-  so under **Country Rule**. A refresh only replaces the database with a new one that works, and a database that
+  connect, or nobody can with **Without the location database** set to **Block**, and **Advanced > Blocking** says
+  so under **Country rule**. A refresh only replaces the database with a new one that works, and a database that
   will not open falls back to the one it replaced.
 * **Bans**: 5 failed sign-ins within 10 minutes bans the address for 60 minutes. An IPv6 visitor is banned with
   its whole /64, since it can pick any address in it. Failures spread over many /64s ban the wider /56 after 3 times
-  **Failed Sign-ins Before a Ban**, or the /48 after 6 times, which is 15 and 30 at the default. Those wider bans last at most 15 minutes, since they shut out others in that network too.
+  **Failed sign-ins before a ban**, or the /48 after 6 times, which is 15 and 30 at the default. Those wider bans last at most 15 minutes, since they shut out others in that network too.
 * **Sign-in limits**: an address can have two sign-ins in progress at once, a /56 four and a /48 eight, and each
   must arrive within 10 seconds.
 * **Immediate**: a ban, a block or a new country rule also closes connections already open, streams included.
@@ -246,7 +246,7 @@ keeps working alongside it.
 
 ## Only Through the Proxy
 
-**Advanced > Security > Only Through the Proxy** makes the proxy the only way into Jellyfin. While Jellyfin
+**Advanced > Security > Only through the proxy** makes the proxy the only way into Jellyfin. While Jellyfin
 trusts the proxy, it listens on this server alone, so even a port left forwarded on the router, or a public
 address on the server, cannot reach it directly.
 
@@ -307,7 +307,7 @@ requests for your public names, all from one local address and none from the int
 
 ## Recovery
 
-* **Undo** in step 5, **Trust the Proxy**, puts Jellyfin's network settings back as they were before **Trust the Proxy**.
+* **Undo** in step 5, **Trust the proxy**, puts Jellyfin's network settings back as they were before **Trust the proxy**.
 * **Locked out of the dashboard?** Create an empty file named `DISABLE` in
   `plugins/configurations/Jellyfin.Plugin.RemoteAccess.Proxy/` under Jellyfin's data folder, and restart
   Jellyfin. The proxy stays off and Jellyfin's network settings go back as they were. Putting them back may
@@ -319,6 +319,6 @@ requests for your public names, all from one local address and none from the int
 
 !!! warning "Disabling the plugin"
     Disabling the plugin on Jellyfin's Plugins page stops the proxy but leaves Jellyfin trusting it. With
-    **Only Through the Proxy** on, nobody can reach Jellyfin at all. Use **Undo** before disabling. If you are
+    **Only through the proxy** on, nobody can reach Jellyfin at all. Use **Undo** before disabling. If you are
     already locked out, create the `DISABLE` file and restart with the plugin enabled, or stop Jellyfin and copy
     `network.before-remote-access.xml` over `network.xml` in Jellyfin's config folder.

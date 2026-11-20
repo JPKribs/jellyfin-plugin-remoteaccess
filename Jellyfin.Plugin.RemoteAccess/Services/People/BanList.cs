@@ -200,9 +200,11 @@ public sealed class BanList : IFailureTracker
         };
         Bans[key] = ban;
         Save(() => _store.SaveBan(ban));
-        var where = location.Country.Length > 0 ? location.Country : "an unknown country";
-        var length = minutes > 0 ? $"for {minutes} minutes" : "until the ban is lifted";
-        if (LogActivity(now, key + " Banned", $"{count} failed sign-ins from {where}, banned {length}"))
+        var where = location.Country.Length > 0 ? location.Country : ServerText.Get(TranslationKeys.ActivityUnknownCountry);
+        var overview = minutes > 0
+            ? ServerText.Format(TranslationKeys.ActivityBannedForMinutes, count, where, minutes)
+            : ServerText.Format(TranslationKeys.ActivityBannedUntilLifted, count, where);
+        if (LogActivity(now, ServerText.Format(TranslationKeys.ActivityAddressBanned, key), overview))
         {
             _logger.LogWarning("Banned {Key} in {Country} after {Failures} failed sign-ins", key, where, count);
         }

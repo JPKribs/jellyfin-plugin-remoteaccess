@@ -21,7 +21,7 @@
                     <div id="checklist"></div>
                     <div id="stepBodies" class="hidden">
 
-                        <!-- Proxy On -->
+                        <!-- Proxy on -->
                         <div id="bodyPower">
                             <div class="fieldDescription" id="textPower" role="status"></div>
                             <div class="checkboxContainer checkboxContainer-withDescription">
@@ -61,14 +61,14 @@
                                 <label for="recLogin" data-str="GuideProviderLogin">Login</label>
                                 <input is="emby-input" type="text" id="recLogin" autocomplete="off" />
                                 <button is="emby-button" type="button" id="btnClearLogin" class="raised base-button secondary small hidden" title="Remove the saved value when saved" aria-label="Clear the saved login" data-str-title="TitleClearSaved" data-str-label="LabelClearLogin">
-                                    <span data-str="ButtonClearSavedValue">Clear Saved Value</span>
+                                    <span data-str="ButtonClearSavedValue">Clear saved value</span>
                                 </button>
                             </div>
                             <div class="inputContainer">
                                 <label for="recPassword" data-str="LabelPassword">Password</label>
                                 <input is="emby-input" type="password" id="recPassword" autocomplete="off" />
                                 <button is="emby-button" type="button" id="btnClearPassword" class="raised base-button secondary small hidden" title="Remove the saved value when saved" aria-label="Clear the saved password" data-str-title="TitleClearSaved" data-str-label="LabelClearPassword">
-                                    <span data-str="ButtonClearSavedValue">Clear Saved Value</span>
+                                    <span data-str="ButtonClearSavedValue">Clear saved value</span>
                                 </button>
                             </div>
                             <div class="inputContainer">
@@ -84,9 +84,9 @@
                             </div>
                             <div id="detectionWarning" class="base-warn hidden"></div>
                             <div class="base-button-row">
-                                <button is="emby-button" type="button" id="btnRunNow" class="raised base-button secondary small" title="Update Now" data-str-title="ButtonUpdateNow">
+                                <button is="emby-button" type="button" id="btnRunNow" class="raised base-button secondary small" title="Update now" data-str-title="ButtonUpdateNow">
                                     <span class="material-icons" aria-hidden="true">sync</span>
-                                    <span data-str="ButtonUpdateNow">Update Now</span>
+                                    <span data-str="ButtonUpdateNow">Update now</span>
                                 </button>
                             </div>
                             <span id="runStatus" class="base-status-text" role="status"></span>
@@ -109,19 +109,19 @@
                             <div id="certTermsField" class="checkboxContainer checkboxContainer-withDescription">
                                 <label class="emby-checkbox-label">
                                     <input type="checkbox" is="emby-checkbox" id="certTerms" />
-                                    <span class="checkboxLabel" data-str="LabelAcceptTerms">Accept the Let's Encrypt Terms</span>
+                                    <span class="checkboxLabel" data-str="LabelAcceptTerms">Accept the Let's Encrypt terms</span>
                                 </label>
                                 <div id="certTermsDescription" class="fieldDescription checkboxFieldDescription">Required before a certificate is requested. Read the <a href="https://letsencrypt.org/repository/" target="_blank" rel="noopener noreferrer" class="button-link">Let's Encrypt Subscriber Agreement</a>.</div>
                             </div>
                             <div id="certMethod" class="base-info hidden"></div>
                             <div id="certFileFields">
                                 <div class="inputContainer">
-                                    <label for="certPath" data-str="LabelCertificateFile">Certificate File</label>
+                                    <label for="certPath" data-str="LabelCertificateFile">Certificate file</label>
                                     <input is="emby-input" type="text" id="certPath" autocomplete="off" />
                                     <div id="certPathDescription" class="fieldDescription"></div>
                                 </div>
                                 <div id="certKeyField" class="inputContainer">
-                                    <label for="certKeyPath" data-str="LabelPrivateKeyFile">Private Key File</label>
+                                    <label for="certKeyPath" data-str="LabelPrivateKeyFile">Private key file</label>
                                     <input is="emby-input" type="text" id="certKeyPath" autocomplete="off" />
                                     <div class="fieldDescription" data-str="DescriptionPrivateKeyFile">For example privkey.pem.</div>
                                 </div>
@@ -143,7 +143,7 @@
                                 <div class="fieldDescription" data-str="DescriptionInstallRoot">Install it on each device that should trust this server.</div>
                                 <div class="base-button-row">
                                     <button is="emby-button" type="button" id="btnDownloadRoot" class="raised base-button secondary small">
-                                        <span data-str="ButtonDownloadRoot">Download Root Certificate</span>
+                                        <span data-str="ButtonDownloadRoot">Download root certificate</span>
                                     </button>
                                 </div>
                             </div>
@@ -158,13 +158,13 @@
                             </div>
                             <div class="base-button-row">
                                 <button is="emby-button" type="button" id="btnRouterRetry" class="raised base-button secondary small">
-                                    <span data-str="ButtonTryAgain">Try Again</span>
+                                    <span data-str="ButtonTryAgain">Try again</span>
                                 </button>
                             </div>
                             <span id="routerStatus" class="base-status-text" role="status"></span>
                         </div>
 
-                        <!-- Trust the Proxy -->
+                        <!-- Trust the proxy -->
                         <div id="bodyTrust">
                             <div class="fieldDescription" id="textTrust" role="status"></div>
                             <div class="fieldDescription" data-str="DescriptionRestartsOnce">Restarts Jellyfin once.</div>
@@ -172,7 +172,7 @@
                             <div id="jellyfinExposed" class="base-warn hidden"></div>
                             <div class="base-button-row">
                                 <button is="emby-button" type="button" id="btnTrust" class="raised base-button primary small">
-                                    <span data-str="HeaderTrustProxy">Trust the Proxy</span>
+                                    <span data-str="HeaderTrustProxy">Trust the proxy</span>
                                 </button>
                                 <button is="emby-button" type="button" id="btnRestore" class="raised base-button destructive small hidden">
                                     <span data-str="ButtonUndo">Undo</span>
@@ -181,14 +181,14 @@
                             <span id="trustStatus" class="base-status-text" role="status"></span>
                         </div>
 
-                        <!-- Reachable From Outside -->
+                        <!-- Reachable from outside -->
                         <div id="bodyReach">
                             <div class="fieldDescription" id="textReach" role="status"></div>
                             <div id="reachNodes" class="base-record-card hidden"></div>
                             <div class="fieldDescription" data-str="DescriptionReachTest">Sends your address to check-host.net, which tries it from other countries.</div>
                             <div class="base-button-row">
                                 <button is="emby-button" type="button" id="btnReach" class="raised base-button secondary small">
-                                    <span data-str="ButtonTestFromOutside">Test from Outside</span>
+                                    <span data-str="ButtonTestFromOutside">Test from outside</span>
                                 </button>
                             </div>
                             <span id="reachStatus" class="base-status-text" role="status"></span>

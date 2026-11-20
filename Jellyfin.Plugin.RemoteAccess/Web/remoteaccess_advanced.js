@@ -442,7 +442,7 @@ export default function (view) {
         });
     }
 
-    // ===== Request a New Certificate =====
+    // ===== Request a new certificate =====
 
     // Offered while the proxy runs with Let's Encrypt as the saved source and its terms accepted.
     var certRequestable = false;
@@ -535,7 +535,7 @@ export default function (view) {
     }
 
     // save
-    // The Save Bar's onSave. Turning on Only Through the Proxy can cut off whoever uses Jellyfin's own address, this
+    // The Save Bar's onSave. Turning on Only through the proxy can cut off whoever uses Jellyfin's own address, this
     // page included, so it is confirmed first.
     //
     // Output

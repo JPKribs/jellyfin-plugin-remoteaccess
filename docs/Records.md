@@ -14,7 +14,7 @@ proxy answers on. Every field, with its default, is in the [Settings Reference](
 
 ![Record editor](screenshots/Record%20Editor.png)
 
-The first update runs within 15 minutes. To run it now, select **Update Now** under the status card.
+The first update runs within 15 minutes. To run it now, select **Update now** under the status card.
 
 ![Provider picker](screenshots/Provider%20Picker.png)
 
@@ -24,17 +24,17 @@ the next time you save, and the page says how many.
 ## Credentials
 
 Credentials are encrypted when saved, and never sent back to the browser. A saved one shows as **Saved, leave
-blank to keep**. Leaving the field blank keeps it, and **Clear Saved Value** under the field removes it. Use the
+blank to keep**. Leaving the field blank keeps it, and **Clear saved value** under the field removes it. Use the
 most limited token your provider offers. See [Security & Storage](Security.md).
 
-Changing the record's **Provider** or **Server Override** clears its saved credentials, so a saved password is
+Changing the record's **Provider** or **Server override** clears its saved credentials, so a saved password is
 never sent somewhere new. Enter them again before you save.
 
 ## Finer Settings
 
 The rest of the record is under **Advanced > Dynamic DNS**, in the **Record** group: pausing it, IPv4 and IPv6,
-**Server Override**, **TTL**, **Treat as Proxied Address**, the DynDNS family options and **Remove Record**.
-**Other Addresses** under **Advanced > Addresses** lists more names the proxy answers on, for names whose DNS you
+**Server override**, **TTL**, **Treat as proxied address**, the DynDNS family options and **Remove record**.
+**Other addresses** under **Advanced > Addresses** lists more names the proxy answers on, for names whose DNS you
 keep some other way. The [Settings Reference](Settings.md#ddns-record) describes each one.
 
 ![Advanced options for DynDNS v2](screenshots/Advanced%20Options.png)
@@ -42,19 +42,19 @@ keep some other way. The [Settings Reference](Settings.md#ddns-record) describes
 ## Records Behind a CDN or Proxy
 
 If DNS for a name returns someone else's address, such as Cloudflare's when its orange cloud is on, the plugin
-cannot tell whether your record is current. Turn on **Treat as Proxied Address**. The plugin then compares against
-the last address it sent instead of looking the name up. Pair it with **Force Update**, so the record is sent again
+cannot tell whether your record is current. Turn on **Treat as proxied address**. The plugin then compares against
+the last address it sent instead of looking the name up. Pair it with **Force update**, so the record is sent again
 now and then in case it was changed elsewhere.
 
 ## How Your Public IP Is Found
 
-* **IPv4 Detection URLs** and **IPv6 Detection URLs** under **Advanced > Dynamic DNS** list services that reply
+* **IPv4 detection URLs** and **IPv6 detection URLs** under **Advanced > Dynamic DNS** list services that reply
   with your address. Leave them empty to use the built-in list. Only `https` addresses are used, since a tampered
   reply could point your DNS somewhere else.
 * Two services must agree on the address before it is used. If only one answers, its answer is used. If services
   answer with different addresses and no two agree, nothing is published that run.
 * If the only address found is a private one, the server most likely has no public IP of its own. Step 2 warns
-  and nothing is published. Turn off **Skip Internal Addresses** to publish such an address anyway.
+  and nothing is published. Turn off **Skip internal addresses** to publish such an address anyway.
 
 ![Advanced, Dynamic DNS](screenshots/Dynamic%20DNS.png)
 
@@ -79,13 +79,13 @@ card in step 2 shows what the last run did and when. See [Record status](Dashboa
 
 ### Force Update
 
-Some providers drop a record that is not refreshed for a while. **Force Update** sends the current address again
+Some providers drop a record that is not refreshed for a while. **Force update** sends the current address again
 once that long has passed since the last successful update, even when DNS already matches. It is off by default.
 
 ### When a Record Keeps Failing
 
 A record that keeps failing is paused, so a mistake such as a wrong token does not keep hitting your provider and
-risk a ban. **Back Off After Failures** and **Back Off Duration** set when and for how long. The defaults are 3
+risk a ban. **Back off after failures** and **Back off duration** set when and for how long. The defaults are 3
 failures in a row and 24 hours. The status card says when the record is paused and when it will be tried next.
 
 Only failures that point at the record itself count: rejected credentials, a request the provider refuses, or an
@@ -101,4 +101,4 @@ provider, name, zone, server or credentials also starts it over.
 
 Some home networks answer a name with a local address, through the router, an ad-blocking DNS server or a hosts
 file. The plugin then cannot see your public record. It notices and compares against the last address it sent
-instead, so an unchanged address is not sent every run. **Treat as Proxied Address** makes it always work that way.
+instead, so an unchanged address is not sent every run. **Treat as proxied address** makes it always work that way.

@@ -6,7 +6,7 @@ import { PLUGIN_ID, t, translatedPage, htmlFormat, linkHtml, listText, problemTe
 
 // The Configuration tab: a checklist from turning the proxy on to a test from outside. Each step holds only what
 // most people need: the proxy switch, the one DDNS record whose name is the proxy's address, the certificate, the
-// router, Trust the Proxy and the outside test. The finer settings are under Advanced. Every state is worked out
+// router, Trust the proxy and the outside test. The finer settings are under Advanced. Every state is worked out
 // from Proxy/Status and Proxy/Settings, plus the DDNS record for someone who only uses Dynamic DNS.
 export default function (view) {
     'use strict';
@@ -122,7 +122,7 @@ export default function (view) {
     var ID_PROVIDERS = ['DnsMadeEasy', 'Sitelutions'];
 
     // Whether the record's hostname can be the proxy's address. A provider without a hostname field, or one keyed
-    // by a record id, needs the name under Other Addresses instead.
+    // by a record id, needs the name under Other addresses instead.
     function namesTheProxy(provider) {
         return !!specFor(provider).h && ID_PROVIDERS.indexOf(provider) < 0;
     }
@@ -279,7 +279,7 @@ export default function (view) {
         });
     }
 
-    // ===== Update Now, in step 2 =====
+    // ===== Update now, in step 2 =====
 
     // Says how the run went. With no result for the record, the configuration tells apart having no record, a
     // paused record and a run that left the record as it was.
@@ -648,7 +648,7 @@ export default function (view) {
                 : t.tr('StepEnterHostname');
             return step('amber', t.tr('StepNotSet'), where);
         }
-        if (!names.some(isPublicName)) return step('amber', t.tr('StepHomeOnly'), t.format('StepOnlyAtHome', listText(names)));
+        if (!names.some(isPublicName)) return step('amber', t.tr('BadgeHomeOnly'), t.format('StepOnlyAtHome', listText(names)));
         var n = st.Name;
         // An older server does not look the name up, so a chosen name is as far as this can check.
         if (!n) return step('green', t.tr('StepChosen'), t.format('StepPeopleReach', listText(names)));
@@ -951,7 +951,7 @@ export default function (view) {
         Shared.getEl('checklist').appendChild(checklist.element);
         Shared.getEl('certTermsDescription').innerHTML = htmlFormat(Shared, 'DescriptionAcceptTerms', [linkHtml(Shared, 'https://letsencrypt.org/repository/', 'LinkSubscriberAgreement')]);
 
-        // Step 2: the record and Update Now.
+        // Step 2: the record and Update now.
         Shared.getEl('recProvider').addEventListener('change', onProviderChange);
         Shared.getEl('btnRunNow').addEventListener('click', runNow);
 

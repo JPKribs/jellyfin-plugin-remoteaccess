@@ -20,24 +20,24 @@
                             <div id="ddnsIntro" class="fieldDescription">How the DDNS records find this server's public IP and when they send it. Set how often updates run in <strong>Scheduled Tasks</strong> under <strong>Update DDNS</strong>.</div>
                             <div id="raLoadError" class="base-error hidden"></div>
                             <div class="inputContainer">
-                                <label for="ipv4Url" data-str="LabelIpv4DetectionUrls">IPv4 Detection URLs</label>
+                                <label for="ipv4Url" data-str="LabelIpv4DetectionUrls">IPv4 detection URLs</label>
                                 <textarea id="ipv4Url" class="emby-input" autocomplete="off" rows="4"></textarea>
                                 <div class="fieldDescription" data-str="DescriptionIpv4DetectionUrls">Services that reply with your IPv4 address, one per line, with a built-in list used when empty.</div>
                             </div>
                             <div class="inputContainer">
-                                <label for="ipv6Url" data-str="LabelIpv6DetectionUrls">IPv6 Detection URLs</label>
+                                <label for="ipv6Url" data-str="LabelIpv6DetectionUrls">IPv6 detection URLs</label>
                                 <textarea id="ipv6Url" class="emby-input" autocomplete="off" rows="4"></textarea>
                                 <div class="fieldDescription" data-str="DescriptionIpv6DetectionUrls">Services that reply with your IPv6 address, one per line, with a built-in list used when empty.</div>
                             </div>
                             <div class="checkboxContainer checkboxContainer-withDescription">
                                 <label class="emby-checkbox-label">
                                     <input type="checkbox" is="emby-checkbox" id="skipInternal" />
-                                    <span class="checkboxLabel" data-str="LabelSkipInternal">Skip Internal Addresses</span>
+                                    <span class="checkboxLabel" data-str="LabelSkipInternal">Skip internal addresses</span>
                                 </label>
                                 <div class="fieldDescription checkboxFieldDescription" data-str="DescriptionSkipInternal">Skips private, loopback and CGNAT addresses, so a mistaken detection is never published.</div>
                             </div>
                             <div class="selectContainer">
-                                <label class="selectLabel" for="forceUpdateHours" data-str="LabelForceUpdate">Force Update</label>
+                                <label class="selectLabel" for="forceUpdateHours" data-str="LabelForceUpdate">Force update</label>
                                 <select is="emby-select" id="forceUpdateHours">
                                     <option value="0" data-str="Off">Off</option>
                                     <option value="1" data-str="OptionEveryHour">Every 1 hour</option>
@@ -53,7 +53,7 @@
                                 <div class="fieldDescription" data-str="DescriptionForceUpdate">Sends your IP again after this long, even when DNS already matches, which proxied records need.</div>
                             </div>
                             <div class="selectContainer">
-                                <label class="selectLabel" for="backoffAfterFailures" data-str="LabelBackoffAfterFailures">Back Off After Failures</label>
+                                <label class="selectLabel" for="backoffAfterFailures" data-str="LabelBackoffAfterFailures">Back off after failures</label>
                                 <select is="emby-select" id="backoffAfterFailures">
                                     <option value="0" data-str="Off">Off</option>
                                     <option value="3" data-str="Option3Failures">3 failures</option>
@@ -63,7 +63,7 @@
                                 <div class="fieldDescription" data-str="DescriptionBackoffAfterFailures">Failures in a row before a record is paused.</div>
                             </div>
                             <div class="selectContainer">
-                                <label class="selectLabel" for="backoffHours" data-str="LabelBackoffDuration">Back Off Duration</label>
+                                <label class="selectLabel" for="backoffHours" data-str="LabelBackoffDuration">Back off duration</label>
                                 <select is="emby-select" id="backoffHours">
                                     <option value="1" data-str="Option1Hour">1 hour</option>
                                     <option value="6" data-str="Option6Hours">6 hours</option>
@@ -74,7 +74,7 @@
                                 <div class="fieldDescription" data-str="DescriptionBackoffDuration">How long a paused record waits before trying again.</div>
                             </div>
                             <div class="inputContainer">
-                                <label for="requestTimeout" data-str="LabelRequestTimeout">Request Timeout</label>
+                                <label for="requestTimeout" data-str="LabelRequestTimeout">Request timeout</label>
                                 <input is="emby-input" type="number" id="requestTimeout" min="1" max="300" step="1" autocomplete="off" />
                                 <div class="fieldDescription" data-str="DescriptionRequestTimeout">How long each request to a detection service or provider may take, in seconds.</div>
                             </div>
@@ -105,7 +105,7 @@
                                 </div>
                                 <div class="fieldDescription" data-str="DescriptionUpdateFamilies">IPv4 updates the A record and IPv6 the AAAA record.</div>
                                 <div class="inputContainer">
-                                    <label for="recServer" data-str="LabelServerOverride">Server Override</label>
+                                    <label for="recServer" data-str="LabelServerOverride">Server override</label>
                                     <input is="emby-input" type="text" id="recServer" autocomplete="off" />
                                     <div class="fieldDescription" data-str="DescriptionServerOverride">Leave blank to use the provider's own server.</div>
                                 </div>
@@ -117,9 +117,9 @@
                                 <div class="checkboxContainer checkboxContainer-withDescription">
                                     <label class="emby-checkbox-label">
                                         <input type="checkbox" is="emby-checkbox" id="recProxied" />
-                                        <span class="checkboxLabel" data-str="LabelProxied">Treat as Proxied Address</span>
+                                        <span class="checkboxLabel" data-str="LabelProxied">Treat as proxied address</span>
                                     </label>
-                                    <div class="fieldDescription checkboxFieldDescription" data-str="DescriptionProxied">For a record behind a proxy or CDN, used with Force Update above.</div>
+                                    <div class="fieldDescription checkboxFieldDescription" data-str="DescriptionProxied">For a record behind a proxy or CDN, used with Force update above.</div>
                                 </div>
                                 <div class="checkboxContainer">
                                     <label class="emby-checkbox-label">
@@ -136,7 +136,7 @@
                                     <div class="fieldDescription checkboxFieldDescription" data-str="DescriptionStaticDns">Uses the static DNS service, for dyndns1 and dslreports.</div>
                                 </div>
                                 <div class="inputContainer">
-                                    <label for="recMx" data-str="LabelMxHost">MX Host</label>
+                                    <label for="recMx" data-str="LabelMxHost">MX host</label>
                                     <input is="emby-input" type="text" id="recMx" autocomplete="off" />
                                     <div class="fieldDescription" data-str="DescriptionMxHost">The mail server for the domain, for the dyndns family.</div>
                                 </div>
@@ -148,7 +148,7 @@
                                 </div>
                                 <div class="base-button-row">
                                     <button is="emby-button" type="button" id="btnRemoveRecord" class="raised base-button destructive small">
-                                        <span data-str="HeaderRemoveRecord">Remove Record</span>
+                                        <span data-str="HeaderRemoveRecord">Remove record</span>
                                     </button>
                                 </div>
                                 <span id="recordStatus" class="base-status-text" aria-live="polite"></span>
@@ -163,14 +163,14 @@
                         </button>
                         <div id="advAddresses" class="base-collapsible-content collapsed">
                             <div class="inputContainer">
-                                <label for="hostnames" data-str="LabelOtherAddresses">Other Addresses</label>
+                                <label for="hostnames" data-str="LabelOtherAddresses">Other addresses</label>
                                 <textarea id="hostnames" class="emby-input" autocomplete="off" rows="3" placeholder="media.example.com"></textarea>
                                 <div id="hostnamesDescription" class="fieldDescription" data-str="DescriptionOtherAddresses">More names the proxy answers on, one per line, besides the DDNS record's name.</div>
                             </div>
                             <div class="checkboxContainer checkboxContainer-withDescription">
                                 <label class="emby-checkbox-label">
                                     <input type="checkbox" is="emby-checkbox" id="advAutoPortForwarding" data-adv="AutoPortForwarding" data-kind="bool" />
-                                    <span class="checkboxLabel" data-str="LabelAutoPortForwarding">Automatic Port Forwarding</span>
+                                    <span class="checkboxLabel" data-str="LabelAutoPortForwarding">Automatic port forwarding</span>
                                 </label>
                                 <div class="fieldDescription checkboxFieldDescription"><span data-str="DescriptionAutoPortForwarding">Asks the router to forward ports 80 and 443 to this server through UPnP or NAT-PMP.</span> <span data-default="AutoPortForwarding" data-unit="onoff"></span></div>
                             </div>
@@ -186,38 +186,38 @@
                             <div class="checkboxContainer checkboxContainer-withDescription">
                                 <label class="emby-checkbox-label">
                                     <input type="checkbox" is="emby-checkbox" id="advJellyfinLoopbackOnly" data-adv="JellyfinLoopbackOnly" data-kind="bool" />
-                                    <span class="checkboxLabel" data-str="LabelLoopbackOnly">Only Through the Proxy</span>
+                                    <span class="checkboxLabel" data-str="LabelLoopbackOnly">Only through the proxy</span>
                                 </label>
                                 <div class="fieldDescription checkboxFieldDescription"><span data-str="DescriptionLoopbackOnly">Jellyfin only listens on this server while it trusts the proxy, so apps, casting and DLNA at home must use your address too.</span> <span data-default="JellyfinLoopbackOnly" data-unit="onoff"></span></div>
                             </div>
                             <div class="checkboxContainer checkboxContainer-withDescription">
                                 <label class="emby-checkbox-label">
                                     <input type="checkbox" is="emby-checkbox" id="advHstsEnabled" data-adv="HstsEnabled" data-kind="bool" />
-                                    <span class="checkboxLabel" data-str="LabelHsts">Always Use HTTPS</span>
+                                    <span class="checkboxLabel" data-str="LabelHsts">Always use HTTPS</span>
                                 </label>
                                 <div class="fieldDescription checkboxFieldDescription"><span data-str="DescriptionHsts">Browsers that have visited once refuse plain HTTP.</span> <span data-default="HstsEnabled" data-unit="onoff"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advHstsMaxAgeDays" data-str="LabelHstsMaxAge">HTTPS Memory</label>
+                                <label for="advHstsMaxAgeDays" data-str="LabelHstsMaxAge">HTTPS memory</label>
                                 <input is="emby-input" type="number" id="advHstsMaxAgeDays" data-adv="HstsMaxAgeDays" data-kind="int" min="1" max="730" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionHstsMaxAge">How long browsers keep using HTTPS after a visit, in days.</span> <span data-default="HstsMaxAgeDays" data-unit="days"></span></div>
                             </div>
                             <div class="checkboxContainer checkboxContainer-withDescription">
                                 <label class="emby-checkbox-label">
                                     <input type="checkbox" is="emby-checkbox" id="advSameOriginFramesOnly" data-adv="SameOriginFramesOnly" data-kind="bool" />
-                                    <span class="checkboxLabel" data-str="LabelSameOriginFrames">Block Embedding</span>
+                                    <span class="checkboxLabel" data-str="LabelSameOriginFrames">Block embedding</span>
                                 </label>
                                 <div class="fieldDescription checkboxFieldDescription"><span data-str="DescriptionSameOriginFrames">Other websites cannot frame these pages.</span> <span data-default="SameOriginFramesOnly" data-unit="onoff"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advTrustedNetworks" data-str="LabelTrustedNetworks">Trusted Networks</label>
+                                <label for="advTrustedNetworks" data-str="LabelTrustedNetworks">Trusted networks</label>
                                 <textarea id="advTrustedNetworks" class="emby-input" autocomplete="off" rows="3" data-adv="TrustedNetworks" data-kind="lines" placeholder="100.64.0.0/10"></textarea>
                                 <div class="fieldDescription" data-str="DescriptionTrustedNetworks">Addresses or ranges treated like your own network, such as a VPN, one per line.</div>
                             </div>
                             <div id="certRequestDescription" class="fieldDescription" data-str="DescriptionRequestCertificate">Renewal is automatic, so use this only to replace a Let's Encrypt certificate now, such as after its key leaked. It works while the proxy runs with Let's Encrypt as the source.</div>
                             <div class="base-button-row">
                                 <button is="emby-button" type="button" id="btnRequestCert" class="raised base-button secondary small">
-                                    <span data-str="HeaderRequestCertificate">Request a New Certificate</span>
+                                    <span data-str="HeaderRequestCertificate">Request a new certificate</span>
                                 </button>
                             </div>
                             <span id="certRequestStatus" class="base-status-text" aria-live="polite"></span>
@@ -232,27 +232,27 @@
                         <div id="advCountries" class="base-collapsible-content collapsed">
                             <div class="fieldDescription" data-str="DescriptionBlocking">These only apply to the internet, never to your own or trusted networks.</div>
                             <div class="inputContainer">
-                                <label for="advBlockedAddresses" data-str="LabelBlockedAddresses">Blocked Addresses</label>
+                                <label for="advBlockedAddresses" data-str="LabelBlockedAddresses">Blocked addresses</label>
                                 <textarea id="advBlockedAddresses" class="emby-input" autocomplete="off" rows="3" data-adv="BlockedAddresses" data-kind="lines" placeholder="203.0.113.7"></textarea>
                                 <div class="fieldDescription" data-str="DescriptionBlockedAddresses">Addresses or ranges always refused, one per line.</div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advBanFailures" data-str="LabelBanFailures">Failed Sign-ins Before a Ban</label>
+                                <label for="advBanFailures" data-str="LabelBanFailures">Failed sign-ins before a ban</label>
                                 <input is="emby-input" type="number" id="advBanFailures" data-adv="BanFailures" data-kind="int" min="0" max="1000" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionBanFailures">Failed sign-ins within the window that ban an address, with 0 for no bans.</span> <span data-default="BanFailures" data-unit="count-off"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advBanWindowMinutes" data-str="LabelBanWindow">Ban Window</label>
+                                <label for="advBanWindowMinutes" data-str="LabelBanWindow">Ban window</label>
                                 <input is="emby-input" type="number" id="advBanWindowMinutes" data-adv="BanWindowMinutes" data-kind="int" min="1" max="1440" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionBanWindow">Failures are counted over this many minutes.</span> <span data-default="BanWindowMinutes" data-unit="minutes"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advBanMinutes" data-str="LabelBanLength">Ban Length</label>
+                                <label for="advBanMinutes" data-str="LabelBanLength">Ban length</label>
                                 <input is="emby-input" type="number" id="advBanMinutes" data-adv="BanMinutes" data-kind="int" min="0" max="525600" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionBanLength">How long a ban lasts in minutes, with 0 until you lift it.</span> <span data-default="BanMinutes" data-unit="minutes"></span></div>
                             </div>
                             <div class="selectContainer">
-                                <label class="selectLabel" for="advCountryMode" data-str="LabelCountryRule">Country Rule</label>
+                                <label class="selectLabel" for="advCountryMode" data-str="LabelCountryRule">Country rule</label>
                                 <select is="emby-select" id="advCountryMode" data-adv="CountryMode" data-kind="enum">
                                     <option value="ServerCountry" data-str="OptionServerCountry">Server country only</option>
                                     <option value="Block" data-str="OptionBlockCountries">Block these countries</option>
@@ -266,7 +266,7 @@
                                 <div id="countryPicker"></div>
                             </div>
                             <div class="selectContainer">
-                                <label class="selectLabel" for="advBlockUnknownCountries" data-str="LabelUnknownAddresses">Unknown Addresses</label>
+                                <label class="selectLabel" for="advBlockUnknownCountries" data-str="LabelUnknownAddresses">Unknown addresses</label>
                                 <select is="emby-select" id="advBlockUnknownCountries" data-adv="BlockUnknownCountries" data-kind="bool">
                                     <option value="true" data-str="ButtonBlock">Block</option>
                                     <option value="false" data-str="OptionAllow">Allow</option>
@@ -274,7 +274,7 @@
                                 <div class="fieldDescription"><span data-str="DescriptionUnknownAddresses">What to do with addresses the location database has no country for.</span> <span data-default="BlockUnknownCountries" data-unit="allowblock"></span></div>
                             </div>
                             <div class="selectContainer">
-                                <label class="selectLabel" for="advBlockWithoutDatabase" data-str="LabelWithoutDatabase">Without the Location Database</label>
+                                <label class="selectLabel" for="advBlockWithoutDatabase" data-str="LabelWithoutDatabase">Without the location database</label>
                                 <select is="emby-select" id="advBlockWithoutDatabase" data-adv="BlockWithoutDatabase" data-kind="bool">
                                     <option value="true" data-str="ButtonBlock">Block</option>
                                     <option value="false" data-str="OptionAllow">Allow</option>
@@ -294,12 +294,12 @@
                             <div class="checkboxContainer checkboxContainer-withDescription">
                                 <label class="emby-checkbox-label">
                                     <input type="checkbox" is="emby-checkbox" id="historyEnabled" />
-                                    <span class="checkboxLabel" data-str="LabelRecordHistory">Record History</span>
+                                    <span class="checkboxLabel" data-str="LabelRecordHistory">Record history</span>
                                 </label>
                                 <div class="fieldDescription checkboxFieldDescription" data-str="DescriptionRecordHistory">Records who connects and what they did, for the Dashboard.</div>
                             </div>
                             <div class="inputContainer">
-                                <label for="historyDays" data-str="LabelHistoryPeriod">History Period</label>
+                                <label for="historyDays" data-str="LabelHistoryPeriod">History period</label>
                                 <input is="emby-input" type="number" id="historyDays" min="1" max="3650" step="1" />
                                 <div class="fieldDescription" data-str="DescriptionHistoryPeriod">How long history is kept, in days.</div>
                             </div>
@@ -315,10 +315,10 @@
                             <div id="locationStatus" class="base-info"></div>
                             <div class="base-button-row">
                                 <button is="emby-button" type="button" id="btnUpdateLocation" class="raised base-button secondary fill">
-                                    <span data-str="TaskRefreshLocations">Refresh Locations</span>
+                                    <span data-str="TaskRefreshLocations">Refresh locations</span>
                                 </button>
                                 <button is="emby-button" type="button" id="btnDeleteAll" class="raised base-button destructive fill">
-                                    <span data-str="HeaderClearHistory">Clear History</span>
+                                    <span data-str="HeaderClearHistory">Clear history</span>
                                 </button>
                             </div>
                             <span id="historyStatus" class="base-status-text" aria-live="polite"></span>
@@ -339,22 +339,22 @@
                                 <div class="fieldDescription checkboxFieldDescription"><span data-str="DescriptionHttp2">Lets browsers load pages faster over one connection.</span> <span data-default="EnableHttp2" data-unit="onoff"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advMaxRequestBodyMbWan" data-str="LabelMaxUploadWan">Largest Upload from the Internet</label>
+                                <label for="advMaxRequestBodyMbWan" data-str="LabelMaxUploadWan">Largest upload from the internet</label>
                                 <input is="emby-input" type="number" id="advMaxRequestBodyMbWan" data-adv="MaxRequestBodyMbWan" data-kind="int" min="0" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionMaxUploadWan">Largest upload accepted from the internet, in MB, with 0 for unlimited.</span> <span data-default="MaxRequestBodyMbWan" data-unit="mb"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advMaxRequestBodyMbLan" data-str="LabelMaxUploadLan">Largest Upload from Your Network</label>
+                                <label for="advMaxRequestBodyMbLan" data-str="LabelMaxUploadLan">Largest upload from your network</label>
                                 <input is="emby-input" type="number" id="advMaxRequestBodyMbLan" data-adv="MaxRequestBodyMbLan" data-kind="int" min="0" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionMaxUploadLan">Largest upload accepted from your network, in MB, with 0 for unlimited.</span> <span data-default="MaxRequestBodyMbLan" data-unit="mb"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advMaxConnectionsPerIp" data-str="LabelMaxConnectionsPerIp">Connections per Internet Address</label>
+                                <label for="advMaxConnectionsPerIp" data-str="LabelMaxConnectionsPerIp">Connections per internet address</label>
                                 <input is="emby-input" type="number" id="advMaxConnectionsPerIp" data-adv="MaxConnectionsPerIp" data-kind="int" min="0" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionMaxConnectionsPerIp">Connections one internet address may hold open, with 0 for unlimited.</span> <span data-default="MaxConnectionsPerIp" data-unit="count"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advMaxConnections" data-str="LabelMaxConnections">Total Connections</label>
+                                <label for="advMaxConnections" data-str="LabelMaxConnections">Total connections</label>
                                 <input is="emby-input" type="number" id="advMaxConnections" data-adv="MaxConnections" data-kind="int" min="0" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionMaxConnections">Connections the proxy holds open in all, with 0 for unlimited.</span> <span data-default="MaxConnections" data-unit="count"></span></div>
                             </div>
@@ -368,27 +368,27 @@
                         </button>
                         <div id="advTimeouts" class="base-collapsible-content collapsed">
                             <div class="inputContainer">
-                                <label for="advKeepAliveSeconds" data-str="LabelKeepAlive">Idle Connections</label>
+                                <label for="advKeepAliveSeconds" data-str="LabelKeepAlive">Idle connections</label>
                                 <input is="emby-input" type="number" id="advKeepAliveSeconds" data-adv="KeepAliveSeconds" data-kind="int" min="5" max="3600" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionKeepAlive">How long an unused connection stays open, in seconds.</span> <span data-default="KeepAliveSeconds" data-unit="seconds"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advRequestHeadersTimeoutSeconds" data-str="LabelRequestHeadersTimeout">Request Headers</label>
+                                <label for="advRequestHeadersTimeoutSeconds" data-str="LabelRequestHeadersTimeout">Request headers</label>
                                 <input is="emby-input" type="number" id="advRequestHeadersTimeoutSeconds" data-adv="RequestHeadersTimeoutSeconds" data-kind="int" min="1" max="300" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionRequestHeadersTimeout">How long a visitor may take to send a request's headers, in seconds.</span> <span data-default="RequestHeadersTimeoutSeconds" data-unit="seconds"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advMaxRequestHeadersKb" data-str="LabelMaxRequestHeaders">Header Size</label>
+                                <label for="advMaxRequestHeadersKb" data-str="LabelMaxRequestHeaders">Header size</label>
                                 <input is="emby-input" type="number" id="advMaxRequestHeadersKb" data-adv="MaxRequestHeadersKb" data-kind="int" min="8" max="1024" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionMaxRequestHeaders">Largest set of request headers accepted, in KB.</span> <span data-default="MaxRequestHeadersKb" data-unit="kb"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advMinResponseBytesPerSecond" data-str="LabelMinResponseRate">Minimum Read Rate</label>
+                                <label for="advMinResponseBytesPerSecond" data-str="LabelMinResponseRate">Minimum read rate</label>
                                 <input is="emby-input" type="number" id="advMinResponseBytesPerSecond" data-adv="MinResponseBytesPerSecond" data-kind="int" min="0" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionMinResponseRate">The slowest a visitor may read Jellyfin's pages before the connection is cut, in bytes per second, with 0 for off and media exempt.</span> <span data-default="MinResponseBytesPerSecond" data-unit="bps"></span></div>
                             </div>
                             <div class="inputContainer">
-                                <label for="advBackendActivityTimeoutSeconds" data-str="LabelBackendTimeout">Jellyfin Response</label>
+                                <label for="advBackendActivityTimeoutSeconds" data-str="LabelBackendTimeout">Jellyfin response</label>
                                 <input is="emby-input" type="number" id="advBackendActivityTimeoutSeconds" data-adv="BackendActivityTimeoutSeconds" data-kind="int" min="61" max="86400" step="1" />
                                 <div class="fieldDescription"><span data-str="DescriptionBackendTimeout">How long Jellyfin may go silent before a request is dropped, in seconds.</span> <span data-default="BackendActivityTimeoutSeconds" data-unit="seconds"></span></div>
                             </div>
@@ -400,10 +400,10 @@
                     <span id="restartStatus" class="base-status-text" role="status"></span>
                     <div class="base-button-row">
                         <button is="emby-button" type="button" id="btnResetAdvanced" class="raised base-button secondary fill">
-                            <span data-str="HeaderResetDefaults">Reset to Defaults</span>
+                            <span data-str="HeaderResetDefaults">Reset to defaults</span>
                         </button>
                         <button is="emby-button" type="button" id="btnRestartProxy" class="raised base-button secondary fill">
-                            <span data-str="ButtonRestartProxy">Restart Proxy</span>
+                            <span data-str="ButtonRestartProxy">Restart proxy</span>
                         </button>
                     </div>
                     <div id="saveBar"></div>

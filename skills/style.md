@@ -34,20 +34,24 @@ These rules apply to every string a user can see. That includes HTML, JS, C# mes
 
 ### Casing
 
-| Text | Case | Example |
-| :--- | :--- | :--- |
-| Tab | Title Case, one word | Dashboard |
-| Section and collapsible title | Title Case | Dynamic DNS |
-| Field label | Title Case | Ban Window |
-| Checkbox label | Title Case | Update IPv6 |
-| Button | Title Case, verb first | Update Now |
-| Dialog title | Title Case | Remove Record |
-| Badge and status chip | Title Case | Needs Attention |
-| Column header | Title Case | Last Seen |
-| Activity log name | Title Case | DDNS Record Updated |
-| Description, message, placeholder sentence | Sentence case | Starts the proxy when you save. |
+Every label, heading, button, tab, column header, option, title, badge, and activity log name is in sentence case, mirroring Jellyfin, such as "Allow media playback". Only the first word and proper nouns take a capital.
 
-Title Case capitalizes every word except short articles, conjunctions, and prepositions in the middle, such as "a", "and", "of", "to", and "in". Keep acronyms as written, such as "DDNS", "IPv6", "HTTPS", "TTL", and "MB".
+| Text | Example |
+| :--- | :--- |
+| Tab | Dashboard |
+| Section and collapsible title | Dynamic DNS |
+| Field label | Ban window |
+| Checkbox label | Update IPv6 |
+| Button, verb first | Update now |
+| Dialog title | Remove record |
+| Badge and status chip | Home only |
+| Column header | Last seen |
+| Activity log name | 3 DNS records updated |
+| Description, message, placeholder sentence | Starts the proxy when you save. |
+
+* Names, services, formats, and acronyms keep their own casing, such as "Let's Encrypt", "Cloudflare", "DDNS", "IPv6", and "TTL". Each one this plugin writes is in `Localization/casing.json`, per [translations.md](translations.md#casing).
+* Jellyfin's own strings stay as Jellyfin writes them.
+* A sentence that names a label writes it as the label reads, such as "Turn on Record history under Advanced > History."
 
 ### Words to Use
 
@@ -64,8 +68,8 @@ Pick the word on the left every time.
 | Cancel | Close, No | Closes without keeping changes |
 | Add | New, Create | Puts a new entry into a list on the page |
 | New | Add, Create | Starts a new record in a record picker |
-| Test Connection | Test, Check | Calls the other side and reports the result |
-| Run Now | Start, Trigger | Starts a scheduled task right away |
+| Test connection | Test, Check | Calls the other side and reports the result |
+| Run now | Start, Trigger | Starts a scheduled task right away |
 | Select | Pick, Choose, Tick, Click | Any instruction to make a choice |
 | Turn on, Turn off | Enable, Disable, Tick, Untick | An instruction about a checkbox or toggle |
 | Leave blank | Leave empty | An empty field means the default |
@@ -74,14 +78,14 @@ Pick the word on the left every time.
 | Ban, Unban | Block, Lock out | A refusal after failed sign-ins |
 | Could not | Failed to, Unable to | An error message |
 
-The control names its own result. "Remove Record" takes the record out of the settings and leaves the DNS name at the provider, so it is Remove. "Clear History" empties a log, so it is Clear.
+The control names its own result. "Remove record" takes the record out of the settings and leaves the DNS name at the provider, so it is Remove. "Clear history" empties a log, so it is Clear.
 
 ### Labels
 
 * Two to four words. Name the thing the field holds, not the action.
-* Never put a note, a unit, or a state in a label or an option, in parentheses or after a colon. Write **Request Timeout**, never **Request Timeout (seconds)**, and **None**, never **None (HTTPS off)**. The unit goes in the description, "How long each request may take, in seconds."
+* Never put a note, a unit, or a state in a label or an option, in parentheses or after a colon. Write **Request timeout**, never **Request timeout (seconds)**, and **None**, never **None (HTTPS off)**. The unit goes in the description, "How long each request may take, in seconds."
 * No colons, periods, or question marks.
-* A checkbox label names the feature it turns on, never "Enable X". Write **Update IPv6**, not **Enable IPv6 Updates**. The one exception is the master switch of a step or section, which reads **Enabled**.
+* A checkbox label names the feature it turns on, never "Enable X". Write **Update IPv6**, not **Enable IPv6 updates**. The one exception is the master switch of a step or section, which reads **Enabled**.
 
 ### Descriptions
 
@@ -115,10 +119,10 @@ A placeholder shows an example of a valid value. It is never the only place an i
 
 ### Buttons
 
-* A verb, or a verb and a noun. **Save**, **Update Now**, **Test from Outside**.
-* Name the object when the page has more than one of that action. **Remove Record** sits on a page with other removals.
+* A verb, or a verb and a noun. **Save**, **Update now**, **Test from outside**.
+* Name the object when the page has more than one of that action. **Remove record** sits on a page with other removals.
 * A primary Save is **Save**. Use **Save** and a noun only when one page has several saves.
-* An icon only button carries a `title` of one to three words, such as `Remove`, `Move Up`, or `Retry`. Never a sentence.
+* An icon only button carries a `title` of one to three words, such as `Remove`, `Move up`, or `Retry`. Never a sentence.
 * A button that runs for a while shows progress in place. See [Progress](#progress).
 
 ### Messages
@@ -147,14 +151,14 @@ A confirm asks one question and states the consequence.
 
 ```js
 confirmDialog('Remove media.example.com? This server stops keeping it pointed here, and the proxy stops answering on it.', {
-    title: 'Remove Record',
+    title: 'Remove record',
     confirmText: 'Remove',
     destructive: true
 });
 ```
 
 * The message is a question, then one sentence on the consequence. "Delete 3 items? This cannot be undone."
-* The title is the action in Title Case, such as **Remove Record**. Never leave it unset.
+* The title is the action in sentence case, such as **Remove record**. Never leave it unset.
 * The confirm button repeats the action verb, such as **Remove** or **Delete**. Never **OK** or **Yes**.
 * Set `destructive: true` for anything that loses data.
 * Never "Are you sure you want to". Ask the question directly.
@@ -174,7 +178,7 @@ Give a Data Table its `emptyText`. Use `shared.emptySection(text)` for any other
 
 Use `ActivitySummary` and `ActivityText` from Base.
 
-* The name is short and Title Case. "DDNS Record Updated".
+* The name is short and in sentence case, built from keys in the server's display language. "3 DNS records updated".
 * The overview is one sentence with no closing period, as Base writes it.
 * Use the same verb the UI uses for the action.
 
@@ -214,10 +218,10 @@ A color means the same thing on every page and in every plugin.
 | :--- | :--- | :--- |
 | Green | Done and healthy | Done, Public, Reached |
 | Red | Failed, or about to lose data | Failed, the Failure kind of activity |
-| Orange | Waiting, or needs attention soon | Needs Attention, Home Only |
+| Orange | Waiting, or needs attention soon | Needs attention, Home only |
 | Purple | Working right now, and the Blocked kind of activity | Issuing, Blocked |
 | Blue | Informational | Optional, the User kind of activity |
-| Gray | Off or not applicable | To Do, the Seen kind of activity |
+| Gray | Off or not applicable | To do, the Seen kind of activity |
 
 * Map a status to a color through `BADGE_STATES`. Never keep a second map in the plugin.
 * Disabled is gray when it means off. Red is only for failure.
@@ -253,7 +257,7 @@ Every config page uses Jellyfin's page shell.
 ### Tabs
 
 * One registered page per tab, wired with `translatedPage`, which calls `createConfigPage` and `setTabs`.
-* Tab names are one Title Case word.
+* Tab names are one word.
 * Keep the tab list in one place, the plugin's shared module, never copied into each page.
 * Order tabs from what is used most to what is set once. Remote Access is **Dashboard**, **Configuration**, **Advanced**, kept in `TABS` in `remoteaccess_tabs.js`.
 
@@ -286,9 +290,9 @@ Pick one model per page and keep it.
 
 Every page and section Save is the same:
 
-1. It is Base's `createSaveBar` with `fill: true`. Its button reads **Save**, never **Save Settings** or a noun.
+1. It is Base's `createSaveBar` with `fill: true`. Its button reads **Save**, never **Save settings** or a noun.
 2. The Save Bar is the last element of what it saves. Nothing sits beside it or below it in that section.
-3. Any other actions that belong with that Save, such as **Reset to Defaults**, **Restart**, or **Test**, go in one `<div class="base-button-row">` directly above it. Each is `raised base-button secondary fill`, or `destructive fill` for one that deletes or resets data. A select that belongs there stays a normal `emby-select` in the row. No `small` buttons in that row. Base spaces that row. Its buttons have no margin of their own, so their edges line up with the Save Bar's, the row sits one `--base-gap-narrow` above the Save Bar, and its buttons use the same font weight as Save. A plugin adds no margin, gap, or weight of its own. The Save Bar's element goes directly after the row, never inside a wrapper, since Base spaces them as siblings.
+3. Any other actions that belong with that Save, such as **Reset to defaults**, **Restart**, or **Test**, go in one `<div class="base-button-row">` directly above it. Each is `raised base-button secondary fill`, or `destructive fill` for one that deletes or resets data. A select that belongs there stays a normal `emby-select` in the row. No `small` buttons in that row. Base spaces that row. Its buttons have no margin of their own, so their edges line up with the Save Bar's, the row sits one `--base-gap-narrow` above the Save Bar, and its buttons use the same font weight as Save. A plugin adds no margin, gap, or weight of its own. The Save Bar's element goes directly after the row, never inside a wrapper, since Base spaces them as siblings.
 4. Never hand place a Save button, a small Save, a Save Bar without `fill`, or a status line or unsaved indicator of its own beside it. No plugin CSS positions a Save or its neighbours.
 
 * Call `setDirty` on the Save Bar on every input and change, from `createChangeTracker` or the page's own check.
@@ -413,7 +417,7 @@ grep -o "export function create[A-Za-z]*" ~/.nuget/packages/jpkribs.jellyfin.bas
 | One number with a label | `createStatCard` |
 
 * Pick the chart by the question it answers. A single used of total bar is a Usage Meter, never a Bar Chart.
-* Name each slice or layer with a glossary term in Title Case, such as **Failures**.
+* Name each slice or layer with a glossary term, such as **Failures**.
 * Take colors from Base's series colors. Set a color only when it carries a [meaning](#meaning).
 * Give every chart a `label`, and an `emptyText` sentence for when it has nothing to draw.
 * A map layer and the Activity badge for the same kind share one color, from `MAP_LAYERS` in `remoteaccess_tabs.js`.
@@ -435,7 +439,7 @@ grep -o "export function create[A-Za-z]*" ~/.nuget/packages/jpkribs.jellyfin.bas
 | A dialog already in the page markup | `bindDialog` |
 
 * Build dialogs in JS with `openDialog` and its wrappers. Use `bindDialog` only when the markup is large and static.
-* A dialog title is Title Case and names what the dialog does.
+* A dialog title is in sentence case and names what the dialog does.
 * Buttons read, from left to right, the destructive action, then **Cancel**, then the primary action.
 
 ## Layout
@@ -475,7 +479,7 @@ Run every new or changed string through this list.
 * [ ] No colon at the end of a label, and none in a sentence unless it introduces a list.
 * [ ] One sentence, or two when the second is the fix or the consequence.
 * [ ] Sentences end with a period. Labels, buttons, and titles do not.
-* [ ] Title Case for labels, buttons, titles, tabs, and badges. Sentence case for sentences.
+* [ ] Sentence case everywhere, with the words in `casing.json` kept as written.
 * [ ] No "please", "successfully", exclamation marks, ALL CAPS, "(s)", or contractions.
 * [ ] The word matches [Words to Use](#words-to-use).
 * [ ] Base's typings were searched before any markup was built by hand.

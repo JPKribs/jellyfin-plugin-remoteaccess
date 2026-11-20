@@ -40,6 +40,13 @@ How this plugin shows its text in the viewer's language. Base builds the strings
 5. Build. Fix every `JPKT` error and warning.
 6. Run `dotnet test`. `TranslationsTests` checks every key the pages use is built in.
 
+## Casing
+
+* Every string is in sentence case, mirroring Jellyfin, such as "Allow media playback". Labels, headings, buttons, tabs, column headers, options, titles, toasts, and activity log names included.
+* Names, services, formats, and acronyms keep their own casing. The ones this plugin writes are in `Localization/casing.json`, a JSON array, beside Base's defaults such as `Jellyfin`, `DNS`, and `HTTPS`. Add a word there when the plugin starts writing it, once, as it should read, such as `"Let's Encrypt"`.
+* Jellyfin's own strings stay as Jellyfin writes them. Add `Case="sentence"` or `Case="title"` to a `JellyfinString` only when one reads wrong beside its neighbors.
+* Text built at runtime is cased with `ToSentenceCase` or `ToTitleCase` in C#, and `sentenceCase` or `titleCase`, or `t.sentence(key)` and `t.title(key)`, on a page. Each keeps the words in the casing list and only changes English.
+
 ## Add a Language
 
 Add `Localization/<code>.json`, such as `de.json` or `pt-br.json`, with only keys `en-us.json` has. A missing key falls back to the language's base and then to US English. Jellyfin's strings come in every language Jellyfin has, with no file.
@@ -48,5 +55,6 @@ Add `Localization/<code>.json`, such as `de.json` or `pt-br.json`, with only key
 
 * [ ] No English in a page, script, or server message outside `Localization/en-us.json`.
 * [ ] Jellyfin's string used wherever it has the words.
+* [ ] Every new string is in sentence case, and any new name or acronym is in `casing.json`.
 * [ ] The build has no `JPKT` error or warning.
 * [ ] The pages show the strings, checked once in another language such as `de`.

@@ -26,7 +26,7 @@ Test each behavior at the lowest layer that can prove it. Go up a layer only for
 | A controller or the save path | Controller |
 | A page helper | JavaScript |
 | A page's markup or script | JavaScript for its logic, and a look at the page |
-| The proxy host, certificates, the router, or Trust the Proxy | Unit, and a live check before release |
+| The proxy host, certificates, the router, or Trust the proxy | Unit, and a live check before release |
 
 ## C# Tests
 
@@ -82,7 +82,7 @@ When no test server is at hand, serve the page files outside Jellyfin. A small s
 
 ## Live Checks
 
-The proxy, Let's Encrypt, the router, and Trust the Proxy depend on a real network. Before a release that changes them, check them on a test server with a test domain.
+The proxy, Let's Encrypt, the router, and Trust the proxy depend on a real network. Before a release that changes them, check them on a test server with a test domain.
 
 * Never use a real person's domain or address in a check you record, a screenshot, or a log you share.
 * Note in the report which live checks ran and which did not.

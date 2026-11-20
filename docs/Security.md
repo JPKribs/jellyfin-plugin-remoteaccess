@@ -26,7 +26,7 @@
 ## Network
 
 * **Dynamic DNS only connects out**, to your DNS provider and the IP detection services. It uses HTTPS unless
-  you set a **Server Override** that starts with `http://`. Record names are looked up with the server's own DNS
+  you set a **Server override** that starts with `http://`. Record names are looked up with the server's own DNS
   settings.
 * **Credentials stay with their server**: a request to a provider follows a redirect only on the same server. A
   redirect to another server, or from HTTPS to HTTP, is never followed, so a key is only ever sent where you
@@ -34,10 +34,10 @@
 * **Ports open only with Remote Access**: nothing listens until the proxy is turned on. Then it refuses names you
   did not add before encrypting anything, keeps the setup wizard off the internet, and never blocks your own
   network. See [Protection](RemoteAccess.md#protection).
-* **The router**: with **Automatic Port Forwarding** on, the plugin asks the router on your own network to forward
-  ports 80 and 443, and nothing else. See [Automatic Port Forwarding](RemoteAccess.md#automatic-port-forwarding).
-* **Test from Outside** sends the hostname and port 443 to check-host.net when you select it, and the
-  **Verify External Access** task sends the same every hour while the proxy is on. Disable the task under
+* **The router**: with **Automatic port forwarding** on, the plugin asks the router on your own network to forward
+  ports 80 and 443, and nothing else. See [Automatic port forwarding](RemoteAccess.md#automatic-port-forwarding).
+* **Test from outside** sends the hostname and port 443 to check-host.net when you select it, and the
+  **Verify external access** task sends the same every hour while the proxy is on. Disable the task under
   **Dashboard > Scheduled Tasks** to send them only when you ask.
 
 ## Storage
@@ -61,7 +61,7 @@ The Remote Access folder holds:
 | `selfsigned-root.pfx`, `selfsigned.pfx` | The self-signed root and the certificate issued from it |
 | `people.db` | Visitor history, bans and refusals |
 | `GeoIP/` | The DB-IP location database, and the one it last replaced |
-| `network-state.json` | What **Trust the Proxy** changed, for **Undo** |
+| `network-state.json` | What **Trust the proxy** changed, for **Undo** |
 | `DISABLE` | Only when you create it, to turn the proxy off. See [Recovery](RemoteAccess.md#recovery). |
 
 Jellyfin's own config folder also gets `network.before-remote-access.xml`, a copy of its network settings from

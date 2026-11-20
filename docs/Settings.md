@@ -8,14 +8,14 @@ with its default and range.
 
 ### Dashboard
 
-Who reaches the server, from where, and what was turned away: the share card with **Copy Image**, **Download** and
+Who reaches the server, from where, and what was turned away: the share card with **Copy image**, **Download** and
 **Share**, a map and table of **Locations**, the **Banned** list and the **Activity** list. See
 [Dashboard & Monitoring](Dashboard.md).
 
 ### Configuration
 
 Everything needed to reach Jellyfin from outside, as a checklist of six numbered steps. Each step shows **Done**,
-**Needs Attention**, **To Do** or **Optional** on the right, and opens to show what it found, such as **Ready** or
+**Needs attention**, **To do** or **Optional** on the right, and opens to show what it found, such as **Ready** or
 **Forward by hand**, and its settings. The first step that needs something opens on its own. The bar at the top
 counts the steps that are done, with a segment for each step in its colour that opens that step. A note says when
 the proxy is off, or where Jellyfin can be reached once every step is done. Another names the countries that can
@@ -23,15 +23,15 @@ connect, with a link to change them in **Advanced > Blocking**. Steps 3 to 6 are
 
 ![Configuration tab](screenshots/Configuration.png)
 
-1. **Proxy On**: turn on **Enabled** to start the proxy.
+1. **Proxy on**: turn on **Enabled** to start the proxy.
 2. **Address**: the one DDNS record, with only **Provider**, **Hostname** and the credentials that provider asks
-   for. A card shows the public IP, the last update and its result, with **Update Now**. See
+   for. A card shows the public IP, the last update and its result, with **Update now**. See
    [The DDNS Record](Records.md).
 3. **Certificate**: Let's Encrypt, your own files, or a self-signed certificate, with its status.
-4. **Router**: the ports to forward by hand when the router does not, **Try Again**, and a warning when your
+4. **Router**: the ports to forward by hand when the router does not, **Try again**, and a warning when your
    provider shares your public address.
-5. **Trust the Proxy**: lets Jellyfin see each visitor's real address. **Undo** puts it back.
-6. **Reachable From Outside**: **Test from Outside** checks that the internet can reach your address.
+5. **Trust the proxy**: lets Jellyfin see each visitor's real address. **Undo** puts it back.
+6. **Reachable from outside**: **Test from outside** checks that the internet can reach your address.
 
 **Save** at the bottom keeps every step, the record in step 2 included. Steps 1 and 3 to 6 are explained in
 [Remote Access](RemoteAccess.md).
@@ -50,15 +50,15 @@ record's **Record** group, **Addresses**, **Security**, **Blocking**, **History*
 
 The defaults favour safety. Three of them can surprise you, and each is one change under **Advanced**.
 
-* **Country Rule: Server country only.** Only visitors from the country this server is in can connect from the
+* **Country rule: Server country only.** Only visitors from the country this server is in can connect from the
   internet. The **Configuration** tab names the countries that can connect, in green. Family abroad or a phone on a
   VPN in another country is refused, so add their countries in the **Countries** picker under
-  **Advanced > Blocking**, or set **Country Rule** to **Off**. Until the server's own country is known, shown in
+  **Advanced > Blocking**, or set **Country rule** to **Off**. Until the server's own country is known, shown in
   yellow, everyone can connect.
-* **HTTPS Memory: 180 days.** A browser that visited once keeps using HTTPS for your address for 180 days, which
+* **HTTPS memory: 180 days.** A browser that visited once keeps using HTTPS for your address for 180 days, which
   stops anyone downgrading the connection. If you later turn the proxy off, those browsers refuse `http://` for
   your address until it runs out, so open Jellyfin by its local IP instead.
-* **Back Off Duration: 24 hours.** After 3 failed updates in a row the record waits a day, so a wrong password
+* **Back off duration: 24 hours.** After 3 failed updates in a row the record waits a day, so a wrong password
   does not get your account blocked at the provider. A change of public IP still tries again at once.
 
 ## DDNS Record
@@ -80,24 +80,24 @@ Under **Advanced > Dynamic DNS**, in the **Record** group:
 | **Enabled** | Whether the record is updated. A paused record keeps its settings. | On |
 | **Update IPv4** | Keeps the A record current. | On |
 | **Update IPv6** | Keeps the AAAA record current. Hidden for providers that only take IPv4. | On |
-| **Server Override** | Sends updates to another server, for providers with compatible services. | The provider's own |
+| **Server override** | Sends updates to another server, for providers with compatible services. | The provider's own |
 | **TTL** | How long DNS may cache the record, in seconds, for providers that take one. `1` uses the provider's default. | `1` |
-| **Treat as Proxied Address** | Compares against the last address sent instead of looking up DNS. For a record behind a proxy or CDN. | Off |
+| **Treat as proxied address** | Compares against the last address sent instead of looking up DNS. For a record behind a proxy or CDN. | Off |
 | Wildcard, static DNS and mail settings | For the DynDNS family only. | Off |
-| **Remove Record** | Deletes the record and takes its names off the proxy's addresses. | |
+| **Remove record** | Deletes the record and takes its names off the proxy's addresses. | |
 
 ## Configuration
 
 The proxy's settings in the numbered steps of the **Configuration** tab. The proxy answers on the record's names
-and the **Other Addresses** under Advanced.
+and the **Other addresses** under Advanced.
 
 | Setting | What it does | Default |
 |---|---|---|
 | **Enabled** | Step 1. Starts the proxy on ports 80 and 443. | Off |
 | **Source** | Step 3. Where the certificate comes from: Let's Encrypt, PEM files, a PKCS#12 file, self-signed, or none. | Let's Encrypt |
-| **Accept the Let's Encrypt Terms** | Step 3. Nothing is requested from Let's Encrypt until this is ticked. | Off |
-| **Certificate File**, **Private Key File**, **Password** | Step 3. The files for PEM or PKCS#12. The password is stored encrypted. | Empty |
-| **Trust the Proxy** | Step 5. Lets Jellyfin see each visitor's real address. Until it is done, internet visitors are turned away. Jellyfin restarts once. **Undo** reverses it. | Not set |
+| **Accept the Let's Encrypt terms** | Step 3. Nothing is requested from Let's Encrypt until this is ticked. | Off |
+| **Certificate file**, **Private key file**, **Password** | Step 3. The files for PEM or PKCS#12. The password is stored encrypted. | Empty |
+| **Trust the proxy** | Step 5. Lets Jellyfin see each visitor's real address. Until it is done, internet visitors are turned away. Jellyfin restarts once. **Undo** reverses it. | Not set |
 
 ## Advanced
 
@@ -108,13 +108,13 @@ group of this section, listed under [DDNS record](#ddns-record).
 
 | Setting | What it does | Default | Range |
 |---|---|---|---|
-| **IPv4 Detection URLs** | Services that reply with your IPv4 address, one per line. Only `https` is used. | A built-in list | Any number |
-| **IPv6 Detection URLs** | The same, for IPv6. | A built-in list | Any number |
-| **Skip Internal Addresses** | Never publishes a private, loopback or CGNAT address. | On | |
-| **Force Update** | Sends the address again after this long, even when DNS matches. | Off | 1 hour to weekly |
-| **Back Off After Failures** | Failures in a row before the record is paused. | 3 | Off, 3, 5 or 10 |
-| **Back Off Duration** | How long a paused record waits. | 24 hours | 1 to 48 hours |
-| **Request Timeout** | How long each request may take, in seconds. | 15 | 1 to 300 |
+| **IPv4 detection URLs** | Services that reply with your IPv4 address, one per line. Only `https` is used. | A built-in list | Any number |
+| **IPv6 detection URLs** | The same, for IPv6. | A built-in list | Any number |
+| **Skip internal addresses** | Never publishes a private, loopback or CGNAT address. | On | |
+| **Force update** | Sends the address again after this long, even when DNS matches. | Off | 1 hour to weekly |
+| **Back off after failures** | Failures in a row before the record is paused. | 3 | Off, 3, 5 or 10 |
+| **Back off duration** | How long a paused record waits. | 24 hours | 1 to 48 hours |
+| **Request timeout** | How long each request may take, in seconds. | 15 | 1 to 300 |
 
 How often updates run is set on the **Update DDNS** scheduled task, every 15 minutes by default. See
 [How updates run](Records.md#how-updates-run).
@@ -123,20 +123,20 @@ How often updates run is set on the **Update DDNS** scheduled task, every 15 min
 
 | Setting | What it does | Default | Range |
 |---|---|---|---|
-| **Other Addresses** | More names the proxy answers on besides the DDNS record's names, one per line. | None | |
-| **Automatic Port Forwarding** | Asks the router to forward ports 80 and 443 to this server through NAT-PMP or UPnP. See [Automatic Port Forwarding](RemoteAccess.md#automatic-port-forwarding). | On | |
+| **Other addresses** | More names the proxy answers on besides the DDNS record's names, one per line. | None | |
+| **Automatic port forwarding** | Asks the router to forward ports 80 and 443 to this server through NAT-PMP or UPnP. See [Automatic port forwarding](RemoteAccess.md#automatic-port-forwarding). | On | |
 
 ### Security
 
 | Setting | What it does | Default | Range |
 |---|---|---|---|
-| **Only Through the Proxy** | Jellyfin only listens on this server while it trusts the proxy. See [Only Through the Proxy](RemoteAccess.md#only-through-the-proxy). | Off | |
-| **Always Use HTTPS** | Browsers that have visited once refuse plain HTTP, known as HSTS. | On | |
-| **HTTPS Memory** | How long browsers keep using HTTPS after a visit, in days. | 180 | 1 to 730 |
-| **Block Embedding** | Other websites cannot frame Jellyfin's pages. | On | |
-| **Trusted Networks** | Addresses or ranges treated like your own network, such as a VPN, one per line. | None | |
+| **Only through the proxy** | Jellyfin only listens on this server while it trusts the proxy. See [Only through the proxy](RemoteAccess.md#only-through-the-proxy). | Off | |
+| **Always use HTTPS** | Browsers that have visited once refuse plain HTTP, known as HSTS. | On | |
+| **HTTPS memory** | How long browsers keep using HTTPS after a visit, in days. | 180 | 1 to 730 |
+| **Block embedding** | Other websites cannot frame Jellyfin's pages. | On | |
+| **Trusted networks** | Addresses or ranges treated like your own network, such as a VPN, one per line. | None | |
 
-**Request a New Certificate** replaces the certificate early. See [Renewal](RemoteAccess.md#renewal).
+**Request a new certificate** replaces the certificate early. See [Renewal](RemoteAccess.md#renewal).
 
 ### Blocking
 
@@ -144,14 +144,14 @@ These only ever apply to the internet, never to your own or trusted networks.
 
 | Setting | What it does | Default | Range |
 |---|---|---|---|
-| **Blocked Addresses** | Addresses or ranges always refused, one per line. | None | |
-| **Failed Sign-ins Before a Ban** | Failures within the window that ban an address. 0 turns bans off. | 5 | 0 to 1000 |
-| **Ban Window** | The minutes failures are counted over. | 10 | 1 to 1440 |
-| **Ban Length** | How long a ban lasts in minutes. 0 bans until you lift it. | 60 | 0 to 525600 |
-| **Country Rule** | **Server country only**, **Block these countries**, **Allow only these countries**, or **Off**. | Server country only | |
+| **Blocked addresses** | Addresses or ranges always refused, one per line. | None | |
+| **Failed sign-ins before a ban** | Failures within the window that ban an address. 0 turns bans off. | 5 | 0 to 1000 |
+| **Ban window** | The minutes failures are counted over. | 10 | 1 to 1440 |
+| **Ban length** | How long a ban lasts in minutes. 0 bans until you lift it. | 60 | 0 to 525600 |
+| **Country rule** | **Server country only**, **Block these countries**, **Allow only these countries**, or **Off**. | Server country only | |
 | **Countries** | The countries the rule names. | None | |
-| **Unknown Addresses** | Allow or block addresses the location database has no country for. | Allow | |
-| **Without the Location Database** | Allow or block everyone while the database is missing or downloading. | Allow | |
+| **Unknown addresses** | Allow or block addresses the location database has no country for. | Allow | |
+| **Without the location database** | Allow or block everyone while the database is missing or downloading. | Allow | |
 
 How bans work for IPv6 is under [Protection](RemoteAccess.md#protection).
 
@@ -159,22 +159,22 @@ How bans work for IPv6 is under [Protection](RemoteAccess.md#protection).
 
 | Setting | What it does | Default | Range |
 |---|---|---|---|
-| **Record History** | Records who connects and what they did, for the Dashboard. | On | |
-| **History Period** | How long history is kept, in days. | 90 | 1 to 3650 |
+| **Record history** | Records who connects and what they did, for the Dashboard. | On | |
+| **History period** | How long history is kept, in days. | 90 | 1 to 3650 |
 | **Location** | **Country**, **Country and city**, which is a 130 MB download, or **Off**. | Country | |
 
-**Refresh Locations** downloads the newest location database now, and **Clear History** deletes everything
-recorded. The **Refresh Locations** scheduled task also does this weekly.
+**Refresh locations** downloads the newest location database now, and **Clear history** deletes everything
+recorded. The **Refresh locations** scheduled task also does this weekly.
 
 ### Performance
 
 | Setting | What it does | Default | Range |
 |---|---|---|---|
 | **HTTP/2** | Lets browsers load pages faster over one connection. | On | |
-| **Largest Upload from the Internet** | In MB, with 0 for unlimited. | 100 | 0 or more |
-| **Largest Upload from Your Network** | In MB, with 0 for unlimited. | Unlimited | 0 or more |
-| **Connections per Internet Address** | Connections one internet address may hold open, with 0 for unlimited. | Auto: 64, or 32 on low memory | 0 or more |
-| **Total Connections** | Connections the proxy holds open in all, with 0 for unlimited. | Auto: 2000, or 500 on low memory | 0 or more |
+| **Largest upload from the internet** | In MB, with 0 for unlimited. | 100 | 0 or more |
+| **Largest upload from your network** | In MB, with 0 for unlimited. | Unlimited | 0 or more |
+| **Connections per internet address** | Connections one internet address may hold open, with 0 for unlimited. | Auto: 64, or 32 on low memory | 0 or more |
+| **Total connections** | Connections the proxy holds open in all, with 0 for unlimited. | Auto: 2000, or 500 on low memory | 0 or more |
 
 Jellyfin compresses its own pages, through the proxy too, so the proxy leaves them as they are.
 
@@ -182,16 +182,16 @@ Jellyfin compresses its own pages, through the proxy too, so the proxy leaves th
 
 | Setting | What it does | Default | Range |
 |---|---|---|---|
-| **Idle Connections** | How long an unused connection stays open, in seconds. | Auto: 130, or 60 on low memory | 5 to 3600 |
-| **Request Headers** | How long a visitor may take to send a request's headers, in seconds. | 15 | 1 to 300 |
-| **Header Size** | The largest set of request headers accepted, in KB. | 32 | 8 to 1024 |
-| **Minimum Read Rate** | The slowest a visitor may read Jellyfin's pages, in bytes per second. Media is exempt. 0 is off. | 240 | 0 or more |
-| **Jellyfin Response** | How long Jellyfin may go silent before a request is dropped, in seconds. | 300 | 61 to 86400 |
+| **Idle connections** | How long an unused connection stays open, in seconds. | Auto: 130, or 60 on low memory | 5 to 3600 |
+| **Request headers** | How long a visitor may take to send a request's headers, in seconds. | 15 | 1 to 300 |
+| **Header size** | The largest set of request headers accepted, in KB. | 32 | 8 to 1024 |
+| **Minimum read rate** | The slowest a visitor may read Jellyfin's pages, in bytes per second. Media is exempt. 0 is off. | 240 | 0 or more |
+| **Jellyfin response** | How long Jellyfin may go silent before a request is dropped, in seconds. | 300 | 61 to 86400 |
 
 **Auto** settings follow the server's memory. Below 3 GB available to Jellyfin they use the lower value. See
-[Low-memory servers](RemoteAccess.md#low-memory-servers). **Reset to Defaults** puts every limit and security
-setting back, **Unknown Addresses** and **Without the Location Database** included. It keeps trusted networks,
-the block list, **Country Rule**, **Countries**, **Other Addresses**, history and the **Dynamic DNS** settings. Nothing changes until you save. **Restart Proxy** restarts
+[Low-memory servers](RemoteAccess.md#low-memory-servers). **Reset to defaults** puts every limit and security
+setting back, **Unknown addresses** and **Without the location database** included. It keeps trusted networks,
+the block list, **Country rule**, **Countries**, **Other addresses**, history and the **Dynamic DNS** settings. Nothing changes until you save. **Restart proxy** restarts
 the listener without restarting Jellyfin.
 
 ## Scheduled Tasks
@@ -201,6 +201,6 @@ Under **Dashboard > Scheduled Tasks**:
 | Task | What it does | Runs |
 |---|---|---|
 | **Update DDNS** | Checks and updates the DDNS record. | At startup and every 15 minutes |
-| **Refresh Certificate** | Requests a Let's Encrypt certificate when one is missing, no longer covers your addresses, or expires within 30 days. Reloads certificate files and replaces a self-signed one before it expires. | Daily at 3:00 |
-| **Refresh Locations** | Downloads the newest DB-IP location database. | Weekly |
-| **Verify External Access** | Runs step 6's outside check on your public address and port 443, and writes an error to the activity log when no place can connect. Skipped while the proxy is off. | Every hour |
+| **Refresh certificate** | Requests a Let's Encrypt certificate when one is missing, no longer covers your addresses, or expires within 30 days. Reloads certificate files and replaces a self-signed one before it expires. | Daily at 3:00 |
+| **Refresh locations** | Downloads the newest DB-IP location database. | Weekly |
+| **Verify external access** | Runs step 6's outside check on your public address and port 443, and writes an error to the activity log when no place can connect. Skipped while the proxy is off. | Every hour |

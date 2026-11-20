@@ -72,24 +72,24 @@ Pick your path. Everything that differs between them is here.
        to your domain, and create it. Copy the token, Cloudflare shows it once.
     4. In Jellyfin, open **Remote Access > Configuration**, open step 2, **Address**, and fill in:
         * **Provider**: **Cloudflare**
-        * **Record Name**: `media.example.com`
-        * **Auth Email or Token**: the word `token`
-        * **API Token or Key**: the token from step 3
-        * **Zone Name**: `example.com`
+        * **Record name**: `media.example.com`
+        * **Auth email or token**: the word `token`
+        * **API token or key**: the token from step 3
+        * **Zone name**: `example.com`
 
     !!! warning "Keep the cloud grey"
         With the orange cloud on, every visitor reaches Jellyfin from a Cloudflare address, and the plugin can no
         longer ban or block the right people.
 
-Select **Save**, then **Update Now**. The status card's **Result** should say the record was updated. From now on
+Select **Save**, then **Update now**. The status card's **Result** should say the record was updated. From now on
 the plugin checks every 15 minutes.
 
 If your home has no IPv6, turn off **Update IPv6** under **Advanced > Dynamic DNS** and save.
 
 ## 3. Turn on Remote Access
 
-1. Step 1, **Proxy On**: turn on **Enabled**.
-2. Step 3, **Certificate**: keep **Let's Encrypt** and tick **Accept the Let's Encrypt Terms**.
+1. Step 1, **Proxy on**: turn on **Enabled**.
+2. Step 3, **Certificate**: keep **Let's Encrypt** and tick **Accept the Let's Encrypt terms**.
 3. Select **Save**.
 
 Within a minute or two step 3 shows a certificate. It works before your router is set up, since the name is
@@ -102,17 +102,17 @@ Step 4, **Router**, opens ports 80 and 443 on your router by itself.
 * **Forwarded**: step 4 names the device that answered. Check the two rules are on your router, as in
   [Checking the forward](RemoteAccess.md#checking-the-forward).
 * **Shared address**: your provider shares your IP. See step 0.
-* **Forward by hand**: turn on UPnP or NAT-PMP in the router and select **Try Again**, or add the two rules step 4
+* **Forward by hand**: turn on UPnP or NAT-PMP in the router and select **Try again**, or add the two rules step 4
   shows, TCP 443 and TCP 80 to this server. Never forward Jellyfin's own ports, 8096 or 8920.
 
 ## 5. Trust the Proxy
 
-In step 5, select **Trust the Proxy** and confirm. Jellyfin restarts once. Until then the proxy turns internet
+In step 5, select **Trust the proxy** and confirm. Jellyfin restarts once. Until then the proxy turns internet
 visitors away, since Jellyfin cannot tell them apart from people at home.
 
 ## 6. Test It
 
-In step 6, select **Test from Outside**. It shows **Reachable** once a place outside your network gets through.
+In step 6, select **Test from outside**. It shows **Reachable** once a place outside your network gets through.
 Then turn off Wi-Fi on your phone and open your address. You should see Jellyfin's sign-in page with a padlock.
 
 Add the address as a server in your Jellyfin apps for use away from home. At home, keep the local address, since
@@ -137,18 +137,18 @@ many routers cannot open your own public address from inside.
 
     | What you see | What to do |
     |---|---|
-    | `no 'A' record at Cloudflare` | Create the record from step 1, or match its name to **Record Name**. |
+    | `no 'A' record at Cloudflare` | Create the record from step 1, or match its name to **Record name**. |
     | `no 'AAAA' record at Cloudflare` | Turn off **Update IPv6** under **Advanced > Dynamic DNS**. |
-    | `zone lookup failed`, or a permission error | Make a new token, and check **Auth Email or Token** is `token`. |
-    | `no zone ID found for zone ...` | **Zone Name** is the domain alone, such as `example.com`. |
+    | `zone lookup failed`, or a permission error | Make a new token, and check **Auth email or token** is `token`. |
+    | `no zone ID found for zone ...` | **Zone name** is the domain alone, such as `example.com`. |
 
 | What you see | What to do |
 |---|---|
 | Configuration step 2 says the address is internal | The server has no public IP. See step 0. |
-| Configuration step 2 shows **Not pointed here** | Select **Update Now** and wait a few minutes. |
+| Configuration step 2 shows **Not pointed here** | Select **Update now** and wait a few minutes. |
 | Configuration step 3 shows no certificate | Step 3 and Jellyfin's activity log show Let's Encrypt's reason. |
 | Step 4 names a device that is not your router | See [Checking the forward](RemoteAccess.md#checking-the-forward). |
-| **Test from Outside** shows **Not reachable** | Check step 4 and step 0. Some providers block ports 80 and 443, so ask them. |
+| **Test from outside** shows **Not reachable** | Check step 4 and step 0. Some providers block ports 80 and 443, so ask them. |
 | Works away from home, not at home | Normal for many routers. Use the local address at home. |
 | Everyone shows as local on the Dashboard | See [When every visitor looks local](RemoteAccess.md#when-every-visitor-looks-local). |
 | Locked out after a change | See [Recovery](RemoteAccess.md#recovery). |

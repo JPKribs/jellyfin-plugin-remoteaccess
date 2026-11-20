@@ -45,7 +45,7 @@ Work is done when it has been checked, not when it has been written.
 
 Stop and ask before any of these, even when the task seems to call for it.
 
-* **Jellyfin's network settings.** A change to Trust the Proxy, Undo, Only Through the Proxy, or anything else that writes Jellyfin's own network configuration or restarts it. A mistake here locks people out of their server.
+* **Jellyfin's network settings.** A change to Trust the proxy, Undo, Only through the proxy, or anything else that writes Jellyfin's own network configuration or restarts it. A mistake here locks people out of their server.
 * **Security.** A change to authentication, credential storage, the key ring, the redirect rules for provider requests, bans, the block list, country rules, trusted networks, or which addresses count as local.
 * **Certificates.** A change to how certificates are requested, stored, renewed, or trusted, or to the self-signed root.
 * **Stored data.** Anything that changes, moves, or deletes the settings file, the key ring, certificates, or the history database, or how an older install's data is read.
@@ -66,7 +66,7 @@ Explain what you would change, why, and what it risks. Wait for an answer before
 | `Jellyfin.Plugin.RemoteAccess/Configuration/` | The plugin configuration. |
 | `Jellyfin.Plugin.RemoteAccess/Localization/` | The plugin's own strings, in `en-us.json`. |
 | `Jellyfin.Plugin.RemoteAccess/Providers/` | The DNS providers, one class each under `Implementations/`. |
-| `Jellyfin.Plugin.RemoteAccess/Services/Proxy/` | The HTTPS proxy, certificates, the router, and Trust the Proxy. |
+| `Jellyfin.Plugin.RemoteAccess/Services/Proxy/` | The HTTPS proxy, certificates, the router, and Trust the proxy. |
 | `Jellyfin.Plugin.RemoteAccess/Services/People/` | History, bans, the block list, country rules, and locations. |
 | `Jellyfin.Plugin.RemoteAccess.Tests/` | The C# tests, and the page module tests in `js/`. |
 | `docs/` | The documentation site, built with MkDocs. |

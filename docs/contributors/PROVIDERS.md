@@ -36,7 +36,7 @@ each provider class, so the JS needs no per provider edit.
 4. Override `Label`, `Hint`, and `Fields` on the provider. `Label` is the friendly name in the dropdown,
    `Hint` is the one line note under it, and `Fields` is the label for each used field with a null for any
    field the provider does not use. The dashboard renders itself from these, so no JS edit is needed. The
-   other flags on `ProviderFields` are `Server` for the **Server Override** field, `Ttl` for the **TTL** field,
+   other flags on `ProviderFields` are `Server` for the **Server override** field, `Ttl` for the **TTL** field,
    `IPv6` for the **Update IPv6** toggle, and `Advanced` for the DynDNS style options such as `wildcard`.
 5. If the protocol can only send IPv4, override `SupportsIPv6` to return false and set `IPv6 = false` in
    `Fields`, so the toggle is hidden.

@@ -139,7 +139,7 @@ public class ProxyController : ControllerBase
 
         // Binding Jellyfin to this machine is part of trusting the proxy, so while it is trusted a change to it is
         // applied the same way, with Jellyfin restarting once: a change that cannot be applied is refused, so the
-        // setting never claims what Jellyfin is not doing. Otherwise it waits for Trust the Proxy. Turning it off
+        // setting never claims what Jellyfin is not doing. Otherwise it waits for Trust the proxy. Turning it off
         // is applied first, since it needs nothing of the proxy. Turning it on is applied last, once the proxy
         // runs with the new settings, so the check that the proxy works is made against them.
         string? restart = null;

@@ -7,15 +7,15 @@ It is the page the **Remote Access** entry in the dashboard's side menu opens on
 
 ## Share Your Server
 
-Once Remote Access has an address, the **Share Your Server** card at the top shows it with a QR code. It is the
+Once Remote Access has an address, the **Share your server** card at the top shows it with a QR code. It is the
 proxy's first public name, the DDNS record's hostname in step 2 of the **Configuration** tab. A **Public** badge means
-anyone can open it, and **Home Only** means only your home network can.
+anyone can open it, and **Home only** means only your home network can.
 
 * Scan the code with a phone camera to open the address.
-* **Copy Image** puts the QR code on the clipboard, and **Download** saves it as a picture. The copy button beside the
+* **Copy image** puts the QR code on the clipboard, and **Download** saves it as a picture. The copy button beside the
   address puts the address on the clipboard.
 * **Share** opens the device's share sheet, on browsers that have one.
-* When the only address is one your home network alone knows, such as `nas.lan`, the card shows **Home Only** and a note,
+* When the only address is one your home network alone knows, such as `nas.lan`, the card shows **Home only** and a note,
   since phones outside cannot open it. Choose a public address in step 2 to share it outside.
 * The card stays hidden while the proxy is off, or has no address other than a wildcard.
 
@@ -54,7 +54,7 @@ The **Country** filter also has **Local**, for visitors from your own network.
 | **Seen** | Reached the sign-in page and did nothing else. |
 
 Each row shows the **Type**, **User**, **IP**, **Device**, the **Address** it asked for, its **Country** and when it
-was **Last Seen**.
+was **Last seen**.
 With **Location** set to **Country and city**, an **Area** column adds the city.
 Visitors from your own network show as **Local**. IPv6 visitors are grouped by their /64, since one device can use
 many addresses in it.
@@ -69,8 +69,8 @@ The button at the end of a row acts on it:
 ## What Is Recorded
 
 History is on by default and kept for 90 days. Change it under **Advanced > History**, listed in the
-[Settings Reference](Settings.md#history). With **Record History** off the Dashboard stays empty, but bans and blocks
-still work. **Clear History** deletes everything recorded and keeps the block list.
+[Settings Reference](Settings.md#history). With **Record history** off the Dashboard stays empty, but bans and blocks
+still work. **Clear history** deletes everything recorded and keeps the block list.
 
 Locations come from the free [DB-IP](https://db-ip.com) database, downloaded to this server. Addresses are looked up
 on the server itself and never sent anywhere. The history is kept in `people.db`. See [Storage](Security.md#storage).
@@ -111,67 +111,67 @@ Each entry has a level:
 A problem is written once when it starts, and once more when it clears, not on every run. A run where every
 record is already current writes nothing.
 
-Every entry has the same shape: a short name such as **Certificate Renewed** or **203.0.113.7 Banned**, over one
+Every entry has the same shape: a short name such as **Certificate renewed** or **203.0.113.7 banned**, over one
 sentence saying what happened. Where many of one thing happen together, they are summed into one entry per outcome,
-named with the count, such as **3 DNS Records Updated**, whose sentence lists each one with its count, such as
-"3 DNS records were updated for a.example.com (1), b.example.com (1), c.example.com (1) to 203.0.113.5 (3)".
+named with the count, such as **3 DNS records updated**, whose sentence lists each one with its count, such as
+"Updated for a.example.com (1), b.example.com (1), c.example.com (1) to 203.0.113.5 (3)".
 
 #### Dynamic DNS Entries
 
 Each update run writes one entry per outcome, listing the records by hostname.
 
-* **DNS Records Updated**: records were sent a new address, listed with the address. Refreshing the same address
+* **DNS records updated**: records were sent a new address, listed with the address. Refreshing the same address
   only goes to the server log.
-* **DNS Records Failed**: the provider refused the update or could not be reached, listed with each reason. It is
+* **DNS records failed**: the provider refused the update or could not be reached, listed with each reason. It is
   an error when a record is left on an old address, and a warning when DNS already has the current one, as after a
   failed refresh.
-* **DNS Records Recovered**: records that were failing updated again.
-* **DNS Records Paused**: records were paused after repeated failures, once per streak, with when the next try is.
-* **Public IP Detection Failing**: no public IP was found for about an hour, with **Public IP Detection Recovered**
+* **DNS records recovered**: records that were failing updated again.
+* **DNS records paused**: records were paused after repeated failures, once per streak, with when the next try is.
+* **Public IP detection failing**: no public IP was found for about an hour, with **Public IP detection recovered**
   when it is found again.
-* **DNS Records Added**, **Changed** or **Removed**: one entry each per save. **Credentials Changed for** a record
-  is always its own entry. **Dynamic DNS Settings Changed**: the settings under **Advanced > Dynamic DNS** changed.
-* **Credential Encryption Unavailable**: an error when the plugin could not set up its encryption keys, once per
+* **DNS records added**, **changed** or **removed**: one entry each per save. **Credentials changed for** a record
+  is always its own entry. **Dynamic DNS settings changed**: the settings under **Advanced > Dynamic DNS** changed.
+* **Credential encryption unavailable**: an error when the plugin could not set up its encryption keys, once per
   outage. No credential can be saved until it can. Reinstall the plugin, then check the permissions on its folders.
-* **File Access Failed**: an error when Jellyfin runs as an account that cannot open the plugin's folders, naming
+* **File access failed**: an error when Jellyfin runs as an account that cannot open the plugin's folders, naming
   the command that fixes it. See [Recovery](RemoteAccess.md#recovery).
 
 #### Remote Access Entries
 
-* **Proxy Settings Changed**: a tab was saved with a change, naming what changed.
-* **Proxy Failed to Start**: once per reason, such as a port in use, with **Proxy Started** when it starts. With
-  **Only Through the Proxy** on, Jellyfin stays on this server alone, and the entry says how to turn the proxy off
+* **Proxy settings changed**: a tab was saved with a change, naming what changed.
+* **Proxy failed to start**: once per reason, such as a port in use, with **Proxy started** when it starts. With
+  **Only through the proxy** on, Jellyfin stays on this server alone, and the entry says how to turn the proxy off
   by hand. See [If the proxy stops working](RemoteAccess.md#if-the-proxy-stops-working).
-* **Trust the Proxy**: **Proxy Trust Turned On** when Jellyfin was set to trust the proxy, **Proxy Trust Confirmed**
-  or **Proxy Check Failed** after the restart, and **Network Settings Restored** when **Undo** put its settings back.
+* **Trust the proxy**: **Proxy trust turned on** when Jellyfin was set to trust the proxy, **Proxy trust confirmed**
+  or **Proxy check failed** after the restart, and **Network settings restored** when **Undo** put its settings back.
 * **Router ports**: written once when something changes, not on every hourly renewal.
-    * **Ports 80 and 443 Opened on Router**: names the device that answered, the address the
+    * **Ports 80 and 443 opened on router**: names the device that answered, the address the
       ports go to and whether UPnP or NAT-PMP was used, and says when that device is not this server's default
       gateway. Before a certificate is ready, only port 80 is opened. See
       [Checking the forward](RemoteAccess.md#checking-the-forward).
-    * **Router Ports Failed to Open**: a warning with the router's reason, such as a port
+    * **Router ports failed to open**: a warning with the router's reason, such as a port
       another device already holds.
-    * **Router Not Found**: a warning that no router answered over UPnP or NAT-PMP.
-* **External Access Failed**: an error when the **Verify External Access** task finds that no outside
-  place can connect to port 443, naming each place and why it failed, with **External Access Restored** when it works again. A check
+    * **Router not found**: a warning that no router answered over UPnP or NAT-PMP.
+* **External access failed**: an error when the **Verify external access** task finds that no outside
+  place can connect to port 443, naming each place and why it failed, with **External access restored** when it works again. A check
   the outside service could not run, such as when it is busy, only goes to the server log.
-* **Certificates**: **Certificate Issued**, **Certificate Renewed**, **Certificate Request Failed**, **Certificate
-  Renewal Failed**, **Certificate Failed to Load** or **Certificate Expiring Soon**. **Certificate Requested** is
+* **Certificates**: **Certificate issued**, **Certificate renewed**, **Certificate request failed**, **Certificate
+  renewal failed**, **Certificate failed to load** or **Certificate expiring soon**. **Certificate requested** is
   logged with who asked.
-* **Root Certificate Created**: the plugin made a new self-signed root, naming what it may vouch for. Every device
+* **Root certificate created**: the plugin made a new self-signed root, naming what it may vouch for. Every device
   that should trust the self-signed certificate needs it installed, in place of any earlier one. See [Self-signed certificates](RemoteAccess.md#self-signed-certificates).
-* **TXT Records Left Over**: Let's Encrypt TXT records could not be removed from the provider, one entry per
+* **TXT records left over**: Let's Encrypt TXT records could not be removed from the provider, one entry per
   cleanup. It is a warning. The records do no harm, but you can delete them there.
-* **Bans**: each ban is its own entry, such as **203.0.113.7 Banned**, with the failed sign-ins and the country.
-  Past five bans in a minute, the rest are summed into one **Clients Banned** entry listing the countries.
-  **Ban Lifted for** an address is logged too.
+* **Bans**: each ban is its own entry, such as **203.0.113.7 banned**, with the failed sign-ins and the country.
+  Past five bans in a minute, the rest are summed into one entry listing the countries, such as **3 clients banned**.
+  **Ban lifted for** an address is logged too.
 * **Blocks**: an address was blocked or unblocked, or a country unblocked, from the Dashboard, such as
-  **203.0.113.7 Blocked**.
-* **Connections Refused**: an hourly summary of what the block list, bans, country rules and connection limits
-  turned away, such as "12 internet connections were refused in the last hour by the country rules (9), bans (3)".
-* **Most Visitors Seen as Local**: see [When every visitor looks local](RemoteAccess.md#when-every-visitor-looks-local).
+  **203.0.113.7 blocked**.
+* **Connections refused**: an hourly summary of what the block list, bans, country rules and connection limits
+  turned away, such as "Internet connections were refused in the last hour by the country rules (9), bans (3)".
+* **Most visitors seen as local**: see [When every visitor looks local](RemoteAccess.md#when-every-visitor-looks-local).
   Logged once.
-* **Location Database Update Failed**: downloading it failed, once per reason, with **Location Database Updated**
+* **Location database update failed**: downloading it failed, once per reason, with **Location database updated**
   when it works again.
-* **History Settings Changed**: **Record History**, **History Period** or **Location** was changed.
-* **History Cleared**: every recorded visit, sign-in and refusal was deleted.
+* **History settings changed**: **Record history**, **History period** or **Location** was changed.
+* **History cleared**: every recorded visit, sign-in and refusal was deleted.

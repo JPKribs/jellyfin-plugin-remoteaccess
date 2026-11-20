@@ -40,7 +40,7 @@ A feature release is cut on `unstable`, then **Sync Branches** with `promote` mo
 
     Every check must run on the commit that is released. Run them again after any later change.
 
-5. **Pages.** Look at every changed page per [testing.md](testing.md#looking-at-a-page), and run the live checks for any change to the proxy, certificates, the router, or Trust the Proxy.
+5. **Pages.** Look at every changed page per [testing.md](testing.md#looking-at-a-page), and run the live checks for any change to the proxy, certificates, the router, or Trust the proxy.
 6. **Docs.** Every page describes this release. Retake any screenshot whose subject changed.
 
     ```bash

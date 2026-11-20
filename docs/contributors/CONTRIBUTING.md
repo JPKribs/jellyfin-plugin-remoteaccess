@@ -30,7 +30,7 @@ Models/           data types for records and detection
 Providers/        one class per DNS provider plus the shared base
 Services/         IP detection, DNS lookup and the update run
 Services/People/  visitor history, bans, the block list and country rules
-Services/Proxy/   the reverse proxy, certificates, Let's Encrypt and Trust the Proxy
+Services/Proxy/   the reverse proxy, certificates, Let's Encrypt and Trust the proxy
 Tasks/            the scheduled tasks
 Utilities/        shared helpers such as credential encryption
 Web/              the dashboard pages, as html, js and css

@@ -4,6 +4,6 @@ In step 2, **Address**, of the **Configuration** tab, set **Provider** to **Key-
 
 - **Host**: the host.
 - **Password**: the dynamic DNS password for the record, from the Key-Systems or domaindiscount24 panel.
-- **Server Override**: leave blank to use Key-Systems's own server.
+- **Server override**: leave blank to use Key-Systems's own server.
 
 _Ported from ddclient's `nic_keysystems_update`._

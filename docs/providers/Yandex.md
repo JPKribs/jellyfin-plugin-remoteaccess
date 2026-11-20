@@ -10,7 +10,7 @@ In step 2, **Address**, of the **Configuration** tab, set **Provider** to **Yand
 
 - **FQDN**: the fully qualified host to match.
 - **Domain**: your Yandex domain. It is used to list the domain's records.
-- **PDD Token**: your Yandex PDD API token.
-- **Server Override**: leave blank to use Yandex PDD's own server.
+- **PDD token**: your Yandex PDD API token.
+- **Server override**: leave blank to use Yandex PDD's own server.
 
 _Ported from ddclient's `nic_yandex_update`._

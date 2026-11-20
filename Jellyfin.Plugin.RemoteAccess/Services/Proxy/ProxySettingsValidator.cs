@@ -66,7 +66,7 @@ public static class ProxySettingsValidator
         // Enum values can arrive as any number. One that names nothing would fail to save as XML, which would
         // leave Jellyfin unable to store the plugin's settings at all, so it is refused here.
         CheckEnum(errors, language, Text(language, TranslationKeys.ErrorFieldCertificateSource), settings.Certificate.Mode);
-        CheckEnum(errors, language, Text(language, TranslationKeys.ErrorFieldCountryRule), settings.Advanced.CountryMode ?? CountryRuleMode.Off);
+        CheckEnum(errors, language, Text(language, TranslationKeys.LabelCountryRule), settings.Advanced.CountryMode ?? CountryRuleMode.Off);
 
         var o = ProxyOptions.From(settings.Advanced);
         CheckPort(errors, language, Text(language, TranslationKeys.ErrorFieldHttpPort), o.HttpPort);
