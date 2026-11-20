@@ -73,10 +73,10 @@ Build with `./build.sh`, unzip the zip from `dist/` into `<config>/plugins/Remot
 
 ### In the Page Harness
 
-When no test server is at hand, serve the page files outside Jellyfin. A small server in a scratch folder maps `configurationpage?name=<file>` to `Jellyfin.Plugin.RemoteAccess/Web/<file>`, and `remoteaccess_jpkribs_shared.*` to Base's `assets/` in the NuGet package. A shell page stubs `ApiClient`, `LibraryMenu`, and `Dashboard`, answers each `RemoteAccess/...` request from fixtures, imports the page controller, and dispatches `viewshow`.
+When no test server is at hand, serve the page files outside Jellyfin with the [screenshot kit](../tools/screenshots/README.md). Its server maps `configurationpage?name=<file>` to `Jellyfin.Plugin.RemoteAccess/Web/<file>`, and `remoteaccess_jpkribs_shared.*` to Base's `assets/` in the NuGet package. Its `stub.js` stubs `ApiClient`, `LibraryMenu`, and `Dashboard` and answers each `RemoteAccess/...` request with generic data. Its `index.html` imports the page controller and dispatches `viewshow`.
 
-* Keep the harness and its fixtures outside the repository.
-* Use fixtures with generic names only.
+* Open `http://127.0.0.1:8866/index.html?page=configuration` in a browser, with `dashboard` or `advanced` for the other tabs.
+* Use generic names only.
 * Record each request the page sends, and assert on them, such as the filter a table passed to `People`.
 * The harness proves the page draws and sends the right requests. It does not prove the server's answers, so a change to a route still needs a controller test.
 

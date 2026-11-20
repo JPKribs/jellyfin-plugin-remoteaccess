@@ -152,19 +152,33 @@ Use `##` for README headings. Keep the README under 40 lines.
 
 * Capture every page and dialog a docs page describes.
 * Capture the dark theme only, which is Jellyfin's default.
-* Capture from a test server, or from the page harness in [testing.md](testing.md#looking-at-a-page), so every name is generic.
-* Capture with history recorded, so the map, tables, and badges are filled.
-* Hide nothing with editing. When a value is private, change the test data instead. Check every shot for a real name before saving it.
+* Capture from the [screenshot kit](#the-screenshot-kit), never from a live server's data.
+* Use generic data. Users such as alex, jordan, and sam, `example.com` names, and documentation addresses such as `198.51.100.10`.
+* Fill the history, so the map, tables, and badges are filled.
+* Show the state the text around the shot describes, such as **Forward by hand** under the text about forwarding by hand.
+* Hide nothing with editing. When a value is private, change the kit's data instead. Look at every PNG for a real name or address before committing it.
 
 ### Sizes
 
 | Kind | Size | How |
 | :--- | :--- | :--- |
-| Dialog | 800 wide | The browser at 800 px, cropped to the dialog |
-| Full page | 1920 wide | The browser at 1920 px, cropped to the content area |
-| Phone | 375 wide at 2x | The browser's device mode at 375 px |
+| Tab | 1600 wide | An 800 px viewport at 2x, with the dashboard header and tabs, down to the end of the tab |
+| Part of a tab | About 1570 wide | An 800 px viewport at 2x, cropped to the step, section, or card with an 8 px margin |
+| Activity Log | About 2660 wide | Jellyfin's own Activity page at 1600 px and 2x, cut under the plugin's rows |
 
-Save every capture as PNG. Crop out the browser frame and the Jellyfin header unless the header is the subject.
+Save every capture as PNG. Keep a retaken image's file name unless its subject no longer exists.
+
+### The Screenshot Kit
+
+`tools/screenshots/` holds everything the captures need. Its [README](../tools/screenshots/README.md) lists the requirements and the commands.
+
+* **Server.** `server.py` maps `configurationpage?name=remoteaccess_X` to `Jellyfin.Plugin.RemoteAccess/Web/`, `remoteaccess_jpkribs_shared.js` and `.css` to the Base version the csproj names, and `/jf/` to jellyfin-web. It answers `RemoteAccess/Translations` from the strings the last build wrote to `obj/`, and `RemoteAccess/Providers` from the provider classes.
+* **Page.** `index.html` loads jellyfin-web's CSS in the dashboard's order, draws the dashboard header, and mounts one tab.
+* **Stand-ins.** `stub.js` gives `ApiClient`, `Dashboard`, and `LibraryMenu` with the generic data. Its `state` picks a variant of the proxy status, such as `cgnat` or `reach`.
+* **Shots.** `shoot.mjs` opens each tab with Playwright, opens the step or section the shot needs, and writes the PNG to `docs/screenshots/`.
+* **Activity Log.** `activity.py` starts a throwaway Jellyfin in Docker with the plugin from `dist/`, makes the plugin write a few entries, and takes Jellyfin's own Activity page.
+
+Look at each PNG it writes before committing it. A new subject is one more entry in the `shots` list of `shoot.mjs`, and new sample data goes in `stub.js`.
 
 ### Names and Placement
 
@@ -247,7 +261,7 @@ changelog:
 * [ ] Every UI label matches the page exactly and is bold.
 * [ ] Every heading is Title Case.
 * [ ] No em dashes, semicolons, or contractions.
-* [ ] Every screenshot matches the current UI and uses pool data.
+* [ ] Every screenshot matches the current UI and uses the screenshot kit's generic data.
 * [ ] [Settings](../docs/Settings.md) and the pages the change touches match the code.
 * [ ] Every term matches [glossary.md](glossary.md).
 * [ ] `mkdocs build --strict` passes.
