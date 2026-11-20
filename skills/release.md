@@ -14,6 +14,10 @@ A version is `JJ.JJ.F.B`.
 
 Raising a part sets every part after it to `0`. `12.4.4.10` becomes `12.4.5.0` for a feature and `12.4.4.11` for a fix.
 
+## Branch
+
+A feature release is cut on `unstable`, then **Sync Branches** with `promote` moves `master` to it. A bug release is cut on `master`, and the sync carries it to `unstable`. See [branches.md](branches.md).
+
 ## Before the Release
 
 1. **Base.** When the release needs a Base change, wait until Base is released and NuGet serves the version, then raise `JPKribs.Jellyfin.Base` in `Jellyfin.Plugin.RemoteAccess/Jellyfin.Plugin.RemoteAccess.csproj` and delete any local copy Base replaces. Never release against a local package.
