@@ -4,12 +4,9 @@ guid: "8150dce5-6153-4924-a985-a6927be95baa"
 version: "12.4.4.20"
 targetAbi: "12.4.0.0"
 framework: "net10.0"
-overview: "Reach your server from anywhere: Dynamic DNS and a secure HTTPS proxy, inside Jellyfin."
+overview: "Reach your server from anywhere."
 description: >
-  Keeps your DNS records pointed at your Jellyfin server's current public IP, and can put a secure HTTPS proxy
-  in front of Jellyfin with automatic Let's Encrypt certificates, bans for failed sign-ins, a block list,
-  country rules and a history of who connects. Everything runs inside Jellyfin, with no separate reverse proxy
-  or updater to run. Remote Access is being actively tested.
+  Remote Access keeps your DNS records pointed at your server and can put an HTTPS proxy with automatic certificates in front of Jellyfin. It is being actively tested.
 category: "Administration"
 imageUrl: "https://raw.githubusercontent.com/JPKribs/jellyfin-plugin-remoteaccess/refs/heads/master/Jellyfin.Plugin.RemoteAccess/Assets/Logo.png"
 owner: "JPKribs"
