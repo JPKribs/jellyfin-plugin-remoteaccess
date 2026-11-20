@@ -152,12 +152,12 @@ public sealed class GeoIpService : IDisposable
         if (error.Length > 0 && !string.Equals(error, _reportedError, StringComparison.Ordinal))
         {
             _reportedError = error;
-            _activity?.Log("Location Database Update Failed", "RemoteAccess.LocationDatabaseFailed", ActivityEntries.Plain(ActivityEntries.Phrase(error) + ", country rules use the database already loaded, if any"), LogLevel.Warning);
+            _activity?.Log(ServerText.Get(TranslationKeys.ActivityLocationFailed), "RemoteAccess.LocationDatabaseFailed", ActivityEntries.Plain(ServerText.Format(TranslationKeys.ActivityLocationFailedOverview, ActivityEntries.Phrase(error))), LogLevel.Warning);
         }
         else if (updated && _reportedError.Length > 0)
         {
             _reportedError = string.Empty;
-            _activity?.Log("Location Database Updated", "RemoteAccess.LocationDatabaseUpdated", "The download works again");
+            _activity?.Log(ServerText.Get(TranslationKeys.ActivityLocationUpdated), "RemoteAccess.LocationDatabaseUpdated", ServerText.Get(TranslationKeys.ActivityLocationUpdatedOverview));
         }
 
         return updated;
@@ -202,7 +202,7 @@ public sealed class GeoIpService : IDisposable
             {
                 probe?.Dispose();
                 File.Delete(temp);
-                _error = "The downloaded location database was not valid, so the current one is kept.";
+                _error = ServerText.Get(TranslationKeys.ErrorLocationInvalid);
                 return false;
             }
 
@@ -226,7 +226,7 @@ public sealed class GeoIpService : IDisposable
             {
                 // The new file checked out but will not open in place. The one it replaced comes back, and the
                 // database already loaded stays in use.
-                _error = "The new location database could not be opened, so the previous one is kept.";
+                _error = ServerText.Get(TranslationKeys.ErrorLocationUnopenable);
                 if (Volatile.Read(ref _reader) is null && TryRestorePrevious(detail, out var previous))
                 {
                     Swap(previous, detail);
@@ -242,7 +242,7 @@ public sealed class GeoIpService : IDisposable
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidDatabaseException)
         {
-            _error = "The location database could not be saved. " + ex.Message;
+            _error = ServerText.Get(TranslationKeys.ErrorLocationUnsaved) + " " + ex.Message;
             _logger.LogWarning("Location database update failed: {Message}", ex.Message);
             return false;
         }
@@ -462,7 +462,7 @@ public sealed class GeoIpService : IDisposable
 
             if (!response.IsSuccessStatusCode)
             {
-                _error = $"The location database download failed with status {(int)response.StatusCode}.";
+                _error = ServerText.Format(TranslationKeys.ErrorLocationStatus, (int)response.StatusCode);
                 return false;
             }
 
@@ -496,8 +496,8 @@ public sealed class GeoIpService : IDisposable
         catch (Exception ex) when (ex is HttpRequestException || (ex is OperationCanceledException && !cancellationToken.IsCancellationRequested))
         {
             _error = ex is OperationCanceledException
-                ? "The location database download took too long and was stopped."
-                : "The location database could not be downloaded. " + ex.Message;
+                ? ServerText.Get(TranslationKeys.ErrorLocationTimeout)
+                : ServerText.Get(TranslationKeys.ErrorLocationDownload) + " " + ex.Message;
             return false;
         }
     }

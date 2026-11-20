@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -48,14 +49,14 @@ public sealed class DynDns2Provider : DNSProviderBase
     public override string Label => "DynDNS v2";
 
     /// <inheritdoc />
-    public override string Hint => "Username and Password are your account credentials. Server override defaults to members.dyndns.org and can point at a compatible service.";
+    public override string Hint => TranslationKeys.ProviderHintDynDns2;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Username",
-        Password = "Password",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPassword,
         Server = true,
         Advanced = new[] { "wildcard", "mx", "backupmx" },
     };

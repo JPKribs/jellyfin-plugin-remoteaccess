@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -44,14 +45,14 @@ public sealed class NoIpProvider : DNSProviderBase
     public override string Label => "No-IP";
 
     /// <inheritdoc />
-    public override string Hint => "Username is your No-IP username or email. A DDNS key is safer than your account password.";
+    public override string Hint => TranslationKeys.ProviderHintNoIp;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Username",
-        Password = "Password or DDNS Key",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPasswordOrDdnsKey,
         Server = true,
     };
 

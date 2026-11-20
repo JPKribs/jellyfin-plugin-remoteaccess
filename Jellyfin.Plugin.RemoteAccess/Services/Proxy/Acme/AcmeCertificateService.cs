@@ -184,7 +184,7 @@ public sealed class AcmeCertificateService : IDisposable
 
             // Counted as a failure until it finishes, so an attempt cut short by a shutdown still backs off: Let's
             // Encrypt has counted the order either way. The outcome below replaces this record.
-            _store.Save(state.Failed(started, "The last attempt did not finish.", names));
+            _store.Save(state.Failed(started, ServerText.Get(TranslationKeys.ErrorAcmeUnfinished), names));
             try
             {
                 var notBefore = await IssueAsync(plan, cancellationToken).ConfigureAwait(false);
@@ -193,11 +193,11 @@ public sealed class AcmeCertificateService : IDisposable
                 _logger.LogInformation("Let's Encrypt issued a certificate for {Names}", list);
                 if (decision.Action == AcmeAction.Renew)
                 {
-                    _activity?.Log("Certificate Renewed", "RemoteAccess.CertificateRenewed", "Let's Encrypt renewed the certificate for " + list);
+                    _activity?.Log(ServerText.Get(TranslationKeys.ActivityCertificateRenewed), "RemoteAccess.CertificateRenewed", ServerText.Format(TranslationKeys.ActivityCertificateRenewedOverview, list));
                 }
                 else
                 {
-                    _activity?.Log("Certificate Issued", "RemoteAccess.CertificateIssued", "Let's Encrypt issued a certificate for " + list);
+                    _activity?.Log(ServerText.Get(TranslationKeys.ActivityCertificateIssued), "RemoteAccess.CertificateIssued", ServerText.Format(TranslationKeys.ActivityCertificateIssuedOverview, list));
                 }
 
                 return true;
@@ -212,9 +212,9 @@ public sealed class AcmeCertificateService : IDisposable
                 var level = decision.Action == AcmeAction.Renew ? LogLevel.Warning : LogLevel.Error;
                 _logger.Log(level, "Let's Encrypt did not issue a certificate for {Names}: {Error}", string.Join(", ", names), error);
                 _activity?.Log(
-                    decision.Action == AcmeAction.Renew ? "Certificate Renewal Failed" : "Certificate Request Failed",
+                    ServerText.Get(decision.Action == AcmeAction.Renew ? TranslationKeys.ActivityRenewalFailed : TranslationKeys.ActivityRequestFailed),
                     decision.Action == AcmeAction.Renew ? "RemoteAccess.CertificateRenewFailed" : "RemoteAccess.CertificateIssueFailed",
-                    ActivityEntries.Plain(ActivityEntries.Phrase(error) + ", the next try is after " + next.ToString("u", System.Globalization.CultureInfo.InvariantCulture)),
+                    ActivityEntries.Plain(ServerText.Format(TranslationKeys.ActivityNextTryAfter, ActivityEntries.Phrase(error), next.ToString("u", System.Globalization.CultureInfo.InvariantCulture))),
                     level);
                 return false;
             }
@@ -274,7 +274,7 @@ public sealed class AcmeCertificateService : IDisposable
     private static string Explain(Exception ex) => ex switch
     {
         AcmeRequestException { Error.Detail: { Length: > 0 } detail } => detail,
-        TaskCanceledException => "Let's Encrypt did not answer in time.",
+        TaskCanceledException => ServerText.Get(TranslationKeys.ErrorAcmeTimeout),
         _ => ex.Message
     };
 
@@ -334,7 +334,7 @@ public sealed class AcmeCertificateService : IDisposable
             if (CertificateStore.PemLoadError(_paths.AcmeChainFile) is { } problem)
             {
                 _logger.LogWarning("The certificate Let's Encrypt issued could not be loaded: {Problem}", problem);
-                throw new InvalidOperationException("Let's Encrypt issued a certificate, but the saved files could not be loaded.");
+                throw new InvalidOperationException(ServerText.Get(TranslationKeys.ErrorAcmeFilesUnloadable));
             }
 
             using var leaf = System.Security.Cryptography.X509Certificates.X509Certificate2.CreateFromPem(chain.Certificate.ToPem());
@@ -355,7 +355,7 @@ public sealed class AcmeCertificateService : IDisposable
     {
         if (!plan.Records.TryGetValue(name, out var record) || _providers.FirstOrDefault(p => p.Kind == record.Provider) is not IAcmeDnsProvider provider)
         {
-            throw new InvalidOperationException($"No DDNS record can publish the TXT record for {name}.");
+            throw new InvalidOperationException(ServerText.Format(TranslationKeys.ErrorNoTxtRecord, name));
         }
 
         var live = WithSecrets(record);
@@ -487,7 +487,7 @@ public sealed class AcmeCertificateService : IDisposable
         var password = _secrets?.Unprotect(record.Password) ?? record.Password;
         if ((SecretProtector.IsProtected(record.Login) && login.Length == 0) || (SecretProtector.IsProtected(record.Password) && password.Length == 0))
         {
-            throw new InvalidOperationException("The DDNS record's credentials could not be decrypted. Re-enter them in step 2, Address, on the Configuration tab.");
+            throw new InvalidOperationException(ServerText.Get(TranslationKeys.ErrorRecordCredentialsUnreadable));
         }
 
         return record.WithSecrets(login, password);
@@ -570,11 +570,11 @@ public sealed class AcmeCertificateService : IDisposable
                     continue;
                 default:
                     var detail = resource.Challenges?.Select(c => c.Error?.Detail).FirstOrDefault(d => !string.IsNullOrEmpty(d));
-                    throw new InvalidOperationException(detail ?? $"Let's Encrypt could not check {name}. Make sure port 80 is forwarded to this server.");
+                    throw new InvalidOperationException(detail ?? ServerText.Format(TranslationKeys.ErrorAcmeCheckFailed, name));
             }
         }
 
-        throw new InvalidOperationException($"Let's Encrypt did not finish checking {name}. Make sure port 80 is forwarded to this server.");
+        throw new InvalidOperationException(ServerText.Format(TranslationKeys.ErrorAcmeCheckUnfinished, name));
     }
 
     /// <summary>
@@ -597,7 +597,7 @@ public sealed class AcmeCertificateService : IDisposable
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
                 _logger.LogWarning("The Let's Encrypt account key could not be read: {Message}", ex.Message);
-                throw new IOException("The Let's Encrypt account key could not be read. It is tried again on the next check.", ex);
+                throw new IOException(ServerText.Get(TranslationKeys.ErrorAcmeAccountKey), ex);
             }
 
             try

@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -45,15 +46,15 @@ public sealed class ZoneEdit1Provider : DNSProviderBase
     public override string Label => "ZoneEdit";
 
     /// <inheritdoc />
-    public override string Hint => "Username is your ZoneEdit username and DDNS token is your ZoneEdit dynamic DNS token. Zone is optional.";
+    public override string Hint => TranslationKeys.ProviderHintZoneEdit1;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Username",
-        Password = "DDNS Token",
-        Zone = "Zone",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelDdnsToken,
+        Zone = TranslationKeys.LabelZone,
         Server = true,
     };
 

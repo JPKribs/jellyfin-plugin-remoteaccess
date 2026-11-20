@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -33,13 +34,13 @@ public sealed class KeySystemsProvider : DNSProviderBase
     public override string Label => "Key-Systems";
 
     /// <inheritdoc />
-    public override string Hint => "Password is the record's dynamic DNS password from the Key-Systems panel.";
+    public override string Hint => TranslationKeys.ProviderHintKeySystems;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Host",
-        Password = "Password",
+        Hostname = TranslationKeys.LabelServerHost,
+        Password = TranslationKeys.LabelPassword,
         Server = true,
     };
 

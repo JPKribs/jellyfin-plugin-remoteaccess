@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -47,14 +48,14 @@ public sealed class DnsMadeEasyProvider : DNSProviderBase
     public override string Label => "DNS Made Easy";
 
     /// <inheritdoc />
-    public override string Hint => "Record ID is the numeric ID of the Dynamic DNS record. Record password is the password generated for that record.";
+    public override string Hint => TranslationKeys.ProviderHintDnsMadeEasy;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record ID",
-        Login = "Account Email",
-        Password = "Record Password",
+        Hostname = TranslationKeys.LabelRecordId,
+        Login = TranslationKeys.LabelAccountEmail,
+        Password = TranslationKeys.LabelRecordPassword,
         Server = true,
     };
 

@@ -7,6 +7,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Services.Proxy.Router;
 
@@ -134,12 +136,12 @@ public sealed class UpnpClient : IRouterClient, IDisposable
                         : PortMapResult.Fail(UpnpProtocol.Describe(code, mapping.ExternalPort));
                 default:
                     return PortMapResult.Fail(body.Length == 0
-                        ? $"The router did not answer the request to open port {mapping.ExternalPort}."
-                        : $"The router could not open port {mapping.ExternalPort}.");
+                        ? ServerText.Format(TranslationKeys.ErrorRouterNoAnswer, mapping.ExternalPort)
+                        : ServerText.Format(TranslationKeys.ErrorRouterCouldNotOpen, mapping.ExternalPort));
             }
         }
 
-        return PortMapResult.Fail($"The router could not open port {mapping.ExternalPort}.");
+        return PortMapResult.Fail(ServerText.Format(TranslationKeys.ErrorRouterCouldNotOpen, mapping.ExternalPort));
     }
 
     /// <inheritdoc />

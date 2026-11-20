@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -38,15 +39,15 @@ public sealed class PorkbunProvider : DNSProviderBase
     public override string Label => "Porkbun";
 
     /// <inheritdoc />
-    public override string Hint => "API key starts with pk1_ and Secret API key starts with sk1_. Root domain is optional.";
+    public override string Hint => TranslationKeys.ProviderHintPorkbun;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "API Key",
-        Password = "Secret API Key",
-        Zone = "Root Domain",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.HeaderApiKey,
+        Password = TranslationKeys.LabelSecretApiKey,
+        Zone = TranslationKeys.LabelRootDomain,
         Server = true,
     };
 

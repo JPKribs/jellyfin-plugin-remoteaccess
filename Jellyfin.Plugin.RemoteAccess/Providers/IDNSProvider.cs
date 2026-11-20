@@ -23,10 +23,13 @@ public interface IDNSProvider
     /// <summary>Gets the friendly name shown in the provider dropdown.</summary>
     string Label { get; }
 
-    /// <summary>Gets the short hint shown under the provider dropdown, describing what each field holds.</summary>
+    /// <summary>
+    /// Gets the key of the short hint shown under the provider dropdown, describing what each field holds. The hint
+    /// itself is in <c>Localization/en-us.json</c>.
+    /// </summary>
     string Hint { get; }
 
-    /// <summary>Gets the fields this provider uses and their labels, so the dashboard shows only what it needs.</summary>
+    /// <summary>Gets the fields this provider uses and the keys of their labels, so the dashboard shows only what it needs.</summary>
     ProviderFields Fields { get; }
 
     /// <summary>

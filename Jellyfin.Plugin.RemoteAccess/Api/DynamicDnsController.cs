@@ -75,12 +75,24 @@ public class DynamicDNSController : ControllerBase
             {
                 value = p.Kind.ToString(),
                 label = p.Label,
-                hint = p.Hint,
-                fields = p.Fields
+                hint = ServerText.Get(p.Hint),
+                fields = p.Fields.Translated()
             });
 
         return Ok(list);
     }
+
+    /// <summary>
+    /// Returns the strings the plugin's pages show, in a language: the Jellyfin strings it declares and its own. Each
+    /// falls back to the language's base, then to US English. The strings are not secret, so no sign-in is needed.
+    /// </summary>
+    /// <param name="language">The language, such as de or pt-br, as the web client's display settings keep it.</param>
+    /// <returns>The strings by key, or 304 when the page already has them.</returns>
+    [HttpGet("Translations")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status304NotModified)]
+    public IActionResult Translations([FromQuery] string? language) => BaseTranslations.Serve(language, Request, Response);
 
     /// <summary>
     /// Returns the plugin configuration for the dashboard with stored credentials replaced by a
@@ -130,7 +142,7 @@ public class DynamicDNSController : ControllerBase
         incoming.Records ??= new();
         if (incoming.Records.Any(r => r is null || !Enum.IsDefined(r.Provider)))
         {
-            return BadRequest(new { Errors = new List<string> { "A record has an unknown provider." } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Get(TranslationKeys.ErrorUnknownProvider) } });
         }
 
         // Status the page shows is echoed back with every save. The server keeps its own copy, so what the
@@ -138,17 +150,17 @@ public class DynamicDNSController : ControllerBase
         ClearRuntimeStatus(incoming);
         if (XmlText.FindInvalid(incoming) is { } bad)
         {
-            return BadRequest(new { Errors = new List<string> { $"{bad} holds a character that cannot be saved." } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Format(TranslationKeys.ErrorInvalidCharacter, bad) } });
         }
 
         if (MissingHostname(incoming.Records, _providers))
         {
-            return BadRequest(new { Errors = new List<string> { "Every record needs a hostname." } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Get(TranslationKeys.ErrorRecordNeedsHostname) } });
         }
 
         if (incoming.Records.Any(r => SecretProtector.IsProtected(r.Login) || SecretProtector.IsProtected(r.Password)))
         {
-            return BadRequest(new { Errors = new List<string> { "Encrypted values cannot be entered as credentials." } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Get(TranslationKeys.ErrorEncryptedCredentials) } });
         }
 
         // Without the key store a typed credential could only be stored in the clear, which is never done.
@@ -193,7 +205,7 @@ public class DynamicDNSController : ControllerBase
         ConfigurationAudit.LogRecordChanges(_activity, before, after, userId);
         if (settingsChanged)
         {
-            _activity.Log("Dynamic DNS Settings Changed", "RemoteAccess.SettingsChanged", "Detection, refresh or backoff settings were changed", userId: userId);
+            _activity.Log(ServerText.Get(TranslationKeys.ActivityDynamicDnsSettingsChanged), "RemoteAccess.SettingsChanged", ServerText.Get(TranslationKeys.ActivityDynamicDnsSettingsChangedOverview), userId: userId);
         }
 
         // Runtime status is keyed by record id, so a record edited to point somewhere else (another

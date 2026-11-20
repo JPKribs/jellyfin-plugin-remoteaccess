@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -31,14 +32,14 @@ public sealed class NamecheapProvider : DNSProviderBase
     public override string Label => "Namecheap";
 
     /// <inheritdoc />
-    public override string Hint => "Domain is your domain, such as example.com. DDNS password is from Advanced DNS after you turn on Dynamic DNS.";
+    public override string Hint => TranslationKeys.ProviderHintNamecheap;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Host and Domain",
-        Login = "Domain",
-        Password = "DDNS Password",
+        Hostname = TranslationKeys.LabelHostAndDomain,
+        Login = TranslationKeys.LabelDomain,
+        Password = TranslationKeys.LabelDdnsPassword,
         Server = true,
     };
 

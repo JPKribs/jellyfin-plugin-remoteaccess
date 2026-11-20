@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -33,14 +34,14 @@ public sealed class MythicDynProvider : DNSProviderBase
     public override string Label => "Mythic Beasts";
 
     /// <inheritdoc />
-    public override string Hint => "Username is your Mythic Beasts dynamic DNS API key. Password is its secret.";
+    public override string Hint => TranslationKeys.ProviderHintMythicDyn;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Username",
-        Password = "Password",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPassword,
         Server = true,
     };
 

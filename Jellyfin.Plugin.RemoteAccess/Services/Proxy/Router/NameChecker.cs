@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Services.Proxy.Router;
 
@@ -119,8 +121,8 @@ public sealed class NameChecker : IDisposable
         }
 
         status.Error = mine.Count == 0
-            ? "This server's public address is not known yet, so the name cannot be compared with it."
-            : $"{hostname} points to {string.Join(" and ", status.Addresses)}, not to this server at {status.PublicAddress}. Check its DNS record.";
+            ? ServerText.Get(TranslationKeys.ErrorPublicAddressUnknown)
+            : ServerText.Format(TranslationKeys.ErrorNamePointsElsewhere, hostname, ServerText.List(status.Addresses), status.PublicAddress);
         return status;
     }
 

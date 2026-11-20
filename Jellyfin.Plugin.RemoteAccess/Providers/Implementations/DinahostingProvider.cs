@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -36,15 +37,15 @@ public sealed class DinahostingProvider : DNSProviderBase
     public override string Label => "Dinahosting";
 
     /// <inheritdoc />
-    public override string Hint => "Username and Password are your Dinahosting credentials. Fill in Domain only when the host has more than two labels.";
+    public override string Hint => TranslationKeys.ProviderHintDinahosting;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Host and Domain",
-        Login = "Username",
-        Password = "Password",
-        Zone = "Domain",
+        Hostname = TranslationKeys.LabelHostAndDomain,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPassword,
+        Zone = TranslationKeys.LabelDomain,
         Server = true,
     };
 

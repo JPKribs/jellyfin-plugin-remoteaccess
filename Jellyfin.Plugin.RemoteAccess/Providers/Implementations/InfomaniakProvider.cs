@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -41,14 +42,14 @@ public sealed class InfomaniakProvider : DNSProviderBase
     public override string Label => "Infomaniak";
 
     /// <inheritdoc />
-    public override string Hint => "Username and Password are the dynamic DNS credentials you create in the Infomaniak Manager.";
+    public override string Hint => TranslationKeys.ProviderHintInfomaniak;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Username",
-        Password = "Password",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPassword,
         Server = true,
     };
 

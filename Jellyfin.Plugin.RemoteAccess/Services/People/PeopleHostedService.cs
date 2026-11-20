@@ -67,7 +67,7 @@ public sealed class PeopleHostedService : BackgroundService
         // Found at startup, before the activity log was ready; it is written there once now.
         if (FolderAccess.Problem.Length > 0)
         {
-            _activity.Log("File Access Failed", "RemoteAccess.FolderAccess", ActivityEntries.Plain(FolderAccess.Problem), LogLevel.Error);
+            _activity.Log(ServerText.Get(TranslationKeys.ActivityFileAccessFailed), "RemoteAccess.FolderAccess", ActivityEntries.Plain(FolderAccess.Problem), LogLevel.Error);
         }
 
         // The database loads in the background, so a slow or stalled download never holds up history.

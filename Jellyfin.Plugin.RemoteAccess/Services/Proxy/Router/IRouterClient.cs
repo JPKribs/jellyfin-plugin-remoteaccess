@@ -1,6 +1,8 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Services.Proxy.Router;
 
@@ -94,7 +96,7 @@ public sealed record PortMapResult(PortMapOutcome Outcome, string Error)
     /// </summary>
     /// <param name="port">The external port.</param>
     /// <returns>The answer.</returns>
-    public static PortMapResult Taken(int port) => new(PortMapOutcome.Conflict, $"The router already forwards port {port} to another device.");
+    public static PortMapResult Taken(int port) => new(PortMapOutcome.Conflict, ServerText.Format(TranslationKeys.ErrorRouterPortTaken, port));
 
     /// <summary>
     /// Builds the answer for any other refusal.

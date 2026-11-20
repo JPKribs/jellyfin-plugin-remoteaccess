@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -33,14 +34,14 @@ public sealed class SitelutionsProvider : DNSProviderBase
     public override string Label => "Sitelutions";
 
     /// <inheritdoc />
-    public override string Hint => "Record ID is the numeric ID from your Sitelutions Recordbook. Account email and Account password are your sign-in.";
+    public override string Hint => TranslationKeys.ProviderHintSitelutions;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record ID",
-        Login = "Account Email",
-        Password = "Account Password",
+        Hostname = TranslationKeys.LabelRecordId,
+        Login = TranslationKeys.LabelAccountEmail,
+        Password = TranslationKeys.LabelAccountPassword,
         Server = true,
         Ttl = true,
     };

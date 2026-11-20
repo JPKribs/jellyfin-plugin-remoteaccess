@@ -15,9 +15,7 @@ public static class CredentialEncryption
     /// <summary>
     /// What the person is told when credentials cannot be encrypted. They are never stored in the clear instead.
     /// </summary>
-    public const string KeyStoreUnavailable = "Credentials cannot be saved because the plugin could not set up its encryption keys, and they are never stored unencrypted. "
-        + "Reinstall the plugin and try again. If it happens again, check that the account Jellyfin runs as can read and write the plugin's folders in Jellyfin's data folder, "
-        + "plugins/configurations/Jellyfin.Plugin.DynamicDns.Keys in particular.";
+    public static string KeyStoreUnavailable => ServerText.Get(TranslationKeys.ErrorKeyStoreUnavailable);
 
     /// <summary>Whether a stored value is a credential in the clear: not empty and not encrypted.</summary>
     /// <param name="value">The stored value.</param>

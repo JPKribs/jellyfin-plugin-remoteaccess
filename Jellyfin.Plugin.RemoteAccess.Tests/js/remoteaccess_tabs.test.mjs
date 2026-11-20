@@ -4,11 +4,16 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
     addressLines, otherAddresses, proxyHostnames, primaryRecord, routerStateText, problemText,
-    countryCounts, countryRows, countryFilterOptions, activityQuery, stepState, MAP_LAYERS
+    countryCounts, countryRows, countryFilterOptions, activityQuery, stepState, setTranslations, listText, MAP_LAYERS
 } from './configurationpage?name=remoteaccess_tabs.js';
-import { COUNTRY_CODES } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { COUNTRY_CODES, createTranslations } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+
+// The plugin's own US English, so the helpers say what the pages show in English.
+var ENGLISH = JSON.parse(readFileSync(new URL('../../Jellyfin.Plugin.RemoteAccess/Localization/en-us.json', import.meta.url), 'utf8'));
+setTranslations(createTranslations(ENGLISH, 'en-us'));
 
 var PEOPLE = {
     PeopleByCountry: [{ CountryCode: 'US', Country: 'United States', Count: 4, LastUtc: '2026-11-15T10:00:00Z' }],
@@ -42,6 +47,15 @@ test('routerStateText warns when the device that answered is not the gateway', (
     assert.match(text, /ports 80 and 443/);
     assert.match(text, /not this server's default gateway/);
     assert.equal(routerStateText(null), '');
+});
+
+test('listText joins names the way the viewer\'s language does', () => {
+    assert.equal(listText([80, 443]), '80 and 443');
+    assert.equal(listText(['a']), 'a');
+});
+
+test('countryFilterOptions names your network in the viewer\'s language', () => {
+    assert.equal(countryFilterOptions(PEOPLE, '')[0].label, 'Local');
 });
 
 test('problemText joins the problems a save lists, and falls back without them', async () => {

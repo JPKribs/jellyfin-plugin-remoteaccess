@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -30,13 +31,13 @@ public sealed class FreeMyIpProvider : DNSProviderBase
     public override string Label => "freemyip.com";
 
     /// <inheritdoc />
-    public override string Hint => "Domain is your freemyip domain. Token is from the link shown when you claim it.";
+    public override string Hint => TranslationKeys.ProviderHintFreeMyIp;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Domain",
-        Password = "Token",
+        Hostname = TranslationKeys.LabelDomain,
+        Password = TranslationKeys.LabelToken,
         Server = true,
     };
 

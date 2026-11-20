@@ -39,13 +39,13 @@ public sealed class ExternalAccessTask : PluginScheduledTask
     }
 
     /// <inheritdoc />
-    public override string Name => "Verify External Access";
+    public override string Name => ServerText.Get(TranslationKeys.TaskVerifyExternalAccess);
 
     /// <inheritdoc />
     public override string Key => "RemoteAccessVerifyExternalAccess";
 
     /// <inheritdoc />
-    public override string Description => "Asks a few places on the internet to connect to your public address on port 443, and writes an error to the activity log when none can.";
+    public override string Description => ServerText.Get(TranslationKeys.TaskVerifyExternalAccessDescription);
 
     /// <inheritdoc />
     public override async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
@@ -67,19 +67,19 @@ public sealed class ExternalAccessTask : PluginScheduledTask
         }
         else if (result.Reachable == false)
         {
-            var tried = string.Join("; ", result.Nodes.Select(n => (n.Location.Length > 0 ? n.Location : "Unknown") + ": " + n.Error));
+            var tried = string.Join("; ", result.Nodes.Select(n => (n.Location.Length > 0 ? n.Location : ServerText.Get(TranslationKeys.Unknown)) + ": " + n.Error));
             var message = tried.Length > 0 ? result.Error + " " + tried : result.Error;
             _logger.LogError("External access failed: {Message}", message);
             if (!_failing)
             {
                 _failing = true;
-                _activity.Log("External Access Failed", "RemoteAccess.ExternalAccessFailed", ActivityEntries.Plain(message), LogLevel.Error);
+                _activity.Log(ServerText.Get(TranslationKeys.ActivityExternalAccessFailed), "RemoteAccess.ExternalAccessFailed", ActivityEntries.Plain(message), LogLevel.Error);
             }
         }
         else if (_failing)
         {
             _failing = false;
-            _activity.Log("External Access Restored", "RemoteAccess.ExternalAccessRestored", $"An outside location connected to port {ReachabilityChecker.Port}");
+            _activity.Log(ServerText.Get(TranslationKeys.ActivityExternalAccessRestored), "RemoteAccess.ExternalAccessRestored", ServerText.Format(TranslationKeys.ActivityExternalAccessRestoredOverview, ReachabilityChecker.Port));
         }
 
         progress.Report(100);

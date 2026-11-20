@@ -1,4 +1,6 @@
 using System;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Models;
 
@@ -22,8 +24,8 @@ public static class UpdateDecisionExtensions
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the decision is not a skip.</exception>
     public static (string Action, string Message, bool Succeeded) SkipOutcome(this UpdateDecision decision) => decision switch
     {
-        UpdateDecision.SkipNoAddress => ("No address", "No IP available for the enabled record types.", false),
-        UpdateDecision.SkipUnchanged => ("IP Unchanged", "Update skipped.", true),
+        UpdateDecision.SkipNoAddress => ("No address", ServerText.Get(TranslationKeys.MessageNoAddress), false),
+        UpdateDecision.SkipUnchanged => ("IP Unchanged", ServerText.Get(TranslationKeys.MessageUpdateSkipped), true),
         _ => throw new ArgumentOutOfRangeException(nameof(decision), decision, "Update is not a skip decision.")
     };
 }

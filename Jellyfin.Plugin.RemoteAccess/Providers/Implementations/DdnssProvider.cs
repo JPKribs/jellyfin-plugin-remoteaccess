@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -31,13 +32,13 @@ public sealed class DdnssProvider : DNSProviderBase
     public override string Label => "DDNSS.de";
 
     /// <inheritdoc />
-    public override string Hint => "Host is your DDNSS.de host. Key is your DDNSS.de update key.";
+    public override string Hint => TranslationKeys.ProviderHintDdnss;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Host",
-        Password = "Key",
+        Hostname = TranslationKeys.LabelServerHost,
+        Password = TranslationKeys.LabelKey,
         Server = true,
     };
 

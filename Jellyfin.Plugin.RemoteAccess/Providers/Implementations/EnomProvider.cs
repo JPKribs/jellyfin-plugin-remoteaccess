@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -32,14 +33,14 @@ public sealed class EnomProvider : DNSProviderBase
     public override string Label => "eNom";
 
     /// <inheritdoc />
-    public override string Hint => "Base domain is your domain, such as example.com. Domain password is the domain's Dynamic DNS password.";
+    public override string Hint => TranslationKeys.ProviderHintEnom;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Host",
-        Login = "Base Domain",
-        Password = "Domain Password",
+        Hostname = TranslationKeys.LabelServerHost,
+        Login = TranslationKeys.LabelBaseDomain,
+        Password = TranslationKeys.LabelDomainPassword,
         Server = true,
     };
 

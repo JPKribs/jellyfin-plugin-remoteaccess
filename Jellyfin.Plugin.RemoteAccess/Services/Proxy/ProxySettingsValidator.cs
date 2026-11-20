@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 
@@ -63,49 +64,49 @@ public static class ProxySettingsValidator
 
         // Enum values can arrive as any number. One that names nothing would fail to save as XML, which would
         // leave Jellyfin unable to store the plugin's settings at all, so it is refused here.
-        CheckEnum(errors, "Certificate source", settings.Certificate.Mode);
-        CheckEnum(errors, "Country rule", settings.Advanced.CountryMode ?? CountryRuleMode.Off);
+        CheckEnum(errors, ServerText.Get(TranslationKeys.ErrorFieldCertificateSource), settings.Certificate.Mode);
+        CheckEnum(errors, ServerText.Get(TranslationKeys.ErrorFieldCountryRule), settings.Advanced.CountryMode ?? CountryRuleMode.Off);
 
         var o = ProxyOptions.From(settings.Advanced);
-        CheckPort(errors, "HTTP port", o.HttpPort);
-        CheckPort(errors, "HTTPS port", o.HttpsPort);
+        CheckPort(errors, ServerText.Get(TranslationKeys.ErrorFieldHttpPort), o.HttpPort);
+        CheckPort(errors, ServerText.Get(TranslationKeys.ErrorFieldHttpsPort), o.HttpsPort);
         if (o.HttpPort == o.HttpsPort)
         {
-            errors.Add("The HTTP and HTTPS ports must be different.");
+            errors.Add(ServerText.Get(TranslationKeys.ErrorSamePorts));
         }
 
         // Local clients are then sent to the public address, so there has to be one that is not a wildcard.
         if (o.JellyfinLoopbackOnly && !settings.Hostnames.Any(h => !h.StartsWith('*')))
         {
-            errors.Add("Only through the proxy needs an address that is not a wildcard, so local apps can be sent to it.");
+            errors.Add(ServerText.Get(TranslationKeys.ErrorLoopbackNeedsAddress));
         }
 
         if (o.LanAddress.Length > 0 && !IPAddress.TryParse(o.LanAddress, out _))
         {
-            errors.Add($"LAN address \"{o.LanAddress}\" is not an IP address.");
+            errors.Add(ServerText.Format(TranslationKeys.ErrorLanAddress, o.LanAddress));
         }
 
         if (rawHostnames is not null)
         {
             foreach (var raw in rawHostnames.Where(r => !string.IsNullOrWhiteSpace(r) && HostnameMatcher.Normalize(r).Length == 0))
             {
-                errors.Add($"\"{raw.Trim()}\" is not a valid hostname.");
+                errors.Add(ServerText.Format(TranslationKeys.ErrorHostname, raw.Trim()));
             }
         }
 
         if (o.CountryMode == CountryRuleMode.AllowOnly && o.Countries.Count == 0)
         {
-            errors.Add("Allowing only listed countries needs at least one country, or every internet connection would be refused.");
+            errors.Add(ServerText.Get(TranslationKeys.ErrorAllowOnlyNeedsCountry));
         }
 
         foreach (var raw in o.TrustedNetworks.Where(n => !NetworkClassifier.TryParseNetwork(n, out _)))
         {
-            errors.Add($"Trusted network \"{raw}\" is not an address or CIDR block.");
+            errors.Add(ServerText.Format(TranslationKeys.ErrorTrustedNetwork, raw));
         }
 
         foreach (var raw in o.BlockedAddresses.Where(n => !NetworkClassifier.TryParseNetwork(n, out _)))
         {
-            errors.Add($"Blocked address \"{raw}\" is not an address or CIDR block.");
+            errors.Add(ServerText.Format(TranslationKeys.ErrorBlockedAddress, raw));
         }
 
         CheckCertificate(errors, settings.Certificate);
@@ -127,7 +128,7 @@ public static class ProxySettingsValidator
     {
         if (!Enum.IsDefined(value))
         {
-            errors.Add($"{label} has an unknown value.");
+            errors.Add(ServerText.Format(TranslationKeys.ErrorUnknownValue, label));
         }
     }
 
@@ -135,7 +136,7 @@ public static class ProxySettingsValidator
     {
         if (port is < 1 or > 65535)
         {
-            errors.Add(string.Create(CultureInfo.InvariantCulture, $"{label} must be between 1 and 65535."));
+            errors.Add(ServerText.Format(TranslationKeys.ErrorPortRange, label));
         }
     }
 
@@ -144,10 +145,10 @@ public static class ProxySettingsValidator
         switch (certificate.Mode)
         {
             case CertificateMode.Pkcs12File when certificate.Path.Length == 0:
-                errors.Add("Choose the .pfx or .p12 certificate file.");
+                errors.Add(ServerText.Get(TranslationKeys.ErrorChoosePkcs12));
                 break;
             case CertificateMode.PemFiles when certificate.Path.Length == 0 || certificate.KeyPath.Length == 0:
-                errors.Add("Choose both the certificate and the private key file.");
+                errors.Add(ServerText.Get(TranslationKeys.ErrorChoosePemFiles));
                 break;
         }
     }

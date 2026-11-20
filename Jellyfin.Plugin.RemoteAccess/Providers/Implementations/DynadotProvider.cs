@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -30,14 +31,14 @@ public sealed class DynadotProvider : DNSProviderBase
     public override string Label => "Dynadot";
 
     /// <inheritdoc />
-    public override string Hint => "DDNS password is from the domain's Dynamic DNS settings at Dynadot. Domain is optional and splits the hostname into domain and subdomain.";
+    public override string Hint => TranslationKeys.ProviderHintDynadot;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Password = "DDNS Password",
-        Zone = "Domain",
+        Hostname = TranslationKeys.LabelHostname,
+        Password = TranslationKeys.LabelDdnsPassword,
+        Zone = TranslationKeys.LabelDomain,
         Server = true,
         Ttl = true,
     };

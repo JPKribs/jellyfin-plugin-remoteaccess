@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -48,13 +49,13 @@ public sealed class InwxProvider : DNSProviderBase
     public override string Label => "INWX";
 
     /// <inheritdoc />
-    public override string Hint => "Username and Password are your INWX DynDNS account. INWX works out the host from the account.";
+    public override string Hint => TranslationKeys.ProviderHintInwx;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Login = "Username",
-        Password = "Password",
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPassword,
         Server = true,
     };
 

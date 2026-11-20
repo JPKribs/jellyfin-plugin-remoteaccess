@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -40,15 +41,15 @@ public sealed class SpaceshipProvider : DNSProviderBase
     public override string Label => "Spaceship";
 
     /// <inheritdoc />
-    public override string Hint => "API key and API secret come from the Spaceship API Manager. Domain is the domain, such as example.com.";
+    public override string Hint => TranslationKeys.ProviderHintSpaceship;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "API Key",
-        Password = "API Secret",
-        Zone = "Domain",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.HeaderApiKey,
+        Password = TranslationKeys.LabelApiSecret,
+        Zone = TranslationKeys.LabelDomain,
         Server = true,
         Ttl = true,
     };

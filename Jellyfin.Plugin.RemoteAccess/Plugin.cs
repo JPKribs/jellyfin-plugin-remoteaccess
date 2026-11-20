@@ -7,9 +7,9 @@ using Jellyfin.Plugin.RemoteAccess.Api;
 using Jellyfin.Plugin.RemoteAccess.Configuration;
 using Jellyfin.Plugin.RemoteAccess.Models;
 using Jellyfin.Plugin.RemoteAccess.Providers;
+using Jellyfin.Plugin.RemoteAccess.Services;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Network;
-using Jellyfin.Plugin.RemoteAccess.Services;
 using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
@@ -62,6 +62,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
         LegacyDataMigration.Run(applicationPaths.PluginConfigurationsPath, logger);
         _configurationManager = configurationManager;
         _logger = logger;
+        ServerText.Use(configurationManager as MediaBrowser.Controller.Configuration.IServerConfigurationManager);
         _secrets = new Lazy<SecretProtector>(() => StableSecretProtection.CreateProtector(applicationPaths, SecretsName, logger));
 
         // Jellyfin builds the plugin from the same container the plugin's services are registered in, so the
@@ -125,7 +126,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
     public override Guid Id => Guid.Parse("8150dce5-6153-4924-a985-a6927be95baa");
 
     /// <inheritdoc />
-    public override string Description => "Keep your DNS records pointed at your server's current public IP.";
+    public override string Description => ServerText.Get(TranslationKeys.PluginDescription);
 
     /// <summary>
     /// Encrypts incoming credentials before the configuration is persisted. The dashboard's own save
@@ -231,7 +232,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
         var errors = ProxySettingsValidator.Validate(incoming.Proxy, rawHostnames);
         if (!incoming.Proxy.Enabled && IsTakeoverActive())
         {
-            errors.Add("Undo Trust the Proxy before turning the proxy off, so Jellyfin's remote access goes back to how it was.");
+            errors.Add(ServerText.Get(TranslationKeys.ErrorUndoBeforeOff));
         }
 
         if (errors.Count > 0)

@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -34,15 +35,15 @@ public sealed class CloudflareProvider : DNSProviderBase, IAcmeDnsProvider
     public override string Label => "Cloudflare";
 
     /// <inheritdoc />
-    public override string Hint => "Set Auth email or token to the word token for a scoped API token, or to your account email for the Global API Key. Zone name is the zone, such as example.com.";
+    public override string Hint => TranslationKeys.ProviderHintCloudflare;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record Name",
-        Login = "Auth Email or Token",
-        Password = "API Token or Key",
-        Zone = "Zone Name",
+        Hostname = TranslationKeys.LabelRecordName,
+        Login = TranslationKeys.LabelAuthEmailOrToken,
+        Password = TranslationKeys.LabelApiTokenOrKey,
+        Zone = TranslationKeys.LabelZoneName,
         Server = true,
     };
 

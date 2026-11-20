@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -40,14 +41,14 @@ public sealed class HetznerProvider : DNSProviderBase
     public override string Label => "Hetzner DNS";
 
     /// <inheritdoc />
-    public override string Hint => "API token is a Hetzner DNS API token. DNS zone is the domain, such as example.com.";
+    public override string Hint => TranslationKeys.ProviderHintHetzner;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record Name",
-        Password = "API Token",
-        Zone = "DNS Zone",
+        Hostname = TranslationKeys.LabelRecordName,
+        Password = TranslationKeys.LabelApiToken,
+        Zone = TranslationKeys.LabelDnsZone,
         Server = true,
         Ttl = true,
     };

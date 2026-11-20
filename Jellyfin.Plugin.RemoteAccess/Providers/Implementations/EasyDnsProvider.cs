@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -48,14 +49,14 @@ public sealed partial class EasyDnsProvider : DNSProviderBase
     public override string Label => "easyDNS";
 
     /// <inheritdoc />
-    public override string Hint => "Username and API token are your easyDNS API credentials.";
+    public override string Hint => TranslationKeys.ProviderHintEasyDns;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Username",
-        Password = "API Token",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelApiToken,
         Server = true,
         Advanced = new[] { "wildcard", "mx", "backupmx" },
     };

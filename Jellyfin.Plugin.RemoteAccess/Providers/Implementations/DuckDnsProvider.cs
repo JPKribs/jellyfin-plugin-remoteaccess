@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -31,13 +32,13 @@ public sealed class DuckDnsProvider : DNSProviderBase, IAcmeDnsProvider
     public override string Label => "Duck DNS";
 
     /// <inheritdoc />
-    public override string Hint => "Labels are your Duck DNS subdomains, such as myhost. Token is shown at the top of duckdns.org after you sign in.";
+    public override string Hint => TranslationKeys.ProviderHintDuckDns;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Labels",
-        Password = "Token",
+        Hostname = TranslationKeys.LabelLabels,
+        Password = TranslationKeys.LabelToken,
         Server = true,
     };
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Services.People;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Net;
 using Microsoft.AspNetCore.Authorization;
@@ -138,20 +139,20 @@ public class PeopleController : ControllerBase
         var plugin = Plugin.Instance;
         if (plugin is null || !BlockGuard.TryParseTarget(ip, out var target))
         {
-            return Refuse("That is not an IP address.");
+            return Refuse(ServerText.Get(TranslationKeys.ErrorNotAnAddress));
         }
 
         var address = target.BaseAddress;
         var trusted = plugin.ReadConfiguration(c => NetworkClassifier.ParseNetworks(c.Proxy.Advanced.TrustedNetworks));
         if (BlockGuard.IsExempt(address, _network, trusted))
         {
-            return Refuse("Your network and trusted networks are never blocked.");
+            return Refuse(ServerText.Get(TranslationKeys.TextNeverBlocked));
         }
 
         var client = HttpContext?.Connection.RemoteIpAddress;
         if (client is not null && target.Contains(NetworkClassifier.Normalize(client)))
         {
-            return Refuse("That is your own address. Blocking it would cut you off.");
+            return Refuse(ServerText.Get(TranslationKeys.ErrorOwnAddress));
         }
 
         var text = BlockGuard.Text(target);
@@ -174,7 +175,7 @@ public class PeopleController : ControllerBase
             return Done();
         }
 
-        _activity.Log(text + " Blocked", "RemoteAccess.AddressBlocked", "Added to the block list from the Remote Access page", userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Format(TranslationKeys.ActivityAddressBlocked, text), "RemoteAccess.AddressBlocked", ServerText.Get(TranslationKeys.ActivityAddedToBlockList), userId: ActivityUser.Of(User));
         await _proxy.ApplyAsync(CancellationToken.None).ConfigureAwait(false);
         return Done();
     }
@@ -192,7 +193,7 @@ public class PeopleController : ControllerBase
         var plugin = Plugin.Instance;
         if (plugin is null || !BlockGuard.TryParseTarget(ip, out var target))
         {
-            return Refuse("That is not an IP address.");
+            return Refuse(ServerText.Get(TranslationKeys.ErrorNotAnAddress));
         }
 
         var address = BlockGuard.Text(target);
@@ -204,10 +205,10 @@ public class PeopleController : ControllerBase
         });
         if (removed == 0)
         {
-            return Refuse("This address is not on the block list by itself. A range that covers it can be changed under Advanced.");
+            return Refuse(ServerText.Get(TranslationKeys.ErrorNotListed));
         }
 
-        _activity.Log(address + " Unblocked", "RemoteAccess.AddressUnblocked", "Removed from the block list from the Remote Access page", userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Format(TranslationKeys.ActivityUnblocked, address), "RemoteAccess.AddressUnblocked", ServerText.Get(TranslationKeys.ActivityRemovedFromBlockList), userId: ActivityUser.Of(User));
         await _proxy.ApplyAsync(CancellationToken.None).ConfigureAwait(false);
         return Done();
     }
@@ -229,7 +230,7 @@ public class PeopleController : ControllerBase
 
         if (!Enum.IsDefined(incoming.Location))
         {
-            return Refuse("Location has an unknown value.");
+            return Refuse(ServerText.Get(TranslationKeys.ErrorUnknownLocation));
         }
 
         incoming.HistoryDays = Math.Clamp(incoming.HistoryDays, 1, 3650);
@@ -245,9 +246,9 @@ public class PeopleController : ControllerBase
         if (before is null || before.Enabled != incoming.Enabled || before.HistoryDays != incoming.HistoryDays || before.Location != incoming.Location)
         {
             var overview = incoming.Enabled
-                ? $"History is on, kept for {incoming.HistoryDays} days, locations: {incoming.Location}"
-                : "History is off";
-            _activity.Log("History Settings Changed", "RemoteAccess.HistorySettingsChanged", overview, userId: ActivityUser.Of(User));
+                ? ServerText.Format(TranslationKeys.ActivityHistoryOn, incoming.HistoryDays, incoming.Location)
+                : ServerText.Get(TranslationKeys.ActivityHistoryOff);
+            _activity.Log(ServerText.Get(TranslationKeys.ActivityHistorySettingsChanged), "RemoteAccess.HistorySettingsChanged", overview, userId: ActivityUser.Of(User));
         }
 
         // Loading or downloading the database can take a while; the status shows progress.
@@ -299,15 +300,15 @@ public class PeopleController : ControllerBase
         }
         else
         {
-            return Refuse("That is not an IP address.");
+            return Refuse(ServerText.Get(TranslationKeys.ErrorNotAnAddress));
         }
 
         if (lifted.Count == 0)
         {
-            return Refuse("This address is not banned.");
+            return Refuse(ServerText.Get(TranslationKeys.ErrorNotBanned));
         }
 
-        _activity.Log("Ban Lifted for " + string.Join(", ", lifted), "RemoteAccess.BanLifted", "Lifted from the Remote Access page", userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Format(TranslationKeys.ActivityBanLifted, string.Join(", ", lifted)), "RemoteAccess.BanLifted", ServerText.Get(TranslationKeys.ActivityLiftedFromPage), userId: ActivityUser.Of(User));
         return Done();
     }
 
@@ -326,7 +327,7 @@ public class PeopleController : ControllerBase
         var country = (code ?? string.Empty).Trim().ToUpperInvariant();
         if (plugin is null || country.Length != 2 || !country.All(char.IsAsciiLetterUpper))
         {
-            return Refuse("That is not a country code.");
+            return Refuse(ServerText.Get(TranslationKeys.ErrorNotCountryCode));
         }
 
         var changed = false;
@@ -353,10 +354,10 @@ public class PeopleController : ControllerBase
         });
         if (!changed)
         {
-            return Refuse("The country rules do not block this country.");
+            return Refuse(ServerText.Get(TranslationKeys.ErrorCountryNotBlocked));
         }
 
-        _activity.Log(CountryName(country) + " Unblocked", "RemoteAccess.CountryUnblocked", "The country rules now let it connect", userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Format(TranslationKeys.ActivityUnblocked, CountryName(country)), "RemoteAccess.CountryUnblocked", ServerText.Get(TranslationKeys.ActivityCountryLetIn), userId: ActivityUser.Of(User));
         await _proxy.ApplyAsync(CancellationToken.None).ConfigureAwait(false);
         return Done();
     }
@@ -392,7 +393,7 @@ public class PeopleController : ControllerBase
         _access.ClearBuffered();
         _blocks.Drain();
         _store.DeleteAll();
-        _activity.Log("History Cleared", "RemoteAccess.HistoryCleared", "Every recorded visit, sign-in and refusal was deleted, bans and the block list are unchanged", userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Get(TranslationKeys.ActivityHistoryCleared), "RemoteAccess.HistoryCleared", ServerText.Get(TranslationKeys.ActivityHistoryClearedOverview), userId: ActivityUser.Of(User));
         return Done();
     }
 }

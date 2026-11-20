@@ -8,6 +8,8 @@ using System.Security;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Services.Proxy.Router;
 
@@ -237,9 +239,9 @@ internal static class UpnpProtocol
     /// <returns>A plain sentence.</returns>
     public static string Describe(int code, int port) => code switch
     {
-        ActionNotAuthorized => "The router does not allow this server to open ports. Turn on UPnP for it in the router's settings.",
-        ConflictInMappingEntry => $"The router already forwards port {port} to another device.",
-        _ => $"The router could not open port {port}."
+        ActionNotAuthorized => ServerText.Get(TranslationKeys.ErrorRouterUpnpRefused),
+        ConflictInMappingEntry => ServerText.Format(TranslationKeys.ErrorRouterPortTaken, port),
+        _ => ServerText.Format(TranslationKeys.ErrorRouterCouldNotOpen, port)
     };
 
     private static string? Child(XElement element, string name)

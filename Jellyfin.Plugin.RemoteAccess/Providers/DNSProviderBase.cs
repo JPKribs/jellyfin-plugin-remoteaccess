@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
@@ -133,7 +134,7 @@ public abstract class DNSProviderBase : IDNSProvider
         }
 
         return parts.Count == 0
-            ? DNSUpdateResult.Fail("No record type enabled or no matching IP detected.")
+            ? DNSUpdateResult.Fail(ServerText.Get(TranslationKeys.ErrorNoRecordType))
             : new DNSUpdateResult(allOk, string.Join(" ", parts.ConvertAll(AsSentence))) { IPv4Applied = v4Ok, IPv6Applied = v6Ok };
     }
 

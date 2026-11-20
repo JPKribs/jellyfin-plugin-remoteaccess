@@ -1,8 +1,8 @@
 // remoteaccess_configuration.js
 // The Configuration tab, a Setup Checklist from turning the proxy on to a test from outside.
 
-import { createConfigPage, confirmDialog, createSetupChecklist, createSaveBar } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
-import { PLUGIN_ID, TABS, problemText, showText, trustTheProxy, routerInstructionHtml, routerStateText, loadProviders, primaryRecord, readDdnsSecret, recordNames, saveProxyHostnames, stepState } from './configurationpage?name=remoteaccess_tabs.js';
+import { confirmDialog, createSetupChecklist, createSaveBar } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { PLUGIN_ID, t, translatedPage, saveBarText, htmlFormat, linkHtml, listText, problemText, showText, trustTheProxy, routerInstructionHtml, routerStateText, loadProviders, primaryRecord, readDdnsSecret, recordNames, saveProxyHostnames, stepState } from './configurationpage?name=remoteaccess_tabs.js';
 
 // The Configuration tab: a checklist from turning the proxy on to a test from outside. Each step holds only what
 // most people need: the proxy switch, the one DDNS record whose name is the proxy's address, the certificate, the
@@ -96,11 +96,11 @@ export default function (view) {
     // Provider hint plus a link to that provider's setup doc on GitHub, named after the provider value.
     function applyHint() {
         var prov = Shared.getEl('recProvider').value;
-        var hint = providers.hints[prov] || 'Fill the fields required by this provider.';
+        var hint = providers.hints[prov] || t.tr('ProviderHintDefault');
         var html = Shared.escapeHtml(hint);
         if (prov) {
             var url = 'https://github.com/JPKribs/jellyfin-plugin-remoteaccess/blob/master/docs/providers/' + encodeURIComponent(prov) + '.md';
-            html += ' <a class="ra-link" href="' + url + '" target="_blank" rel="noopener">Setup Guide</a>';
+            html += ' ' + linkHtml(Shared, url, 'ButtonQuickStartGuide');
         }
         Shared.getEl('providerHint').innerHTML = html;
     }
@@ -132,8 +132,8 @@ export default function (view) {
         var provider = Shared.getEl('recProvider').value;
         var spec = specFor(provider);
         Shared.getEl('recHostnameDescription').textContent = namesTheProxy(provider)
-            ? 'The name people use to reach Jellyfin.'
-            : 'Not a name. Add your name under Advanced > Addresses.';
+            ? t.tr('DescriptionHostname')
+            : t.tr('DescriptionHostnameNotName');
         setField('recHostname', spec.h);
         setField('recLogin', spec.l);
         setField('recPassword', spec.p);
@@ -186,27 +186,27 @@ export default function (view) {
 
     function showExtras() {
         show('extraRecords', !extraCount ? ''
-            : extraCount === 1 ? 'This server has 1 more DDNS record saved. It is removed on the next save, and only the record below is kept.'
-                : 'This server has ' + extraCount + ' more DDNS records saved. They are removed on the next save, and only the record below is kept.');
+            : extraCount === 1 ? t.tr('ExtraRecordBelow')
+                : t.format('ExtraRecordsBelow', extraCount));
     }
 
     function renderRecordStatus() {
         var parts = [detected.LastDetectedIPv4, detected.LastDetectedIPv6].filter(function (x) { return x; });
-        Shared.getEl('stIp').textContent = parts.length ? parts.join(' / ') : 'Not detected yet';
+        Shared.getEl('stIp').textContent = parts.length ? parts.join(' / ') : t.tr('TextNotDetectedYet');
         show('detectionWarning', detected.LastDetectionMessage);
 
         var r = record;
         var checked = r && r.LastCheckedUtc ? new Date(r.LastCheckedUtc) : null;
-        Shared.getEl('stChecked').textContent = !checked ? 'Not yet' : isNaN(checked.getTime()) ? String(r.LastCheckedUtc) : checked.toLocaleString();
+        Shared.getEl('stChecked').textContent = !checked ? t.tr('TextNotYet') : isNaN(checked.getTime()) ? String(r.LastCheckedUtc) : checked.toLocaleString();
 
         var result = Shared.getEl('stResult');
         var text;
         var tone = '';
-        if (!r) text = 'No record yet';
-        else if (r.Enabled === false) text = 'Paused';
-        else if (!r.LastCheckedUtc) text = 'Not sent yet';
+        if (!r) text = t.tr('TextNoRecordYet');
+        else if (r.Enabled === false) text = t.tr('StepPaused');
+        else if (!r.LastCheckedUtc) text = t.tr('TextNotSentYet');
         else {
-            text = r.LastStatus || (r.LastSuccess ? 'OK' : 'Failed');
+            text = r.LastStatus || t.tr(r.LastSuccess ? 'ButtonOk' : 'LabelFailed');
             tone = r.LastSuccess ? ' base-ok' : ' base-bad';
         }
         result.textContent = text;
@@ -242,7 +242,7 @@ export default function (view) {
         var provider = Shared.getEl('recProvider').value;
         if (specFor(provider).h && !Shared.getEl('recHostname').value.trim() && (record || hasRecordInput())) {
             setStepOpen('Address');
-            return Promise.reject(pageError('Enter the hostname in step 2.'));
+            return Promise.reject(pageError(t.tr('ErrorEnterHostname')));
         }
 
         var id = record ? record.Id : null;
@@ -275,7 +275,7 @@ export default function (view) {
             recordsLoaded = true;
             show('loadError', '');
         }).catch(function () {
-            show('loadError', 'Could not load providers or settings.');
+            show('loadError', t.tr('ErrorLoadProviders'));
         });
     }
 
@@ -289,14 +289,14 @@ export default function (view) {
         var failed = list.some(function (x) { return !x.Success; });
         var text;
         if (list.length) {
-            text = failed ? 'Finished. The record did not update.' : 'Finished. The record is up to date.';
+            text = t.tr(failed ? 'RunRecordFailed' : 'RunRecordUpdated');
         } else if (warnings.length) {
             text = '';
         } else {
             var r = cfg ? primaryRecord(cfg.Records) : record;
-            text = !r ? 'IP detected. No record is set up yet.'
-                : r.Enabled === false ? 'IP detected. The record is paused under Advanced.'
-                    : 'Finished. The record needed no update.';
+            text = !r ? t.tr('RunNoRecord')
+                : r.Enabled === false ? t.tr('RunRecordPaused')
+                    : t.tr('RunRecordUnchanged');
         }
 
         return {
@@ -309,7 +309,7 @@ export default function (view) {
         var button = Shared.getEl('btnRunNow');
         if (button.disabled) return;
         button.disabled = true;
-        Shared.setStatus('runStatus', 'Updating…', false, { timeout: 0 });
+        Shared.setStatus('runStatus', t.tr('StatusUpdating'), false, { timeout: 0 });
         Shared.apiRequest('RunNow', 'POST').then(function (outcome) {
             return getConfig().catch(function () { return null; }).then(function (fresh) {
                 var result = runMessage(outcome, fresh);
@@ -330,7 +330,7 @@ export default function (view) {
                 }
             });
         }).catch(function (err) {
-            return problemText(err, 'Update failed.').then(function (text) {
+            return problemText(err, t.tr('ErrorUpdate')).then(function (text) {
                 Shared.setStatus('runStatus', text, true, { timeout: 0 });
             });
         }).then(function () {
@@ -349,13 +349,18 @@ export default function (view) {
     // The form as last loaded or saved, to tell whether leaving would lose changes. Null until loaded.
     var baseline = null;
 
-    var CERT_NOTES = {
-        Automatic: 'Issued and renewed for you.',
-        None: 'Browsers need a certificate before they connect.',
-        PemFiles: 'From certbot, acme.sh and similar tools. Renewals apply on their own.',
-        Pkcs12File: 'A .pfx or .p12 file. A renewed file applies on its own.',
-        SelfSigned: 'Trusted only by devices that install its root, which TVs cannot.'
-    };
+    // certNote
+    // The note under the certificate source for the picked source.
+    function certNote(mode) {
+        switch (mode) {
+            case 'Automatic': return t.tr('CertNoteAutomatic');
+            case 'None': return t.tr('CertNoteNone');
+            case 'PemFiles': return t.tr('CertNotePemFiles');
+            case 'Pkcs12File': return t.tr('CertNotePkcs12File');
+            case 'SelfSigned': return t.tr('CertNoteSelfSigned');
+            default: return '';
+        }
+    }
 
     function getSettings() { return Shared.apiRequest('Proxy/Settings', 'GET'); }
     function getStatus() { return Shared.apiRequest('Proxy/Status', 'GET'); }
@@ -366,8 +371,8 @@ export default function (view) {
         var automatic = (st.Certificate || {}).Mode === 'Automatic' && (acme.Names || []).length > 0;
         var text = !automatic ? ''
             : acme.Method === 'Dns'
-                ? 'Checked through ' + (acme.DnsProviders || []).join(' and ') + ' DNS, so port 80 is not needed and wildcards are covered.'
-                : 'Checked over port 80, which leaves wildcards off. A Cloudflare or Duck DNS record for the address avoids both.';
+                ? t.format('CertMethodDns', listText(acme.DnsProviders))
+                : t.tr('CertMethodHttp');
         show('certMethod', text);
     }
 
@@ -385,13 +390,11 @@ export default function (view) {
 
     function showCertFields() {
         var mode = Shared.getEl('certMode').value;
-        Shared.getEl('certModeDescription').textContent = CERT_NOTES[mode] || '';
+        Shared.getEl('certModeDescription').textContent = certNote(mode);
         Shared.setVisible('certTermsField', mode === 'Automatic');
         Shared.setVisible('certFileFields', mode === 'Pkcs12File' || mode === 'PemFiles');
         Shared.setVisible('certKeyField', mode === 'PemFiles');
-        Shared.getEl('certPathDescription').textContent = mode === 'PemFiles'
-            ? 'The full chain file on this server, for example fullchain.pem.'
-            : 'The .pfx or .p12 file on this server.';
+        Shared.getEl('certPathDescription').textContent = t.tr(mode === 'PemFiles' ? 'DescriptionPemFile' : 'DescriptionPkcs12File');
         showCertActions();
     }
 
@@ -457,7 +460,7 @@ export default function (view) {
         // choose it.
         if (Shared.getEl('enabled').checked && Shared.getEl('certMode').value === 'Automatic' && !Shared.getEl('certTerms').checked) {
             setStepOpen('Certificate');
-            return Promise.reject(new Error('Turn on Accept the Let\'s Encrypt Terms in step 3, or select another certificate source.'));
+            return Promise.reject(new Error(t.tr('ErrorAcceptTerms')));
         }
 
         setSaving(true);
@@ -475,10 +478,10 @@ export default function (view) {
             if (result && result.Status) render(result.Status);
             saveBar.setDirty(false);
         }).catch(function (err) {
-            var reply = err && err.pageText ? Promise.resolve(err.pageText) : problemText(err, 'Could not save.');
+            var reply = err && err.pageText ? Promise.resolve(err.pageText) : problemText(err, t.tr('ErrorSave'));
             return reply.then(function (text) {
-                var prefix = !recordSaved ? (changedRecord ? 'The record was not saved. ' : '')
-                    : changedRecord ? 'The record was saved, but the proxy settings were not. ' : '';
+                var prefix = !recordSaved ? (changedRecord ? t.tr('ErrorRecordNotSaved') + ' ' : '')
+                    : changedRecord ? t.tr('ErrorProxyNotSaved') + ' ' : '';
                 throw new Error(prefix + text);
             });
         }).finally(function () {
@@ -491,15 +494,15 @@ export default function (view) {
         var button = Shared.getEl('btnRouterRetry');
         if (button.disabled) return;
         button.disabled = true;
-        Shared.setStatus('routerStatus', 'Asking the router…', false, { timeout: 0 });
+        Shared.setStatus('routerStatus', t.tr('StatusAskingRouter'), false, { timeout: 0 });
         Shared.apiRequest('Proxy/Router/Refresh', 'POST').then(function (r) {
-            var text = !r ? 'Done.'
+            var text = !r ? t.tr('MessageDone')
                 : r.Mapped ? routerStateText(r)
-                    : r.BehindCgnat ? 'Your internet provider shares your public address, so the router cannot open the ports.'
-                        : r.Error || 'The router did not open the ports.';
+                    : r.BehindCgnat ? t.tr('RouterSharedAddress')
+                        : r.Error || t.tr('RouterNotOpened');
             Shared.setStatus('routerStatus', text, !(r && r.Mapped), { timeout: 0 });
         }).catch(function () {
-            Shared.setStatus('routerStatus', 'The router could not be asked.', true, { timeout: 0 });
+            Shared.setStatus('routerStatus', t.tr('ErrorAskRouter'), true, { timeout: 0 });
         }).then(function () {
             button.disabled = false;
             refresh();
@@ -520,13 +523,14 @@ export default function (view) {
     function restore() {
         var button = Shared.getEl('btnRestore');
         if (button.disabled) return;
-        confirmDialog('Undo Trust the Proxy? Jellyfin\'s network settings go back to how they were, internet visitors through the proxy are turned away, and Jellyfin restarts once.', { title: 'Undo Trust the Proxy', confirmText: 'Undo', destructive: true }).then(function (ok) {
+        var options = { title: t.tr('HeaderUndoTrust'), confirmText: t.tr('ButtonUndo'), cancelText: t.tr('ButtonCancel'), destructive: true };
+        confirmDialog(t.tr('ConfirmUndoTrust'), options).then(function (ok) {
             if (!ok) return;
             button.disabled = true;
             Shared.apiRequest('Proxy/Restore', 'POST').then(function (result) {
-                Shared.setStatus('trustStatus', (result && result.Message) || 'Restored.', !(result && result.Success), { timeout: 0 });
+                Shared.setStatus('trustStatus', (result && result.Message) || t.tr('MessageRestored'), !(result && result.Success), { timeout: 0 });
             }).catch(function () {
-                Shared.setStatus('trustStatus', 'Restore failed.', true, { timeout: 0 });
+                Shared.setStatus('trustStatus', t.tr('ErrorRestore'), true, { timeout: 0 });
             }).then(function () {
                 button.disabled = false;
                 refresh();
@@ -569,12 +573,12 @@ export default function (view) {
 
     // The steps in order. The key names the step's elements: step, body, icon, state and text followed by the key.
     var STEPS = [
-        { key: 'Power', title: 'Proxy On' },
-        { key: 'Address', title: 'Address' },
-        { key: 'Certificate', title: 'Certificate' },
-        { key: 'Router', title: 'Router' },
-        { key: 'Trust', title: 'Trust the Proxy' },
-        { key: 'Reach', title: 'Reachable From Outside' }
+        { key: 'Power', titleKey: 'HeaderProxyOn' },
+        { key: 'Address', titleKey: 'HeaderAddress' },
+        { key: 'Certificate', titleKey: 'HeaderCertificate' },
+        { key: 'Router', titleKey: 'HeaderRouter' },
+        { key: 'Trust', titleKey: 'HeaderTrustProxy' },
+        { key: 'Reach', titleKey: 'HeaderReachable' }
     ];
 
     // The last test from outside run from this page, kept until the status carries a newer one.
@@ -588,7 +592,7 @@ export default function (view) {
 
     // A step that only matters once the proxy is on, while it is off. It waits quietly and starts folded.
     function idleStep() {
-        return step('gray', 'Proxy off', 'Used once the proxy is on.', true);
+        return step('gray', t.tr('StepProxyOff'), t.tr('StepUsedOnceOn'), true);
     }
 
     // The names chosen for the proxy, or the one in its public address when the settings list none.
@@ -608,9 +612,9 @@ export default function (view) {
     }
 
     function assessPower(st) {
-        if (st.Running) return step('green', 'Running', 'On ports ' + st.HttpPort + ' and ' + st.HttpsPort + '.');
-        if (st.Enabled) return step('red', 'Not running', st.Error || 'The proxy is turned on but is not running.');
-        return step('gray', 'Off', 'Turn it on to reach Jellyfin securely from the internet. Step 2 works without it.');
+        if (st.Running) return step('green', t.tr('StepRunning'), t.format('StepOnPorts', st.HttpPort, st.HttpsPort));
+        if (st.Enabled) return step('red', t.tr('StepNotRunning'), st.Error || t.tr('StepOnNotRunning'));
+        return step('gray', t.tr('Off'), t.tr('StepTurnOn'));
     }
 
     // The name endings only a home network knows, the same list the server uses. Phones outside cannot open them.
@@ -624,15 +628,15 @@ export default function (view) {
 
     // With the proxy off, the address step is only about the DDNS record.
     function assessRecord() {
-        if (!recordsLoaded) return step('gray', 'Checking', 'Loading the DDNS record.');
+        if (!recordsLoaded) return step('gray', t.tr('StepChecking'), t.tr('StepLoadingRecord'));
         var r = record;
-        if (!r) return step('gray', 'No record', 'Fill in the record below.');
-        if (r.Enabled === false) return step('gray', 'Paused', 'Updates are paused under Advanced > Dynamic DNS.');
-        if (!r.LastCheckedUtc) return step('gray', 'Not updated yet', 'Select Update Now to send it.');
+        if (!r) return step('gray', t.tr('StepNoRecord'), t.tr('StepFillRecord'));
+        if (r.Enabled === false) return step('gray', t.tr('StepPaused'), t.tr('StepUpdatesPaused'));
+        if (!r.LastCheckedUtc) return step('gray', t.tr('StepNotUpdatedYet'), t.tr('StepSelectUpdateNow'));
         var checked = new Date(r.LastCheckedUtc).getTime();
         var recent = !isNaN(checked) && (Date.now() - checked) < 86400000;
-        if (!r.LastSuccess || !recent) return step('red', 'Failing', 'Not updated in the last day. See the result below.');
-        return step('green', 'Up to date', 'The record points at this server.');
+        if (!r.LastSuccess || !recent) return step('red', t.tr('StepFailing'), t.tr('StepNotUpdatedInDay'));
+        return step('green', t.tr('StepUpToDate'), t.tr('StepRecordPointsHere'));
     }
 
     function assessAddress(st) {
@@ -640,19 +644,19 @@ export default function (view) {
         var names = chosenNames(st);
         if (!names.length) {
             var where = record && providers && !namesTheProxy(providers.normalize(record.Provider))
-                ? 'Add your name under Advanced > Addresses.'
-                : 'Enter your hostname below and save.';
-            return step('amber', 'Not set', where);
+                ? t.tr('StepAddNameAdvanced')
+                : t.tr('StepEnterHostname');
+            return step('amber', t.tr('StepNotSet'), where);
         }
-        if (!names.some(isPublicName)) return step('amber', 'Home only', names.join(', ') + ' only works at home. Use a public name.');
+        if (!names.some(isPublicName)) return step('amber', t.tr('StepHomeOnly'), t.format('StepOnlyAtHome', listText(names)));
         var n = st.Name;
         // An older server does not look the name up, so a chosen name is as far as this can check.
-        if (!n) return step('green', 'Chosen', 'People reach Jellyfin at ' + names.join(', ') + '.');
+        if (!n) return step('green', t.tr('StepChosen'), t.format('StepPeopleReach', listText(names)));
         var host = n.Hostname || names[0];
-        if (n.Error) return step('red', 'Not found', host + ' could not be looked up. ' + n.Error);
-        if (n.Resolves) return step('green', 'Ready', host + ' points to this server.');
-        if (!(n.Addresses || []).length) return step('amber', 'Not pointed here', host + ' does not point anywhere yet. New records can take a few minutes.');
-        return step('amber', 'Not pointed here', host + ' points somewhere else. Check the record below.');
+        if (n.Error) return step('red', t.tr('StepNotFound'), t.format('StepLookupFailed', host) + ' ' + n.Error);
+        if (n.Resolves) return step('green', t.tr('StepReady'), t.format('StepPointsHere', host));
+        if (!(n.Addresses || []).length) return step('amber', t.tr('StepNotPointedHere'), t.format('StepPointsNowhere', host));
+        return step('amber', t.tr('StepNotPointedHere'), t.format('StepPointsElsewhere', host));
     }
 
     function assessCertificate(st) {
@@ -662,26 +666,34 @@ export default function (view) {
         var chosen = (settings && settings.Certificate) || {};
         var mode = cert.Mode || chosen.Mode || 'Automatic';
         if (mode === 'Automatic' && !chosen.AcceptTerms) {
-            return step('amber', 'Terms', 'Accept the terms below and save to get a free certificate.');
+            return step('amber', t.tr('StepTerms'), t.tr('StepAcceptTerms'));
         }
         if (cert.Loaded) {
-            if ((cert.UncoveredHostnames || []).length) return step('red', 'Wrong names', 'The certificate does not cover ' + cert.UncoveredHostnames.join(', ') + '.');
-            if (expired(cert.NotAfterUtc)) return step('red', 'Expired', 'The certificate expired on ' + formatDate(cert.NotAfterUtc) + '. Browsers refuse it until it renews.');
-            if (cert.Mode === 'SelfSigned') return step('amber', 'Self-signed', 'Only devices that install its root trust it. Let\'s Encrypt works everywhere.');
-            if (cert.Error) return step('amber', 'Check file', 'The new file could not be loaded, so the old one is still used.');
-            if (soon(cert.NotAfterUtc)) return step('amber', 'Expires soon', 'The certificate expires on ' + formatDate(cert.NotAfterUtc) + '.');
-            var covers = (cert.Names || []).join(', ');
-            return step('green', 'Ready', (covers ? 'Covers ' + covers : 'A certificate is in use') + (cert.NotAfterUtc ? ' until ' + formatDate(cert.NotAfterUtc) : '') + '.');
+            if ((cert.UncoveredHostnames || []).length) return step('red', t.tr('StepWrongNames'), t.format('StepCertificateMissesNames', listText(cert.UncoveredHostnames)));
+            if (expired(cert.NotAfterUtc)) return step('red', t.tr('StepExpired'), t.format('StepCertificateExpired', formatDate(cert.NotAfterUtc)));
+            if (cert.Mode === 'SelfSigned') return step('amber', t.tr('OptionSelfSigned'), t.tr('StepSelfSigned'));
+            if (cert.Error) return step('amber', t.tr('StepCheckFile'), t.tr('StepOldFileUsed'));
+            if (soon(cert.NotAfterUtc)) return step('amber', t.tr('StepExpiresSoon'), t.format('StepCertificateExpires', formatDate(cert.NotAfterUtc)));
+            return step('green', t.tr('StepReady'), certificateInUse(cert));
         }
-        if (!st.Running) return step('gray', 'Not checked', 'Checked once the proxy runs.');
-        if (mode === 'None') return step('amber', 'Not set', 'Browsers cannot connect securely without one.');
-        if (mode !== 'Automatic') return step('red', 'Cannot load', 'The certificate could not be loaded. ' + (cert.Error || ''));
-        if (acme.Issuing) return step('amber', 'Issuing', 'Let\'s Encrypt is checking your address.');
-        if (acme.LastError) return step('red', 'Failed', 'Let\'s Encrypt did not issue a certificate. ' + acme.LastError);
-        if (!(acme.Names || []).length) return step('amber', 'Waiting', 'Let\'s Encrypt needs an address that is not a wildcard.');
-        return step('amber', 'Requested', acme.Method === 'Dns'
-            ? 'Let\'s Encrypt checks your address through ' + (acme.DnsProviders || []).join(' and ') + '.'
-            : 'Let\'s Encrypt checks your address over port 80, so forward it on the router.');
+        if (!st.Running) return step('gray', t.tr('StepNotChecked'), t.tr('StepCheckedOnceRunning'));
+        if (mode === 'None') return step('amber', t.tr('StepNotSet'), t.tr('StepNoCertificate'));
+        if (mode !== 'Automatic') return step('red', t.tr('StepCannotLoad'), t.tr('ErrorCertificateLoad') + (cert.Error ? ' ' + cert.Error : ''));
+        if (acme.Issuing) return step('amber', t.tr('StepIssuing'), t.tr('StepLetsEncryptChecking'));
+        if (acme.LastError) return step('red', t.tr('LabelFailed'), t.tr('StepLetsEncryptFailed') + ' ' + acme.LastError);
+        if (!(acme.Names || []).length) return step('amber', t.tr('StepWaiting'), t.tr('StepNeedsAddress'));
+        return step('amber', t.tr('StepRequested'), acme.Method === 'Dns'
+            ? t.format('StepChecksThroughDns', listText(acme.DnsProviders))
+            : t.tr('StepChecksOverPort80'));
+    }
+
+    // certificateInUse
+    // Says which names the certificate in use covers and until when.
+    function certificateInUse(cert) {
+        var covers = listText(cert.Names);
+        var until = formatDate(cert.NotAfterUtc);
+        if (covers) return until ? t.format('StepCoversUntil', covers, until) : t.format('StepCovers', covers);
+        return until ? t.format('StepInUseUntil', until) : t.tr('StepInUse');
     }
 
     function assessRouter(st) {
@@ -689,38 +701,37 @@ export default function (view) {
         var r = st.Router;
         var reach = currentReach(st);
         var reached = !!(reach && reach.Reachable === true);
-        if (r && r.BehindCgnat) return step('red', 'Shared address', routerStateText(r));
-        if (r && r.Mapped) return step('green', 'Forwarded', routerStateText(r));
+        if (r && r.BehindCgnat) return step('red', t.tr('StepSharedAddress'), routerStateText(r));
+        if (r && r.Mapped) return step('green', t.tr('StepForwarded'), routerStateText(r));
         // Ports forwarded by hand cannot be seen from here, but a test from outside that got through proves them.
-        if (reached) return step('green', 'Forwarded', 'The outside test reached this server.');
-        if (!r) return step('gray', 'Not checked', 'Forward the ports by hand as below.');
-        return step('amber', 'Forward by hand', r.Enabled
-            ? 'The router did not open the ports. Forward them by hand as below.'
-            : 'Automatic port forwarding is off. Forward the ports by hand as below.');
+        if (reached) return step('green', t.tr('StepForwarded'), t.tr('StepOutsideReached'));
+        if (!r) return step('gray', t.tr('StepNotChecked'), t.tr('StepForwardByHandBelow'));
+        return step('amber', t.tr('StepForwardByHand'), r.Enabled
+            ? t.tr('RouterNotOpened') + ' ' + t.tr('StepForwardThemByHand')
+            : t.tr('RouterAutomaticOff') + ' ' + t.tr('StepForwardByHandBelow'));
     }
 
     function assessTrust(st) {
         // Undo stays at hand while Jellyfin is still set up for the proxy, even with the proxy off.
         if (!st.Enabled && (!st.TakeoverPhase || st.TakeoverPhase === 'Unmanaged')) return idleStep();
-        if (st.TakeoverPhase === 'Managed' && st.JellyfinTrustsProxy === false) return step('red', 'Not trusted', 'Jellyfin\'s network settings changed. Trust the proxy again.');
-        if (st.TakeoverPhase === 'Managed') return step('green', 'Trusted', 'Jellyfin sees each visitor\'s real address.');
-        if (st.TakeoverPhase === 'PendingRestart') return step('amber', 'Restarting', 'Jellyfin is restarting to trust the proxy.');
-        if (st.JellyfinTrustsProxy) return step('green', 'Trusted', 'Jellyfin trusts the proxy through its own settings.');
-        if (st.TakeoverError) return step('red', 'Failed', 'Trusting failed, so internet visitors are turned away.');
-        return step('amber', 'Not yet', 'Internet visitors are turned away until then.');
+        if (st.TakeoverPhase === 'Managed' && st.JellyfinTrustsProxy === false) return step('red', t.tr('StepNotTrusted'), t.tr('StepTrustAgain'));
+        if (st.TakeoverPhase === 'Managed') return step('green', t.tr('StepTrusted'), t.tr('StepSeesRealAddress'));
+        if (st.TakeoverPhase === 'PendingRestart') return step('amber', t.tr('StepRestarting'), t.tr('StepRestartingToTrust'));
+        if (st.JellyfinTrustsProxy) return step('green', t.tr('StepTrusted'), t.tr('StepTrustsThroughSettings'));
+        if (st.TakeoverError) return step('red', t.tr('LabelFailed'), t.tr('StepTrustFailed'));
+        return step('amber', t.tr('TextNotYet'), t.tr('StepTurnedAwayUntil'));
     }
 
     function assessReach(st) {
         if (!st.Enabled) return idleStep();
         var reach = currentReach(st);
-        if (!reach || (reach.Reachable == null && !reach.Error)) return step('gray', 'Not tested', 'Select Test from Outside below.');
+        if (!reach || (reach.Reachable == null && !reach.Error)) return step('gray', t.tr('StepNotTested'), t.tr('StepSelectTest'));
         var when = formatTime(reach.CheckedUtc);
         var nodes = reach.Nodes || [];
         var ok = nodes.filter(function (x) { return x.Ok; }).length;
-        var tally = nodes.length ? ok + ' of ' + nodes.length + ' places' : '';
-        if (reach.Reachable === true) return step('green', 'Reachable', 'Reached from ' + (tally || 'outside your network') + '.');
-        if (reach.Reachable === false) return step('red', 'Not reachable', reach.Error || 'Nothing outside your network could reach your address' + (when ? ' on ' + when : '') + '.');
-        return step('amber', 'Test failed', 'The test could not run. ' + reach.Error);
+        if (reach.Reachable === true) return step('green', t.tr('StepReachable'), nodes.length ? t.format('StepReachedFromPlaces', ok, nodes.length) : t.tr('StepReachedFromOutside'));
+        if (reach.Reachable === false) return step('red', t.tr('StepNotReachable'), reach.Error || (when ? t.format('StepNothingReachedOn', when) : t.tr('StepNothingReached')));
+        return step('amber', t.tr('StepTestFailed'), t.tr('ErrorTestRun') + ' ' + reach.Error);
     }
 
     // Opens a step, such as the one a save problem points to.
@@ -753,10 +764,10 @@ export default function (view) {
         var text = '';
         box.className = 'base-info';
         if (!st.Enabled) {
-            text = 'The proxy is off. The DDNS record in step 2 still keeps your address pointed at this server.';
+            text = t.tr('SummaryProxyOff');
             box.className = 'base-neutral';
         } else if (done) {
-            text = st.PublicUrl ? 'Jellyfin can be reached from outside your network at ' + st.PublicUrl + '.' : 'Jellyfin can be reached from outside your network.';
+            text = st.PublicUrl ? t.format('SummaryReachableAt', st.PublicUrl) : t.tr('SummaryReachable');
             box.className = 'base-success';
         }
         show('summaryNote', text);
@@ -768,7 +779,7 @@ export default function (view) {
         Shared.setVisible('nameDetails', mismatch);
         if (mismatch) {
             Shared.getEl('nameHostname').textContent = n.Hostname;
-            Shared.getEl('nameAddresses').textContent = (n.Addresses || []).length ? n.Addresses.join(', ') : 'Nothing yet';
+            Shared.getEl('nameAddresses').textContent = (n.Addresses || []).length ? listText(n.Addresses) : t.tr('TextNothingYet');
             Shared.getEl('namePublic').textContent = n.PublicAddress || '';
             Shared.setVisible('namePublicRow', !!n.PublicAddress);
         }
@@ -778,14 +789,14 @@ export default function (view) {
         describeMethod(st);
         var cert = st.Certificate || {};
         Shared.setVisible('certStatus', !!cert.Loaded);
-        Shared.getEl('certNames').textContent = (cert.Names || []).join(', ');
+        Shared.getEl('certNames').textContent = listText(cert.Names);
         Shared.getEl('certExpires').textContent = formatDate(cert.NotAfterUtc);
         // The issuer's common name alone. The rest of the distinguished name is noise here.
         var issuer = cert.Issuer || '';
         var cn = /(?:^|,\s*)CN=([^,]+)/.exec(issuer);
         Shared.getEl('certIssuer').textContent = cn ? cn[1].trim() : issuer;
         // The step's own text already names most problems. A file that failed to reload is the one it does not explain.
-        show('certProblem', cert.Loaded && cert.Error ? 'The certificate could not be loaded. ' + cert.Error : '');
+        show('certProblem', cert.Loaded && cert.Error ? t.tr('ErrorCertificateLoad') + ' ' + cert.Error : '');
         showCertActions();
     }
 
@@ -803,10 +814,7 @@ export default function (view) {
 
     function renderTrust(st, result) {
         show('trustError', result.state === 'green' ? '' : st.TakeoverError);
-        show('jellyfinExposed', st.JellyfinExposedAt
-            ? 'This server also has the public address ' + st.JellyfinExposedAt + ', where Jellyfin\'s own port ' + st.JellyfinHttpPort +
-              ' answers without the proxy\'s protection. Block Jellyfin\'s ports for the internet in this machine\'s firewall.'
-            : '');
+        show('jellyfinExposed', st.JellyfinExposedAt ? t.format('WarningJellyfinExposed', st.JellyfinExposedAt, st.JellyfinHttpPort) : '');
         var managed = st.TakeoverPhase === 'Managed' || st.TakeoverPhase === 'PendingRestart';
         Shared.setVisible('btnRestore', managed);
         // Trusting again keeps the original snapshot, so Undo still puts back what was there first.
@@ -821,12 +829,12 @@ export default function (view) {
         Shared.setVisible(box, nodes.length > 0);
         if (!nodes.length) { box.innerHTML = ''; return; }
         var when = formatTime(reach.CheckedUtc);
-        var title = '<div class="base-record-row"><strong>Outside check</strong>' +
+        var title = '<div class="base-record-row"><strong>' + Shared.escapeHtml(t.tr('HeaderOutsideCheck')) + '</strong>' +
             '<span class="base-record-label">' + Shared.escapeHtml(when) + '</span></div>';
         box.innerHTML = title + nodes.map(function (x) {
-            var badge = Shared.badge(x.Ok ? 'green' : 'red', x.Ok ? 'Reached' : 'Failed');
+            var badge = Shared.badge(x.Ok ? 'green' : 'red', x.Ok ? t.tr('BadgeReached') : t.tr('LabelFailed'));
             var error = !x.Ok && x.Error ? '<span class="base-record-label">' + Shared.escapeHtml(x.Error) + '</span> ' : '';
-            return '<div class="base-record-row"><span>' + Shared.escapeHtml(x.Location || 'Unknown') + '</span>' +
+            return '<div class="base-record-row"><span>' + Shared.escapeHtml(x.Location || t.tr('Unknown')) + '</span>' +
                 '<span>' + error + badge + '</span></div>';
         }).join('');
     }
@@ -840,7 +848,7 @@ export default function (view) {
 
         show('folderProblem', st.FolderProblem);
         show('everyoneLocal', st.Enabled && st.EveryoneLooksLocal
-            ? 'Most visitors in the last hour came from one local address, so something in front of the proxy, such as rootless Docker or a tunnel, may be hiding their real addresses. Bans, the block list and country rules cannot work until those addresses reach the proxy.'
+            ? t.tr('WarningEveryoneLocal')
             : '');
         renderCountryNote(st);
 
@@ -853,7 +861,7 @@ export default function (view) {
 
     function countryName(code) {
         try {
-            return new Intl.DisplayNames([navigator.language || 'en'], { type: 'region' }).of(code) || code;
+            return new Intl.DisplayNames([t.language || navigator.language || 'en'], { type: 'region' }).of(code) || code;
         } catch (e) {
             return code;
         }
@@ -861,8 +869,11 @@ export default function (view) {
 
     // Names countries in bold, green for the ones let in and red for the ones refused.
     function countryList(names, css) {
-        var bold = names.map(function (n) { return '<strong class="' + css + '">' + Shared.escapeHtml(n) + '</strong>'; });
-        return bold.length < 2 ? bold.join('') : bold.slice(0, -1).join(', ') + ' and ' + bold[bold.length - 1];
+        // The list is joined around markers, so the language's own words for "and" stay plain text.
+        var marked = names.map(function (n, i) { return '\u0001' + i + '\u0002'; });
+        return Shared.escapeHtml(listText(marked)).replace(/\u0001(\d+)\u0002/g, function (m, i) {
+            return '<strong class="' + css + '">' + Shared.escapeHtml(names[+i]) + '</strong>';
+        });
     }
 
     // Says which countries can connect, so it is clear access is limited, with the way to change it.
@@ -873,29 +884,33 @@ export default function (view) {
         var chosen = (adv.Countries || []).map(countryName);
         var html = '';
         if (st.Enabled && mode === 'ServerCountry') {
+            // {0} and {1} open and close the bold part of the sentence.
+            var bold = ['<strong class="ra-country-unknown">', '</strong>'];
             html = st.ServerCountry
-                ? 'Only visitors from ' + countryList([st.ServerCountry].concat(chosen), 'ra-country-known') + ' can connect from the internet.'
-                : '<strong class="ra-country-unknown">This server\'s country is not known yet</strong>, so everyone can connect until it is. Then only visitors from its country' + (chosen.length ? ' and ' + countryList(chosen, 'ra-country-known') : '') + ' can.';
+                ? htmlFormat(Shared, 'CountryOnlyFrom', [countryList([st.ServerCountry].concat(chosen), 'ra-country-known')])
+                : chosen.length
+                    ? htmlFormat(Shared, 'CountryUnknownPlus', bold.concat([countryList(chosen, 'ra-country-known')]))
+                    : htmlFormat(Shared, 'CountryUnknown', bold);
         } else if (st.Enabled && mode === 'AllowOnly' && chosen.length) {
-            html = 'Only visitors from ' + countryList(chosen, 'ra-country-known') + ' can connect from the internet.';
+            html = htmlFormat(Shared, 'CountryOnlyFrom', [countryList(chosen, 'ra-country-known')]);
         } else if (st.Enabled && mode === 'Block' && chosen.length) {
-            html = 'Visitors from ' + countryList(chosen, 'ra-country-blocked') + ' are refused.';
+            html = htmlFormat(Shared, 'CountryRefused', [countryList(chosen, 'ra-country-blocked')]);
         }
         Shared.setVisible('countryNote', !!html);
-        if (html) box.innerHTML = html + ' Change this in <a class="ra-link" href="#/configurationpage?name=remoteaccess_advanced">Advanced &gt; Blocking</a>.';
+        if (html) box.innerHTML = html + ' ' + htmlFormat(Shared, 'CountryChangeIn', [linkHtml(Shared, '#/configurationpage?name=remoteaccess_advanced', 'LinkAdvancedBlocking')]);
     }
 
     function testReach() {
         var button = Shared.getEl('btnReach');
         if (button.disabled) return;
         button.disabled = true;
-        Shared.setStatus('reachStatus', 'Testing from outside, which can take 20 seconds…', false, { timeout: 0 });
+        Shared.setStatus('reachStatus', t.tr('StatusTestingOutside'), false, { timeout: 0 });
         Shared.apiRequest('Proxy/Reachability', 'POST').then(function (result) {
             if (result) lastReach = result;
             Shared.setStatus('reachStatus', '', false);
             if (lastStatus) render(lastStatus);
         }).catch(function () {
-            Shared.setStatus('reachStatus', 'The test could not run.', true, { timeout: 0 });
+            Shared.setStatus('reachStatus', t.tr('ErrorTestRun'), true, { timeout: 0 });
         }).then(function () {
             button.disabled = false;
             refresh();
@@ -925,16 +940,19 @@ export default function (view) {
             return recordsDone.then(function () { render(results[1]); });
         }).catch(function () {
             Shared.getEl('summaryNote').className = 'base-error';
-            show('summaryNote', 'Could not load the proxy status.');
+            show('summaryNote', t.tr('ErrorLoadStatus'));
         });
     }
 
     function bind() {
         checklist = createSetupChecklist({
-            steps: STEPS.map(function (s) { return { key: s.key, title: s.title, state: 'todo', content: Shared.getEl('body' + s.key) }; }),
-            navLabel: 'Setup progress'
+            steps: STEPS.map(function (s) { return { key: s.key, title: t.tr(s.titleKey), state: 'todo', content: Shared.getEl('body' + s.key) }; }),
+            navLabel: t.tr('LabelSetupProgress'),
+            summaryText: t.tr('ChecklistSummary'),
+            stateLabels: { done: t.tr('StateDone'), attention: t.tr('StateAttention'), todo: t.tr('StateToDo'), optional: t.tr('StateOptional') }
         });
         Shared.getEl('checklist').appendChild(checklist.element);
+        Shared.getEl('certTermsDescription').innerHTML = htmlFormat(Shared, 'DescriptionAcceptTerms', [linkHtml(Shared, 'https://letsencrypt.org/repository/', 'LinkSubscriberAgreement')]);
 
         // Step 2: the record and Update Now.
         Shared.getEl('recProvider').addEventListener('change', onProviderChange);
@@ -948,19 +966,18 @@ export default function (view) {
         Shared.getEl('btnRestore').addEventListener('click', restore);
         Shared.getEl('btnReach').addEventListener('click', testReach);
 
-        saveBar = createSaveBar({ fill: true, form: Shared.getEl('RemoteAccessConfigurationForm'), onSave: save });
+        saveBar = createSaveBar(Object.assign(saveBarText(), { fill: true, form: Shared.getEl('RemoteAccessConfigurationForm'), onSave: save }));
         Shared.getEl('saveBar').replaceWith(saveBar.element);
         ['input', 'change'].forEach(function (type) {
             view.addEventListener(type, function () { saveBar.setDirty(isDirty()); });
         });
     }
 
-    Shared = createConfigPage(view, {
+    Shared = translatedPage(view, {
         pluginId: PLUGIN_ID,
         apiPrefix: 'RemoteAccess',
         tabsKey: 'remoteaccess',
         tabIndex: 1,
-        tabs: TABS,
         bind: bind,
         isDirty: isDirty,
         load: function (shared, page) {

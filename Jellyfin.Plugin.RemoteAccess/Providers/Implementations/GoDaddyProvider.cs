@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -38,15 +39,15 @@ public sealed class GoDaddyProvider : DNSProviderBase
     public override string Label => "GoDaddy";
 
     /// <inheritdoc />
-    public override string Hint => "API key and API secret come from developer.godaddy.com/keys. Domain is the domain, such as example.com.";
+    public override string Hint => TranslationKeys.ProviderHintGoDaddy;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record Name",
-        Login = "API Key",
-        Password = "API Secret",
-        Zone = "Domain",
+        Hostname = TranslationKeys.LabelRecordName,
+        Login = TranslationKeys.HeaderApiKey,
+        Password = TranslationKeys.LabelApiSecret,
+        Zone = TranslationKeys.LabelDomain,
         Server = true,
         Ttl = true,
     };

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 
@@ -50,7 +52,7 @@ internal static class FolderAccess
         }
         catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
         {
-            return $"Jellyfin's account, {Account()}, cannot use {folder}: {ex.Message} It was made private to the account that ran Jellyfin before. Fix it with: {FixCommand(folder)}";
+            return ServerText.Format(TranslationKeys.ErrorFolderAccess, Account(), folder, ex.Message, FixCommand(folder));
         }
     }
 

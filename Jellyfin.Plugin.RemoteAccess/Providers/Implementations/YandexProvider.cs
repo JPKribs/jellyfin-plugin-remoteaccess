@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -37,14 +38,14 @@ public sealed class YandexProvider : DNSProviderBase
     public override string Label => "Yandex PDD";
 
     /// <inheritdoc />
-    public override string Hint => "Yandex has retired the legacy PDD API, so updates are expected to fail. Move the domain to another provider.";
+    public override string Hint => TranslationKeys.ProviderHintYandex;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "FQDN",
-        Login = "Domain",
-        Password = "PDD Token",
+        Hostname = TranslationKeys.LabelFqdn,
+        Login = TranslationKeys.LabelDomain,
+        Password = TranslationKeys.LabelPddToken,
         Server = true,
     };
 

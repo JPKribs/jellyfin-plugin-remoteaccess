@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -32,13 +33,13 @@ public sealed class Hosting1984Provider : DNSProviderBase
     public override string Label => "1984 Hosting";
 
     /// <inheritdoc />
-    public override string Hint => "API key is the FreeDNS API key in your 1984 Hosting account.";
+    public override string Hint => TranslationKeys.ProviderHintHosting1984;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Domain",
-        Password = "API Key",
+        Hostname = TranslationKeys.LabelDomain,
+        Password = TranslationKeys.HeaderApiKey,
         Server = true,
     };
 

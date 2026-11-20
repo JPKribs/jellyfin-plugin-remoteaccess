@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Services.People;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Tasks;
 
@@ -25,13 +26,13 @@ public sealed class LocationDatabaseTask : PluginScheduledTask
     }
 
     /// <inheritdoc />
-    public override string Name => "Refresh Locations";
+    public override string Name => ServerText.Get(TranslationKeys.TaskRefreshLocations);
 
     /// <inheritdoc />
     public override string Key => "RemoteAccessLocationDatabase";
 
     /// <inheritdoc />
-    public override string Description => "Downloads the newest DB-IP location database, used for the Dashboard's map and the country rules.";
+    public override string Description => ServerText.Get(TranslationKeys.TaskRefreshLocationsDescription);
 
     /// <inheritdoc />
     public override async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)

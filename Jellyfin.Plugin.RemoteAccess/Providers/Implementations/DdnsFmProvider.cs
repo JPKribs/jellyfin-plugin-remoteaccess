@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -30,13 +31,13 @@ public sealed class DdnsFmProvider : DNSProviderBase
     public override string Label => "DDNS.fm";
 
     /// <inheritdoc />
-    public override string Hint => "Domain is your DDNS.fm domain. Key is the update key from your DDNS.fm dashboard.";
+    public override string Hint => TranslationKeys.ProviderHintDdnsFm;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Domain",
-        Password = "Key",
+        Hostname = TranslationKeys.LabelDomain,
+        Password = TranslationKeys.LabelKey,
         Server = true,
     };
 

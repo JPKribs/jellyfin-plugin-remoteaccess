@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Services.Proxy.Router;
 
@@ -27,17 +29,17 @@ public static class CgnatCheck
         // 100.64.0.0/10 is set aside for providers to share among customers (RFC 6598).
         if (b[0] == 100 && (b[1] & 0xC0) == 64)
         {
-            return (true, $"Your router's internet address is {router}, a shared address from your provider. Forwarded ports cannot be reached from the internet, so ask your provider for a public IP.");
+            return (true, ServerText.Format(TranslationKeys.ErrorRouterShared, router));
         }
 
         if (b[0] == 10 || (b[0] == 172 && b[1] >= 16 && b[1] <= 31) || (b[0] == 192 && b[1] == 168))
         {
-            return (true, $"Your router's internet address is {router}, a private address, so another router or your provider stands between it and the internet. Forwarded ports cannot be reached until that one forwards them too.");
+            return (true, ServerText.Format(TranslationKeys.ErrorRouterPrivate, router));
         }
 
         if (IPAddress.TryParse(publicIPv4, out var seen) && seen.AddressFamily == AddressFamily.InterNetwork && !seen.Equals(router))
         {
-            return (true, $"Your router's internet address is {router}, but the internet sees this server at {seen}. Your provider likely shares one address between customers, or this server reaches the internet through a VPN.");
+            return (true, ServerText.Format(TranslationKeys.ErrorRouterMismatch, router, seen));
         }
 
         return (false, string.Empty);

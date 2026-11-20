@@ -8,18 +8,18 @@
                 <div class="verticalSection verticalSection-extrabottompadding">
 
                     <div class="sectionTitleContainer flex align-items-center">
-                        <h1 class="sectionTitle">Dashboard</h1>
+                        <h1 class="sectionTitle" data-str="TabDashboard">Dashboard</h1>
                     </div>
 
                     <!-- Share Your Server -->
                     <!-- The public address as a QR code, shown once Remote Access has one. -->
                     <div id="shareHost" class="hidden"></div>
                     <div id="shareBody" class="hidden">
-                        <div id="shareNote" class="fieldDescription">Scan the code with a phone, or send the address to family for their Jellyfin app.</div>
+                        <div id="shareNote" class="fieldDescription" data-str="ShareNote">Scan the code with a phone, or send the address to family for their Jellyfin app.</div>
                         <div id="shareHomeOnly" class="base-warn hidden">This address only works on your home network. Pick a public one in step 2 of <a class="ra-link" href="#/configurationpage?name=remoteaccess_configuration">Configuration</a> to share it outside.</div>
                         <div id="shareQr"></div>
                         <div class="base-button-row">
-                            <button is="emby-button" type="button" id="btnShare" class="raised base-button secondary small hidden"><span class="material-icons" aria-hidden="true">share</span><span>Share</span></button>
+                            <button is="emby-button" type="button" id="btnShare" class="raised base-button secondary small hidden"><span class="material-icons" aria-hidden="true">share</span><span data-str="Share">Share</span></button>
                         </div>
                     </div>
 
@@ -28,7 +28,7 @@
                     <!-- Locations -->
                     <!-- Where visitors came from, as a world map and a table that share one selection. -->
                     <div class="sectionTitleContainer flex align-items-center">
-                        <h2 class="sectionTitle">Locations</h2>
+                        <h2 class="sectionTitle" data-str="HeaderLocations">Locations</h2>
                     </div>
                     <div id="worldMap"></div>
                     <div id="countryTable" class="ra-table"></div>
@@ -36,20 +36,20 @@
                     <!-- Banned -->
                     <!-- Addresses banned for failed sign-ins, each with a way to lift the ban. -->
                     <div class="sectionTitleContainer flex align-items-center">
-                        <h2 class="sectionTitle">Banned</h2>
+                        <h2 class="sectionTitle" data-str="HeaderBanned">Banned</h2>
                     </div>
                     <div id="banned" class="ra-table"></div>
 
                     <!-- Activity -->
                     <!-- What each address did, newest first, filtered on the server. -->
                     <div class="sectionTitleContainer flex align-items-center">
-                        <h2 class="sectionTitle">Activity</h2>
+                        <h2 class="sectionTitle" data-str="HeaderActivity">Activity</h2>
                     </div>
                     <span id="activityStatus" class="base-status-text" role="status"></span>
                     <div id="activity" class="ra-table"></div>
 
                     <div class="fieldDescription">
-                        <a href="https://db-ip.com" target="_blank" rel="noopener noreferrer" class="button-link">IP geolocation by DB-IP</a>
+                        <a href="https://db-ip.com" target="_blank" rel="noopener noreferrer" class="button-link" data-str="GeoIpAttribution">IP geolocation by DB-IP</a>
                     </div>
 
                 </div>

@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
@@ -362,9 +363,9 @@ public sealed class CertificateStore : IDisposable
             var limits = string.Join(", ", LocalAuthority.ConstraintNames(wanted));
             _logger.LogInformation("Created a root certificate for self-signed HTTPS that only vouches for {Names} and private addresses. Install it on each device from step 3, Certificate, on the Configuration tab", limits);
             _activity?.Log(
-                "Root Certificate Created",
+                ServerText.Get(TranslationKeys.ActivityRootCreated),
                 "RemoteAccess.RootCertificateCreated",
-                "It only vouches for " + limits + " and private addresses, so install it on every device that should trust the self-signed certificate, replacing any earlier one, from step 3, Certificate, on the Configuration tab");
+                ServerText.Format(TranslationKeys.ActivityRootCreatedOverview, limits));
         }
 
         using (root)

@@ -56,9 +56,9 @@ public static class ConfigurationAudit
                 || !string.Equals(record.Password, old.Password, StringComparison.Ordinal))
             {
                 activity.Log(
-                    "Credentials Changed for " + record.DisplayName(),
+                    ServerText.Format(TranslationKeys.ActivityCredentialsChanged, record.DisplayName()),
                     "RemoteAccess.RecordCredentialsChanged",
-                    "The login or password of the " + record.Provider + " DNS record for " + record.Hostname + " was changed",
+                    ServerText.Format(TranslationKeys.ActivityCredentialsChangedOverview, record.Provider, record.Hostname),
                     userId: userId);
             }
         }

@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -32,14 +33,14 @@ public sealed class DonDominioProvider : DNSProviderBase
     public override string Label => "DonDominio";
 
     /// <inheritdoc />
-    public override string Hint => "User is your DonDominio API user. API key is your DonDominio API key.";
+    public override string Hint => TranslationKeys.ProviderHintDonDominio;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Host",
-        Login = "User",
-        Password = "API Key",
+        Hostname = TranslationKeys.LabelServerHost,
+        Login = TranslationKeys.LabelUser,
+        Password = TranslationKeys.HeaderApiKey,
         Server = true,
     };
 

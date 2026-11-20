@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -40,14 +41,14 @@ public sealed class Ns1Provider : DNSProviderBase
     public override string Label => "NS1";
 
     /// <inheritdoc />
-    public override string Hint => "API key is your NS1 API key. Zone is optional and is taken from the record name when left blank.";
+    public override string Hint => TranslationKeys.ProviderHintNs1;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record Name",
-        Login = "API Key",
-        Zone = "Zone",
+        Hostname = TranslationKeys.LabelRecordName,
+        Login = TranslationKeys.HeaderApiKey,
+        Zone = TranslationKeys.LabelZone,
         Server = true,
         Ttl = true,
     };

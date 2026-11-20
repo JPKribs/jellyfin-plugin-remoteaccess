@@ -3,6 +3,7 @@ using System.Net;
 using Jellyfin.Plugin.RemoteAccess.Models;
 using Jellyfin.Plugin.RemoteAccess.Providers;
 using Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -59,7 +60,7 @@ public class ProviderRegistryTests
         foreach (var instance in provider.GetServices<IDNSProvider>())
         {
             Assert.False(string.IsNullOrWhiteSpace(instance.Label), instance.Kind + " has no Label");
-            Assert.False(string.IsNullOrWhiteSpace(instance.Hint), instance.Kind + " has no Hint");
+            Assert.True(BaseTranslations.For("en-us").ContainsKey(instance.Hint), instance.Kind + " has no Hint");
             var f = instance.Fields;
             Assert.NotNull(f);
             var hasField = f.Hostname is not null || f.Login is not null || f.Password is not null || f.Zone is not null;

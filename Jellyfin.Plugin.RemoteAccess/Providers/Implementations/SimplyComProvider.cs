@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -31,15 +32,15 @@ public sealed class SimplyComProvider : DNSProviderBase
     public override string Label => "Simply.com";
 
     /// <inheritdoc />
-    public override string Hint => "Account name is your Simply.com account number and API key is your Simply.com API key. Zone is optional.";
+    public override string Hint => TranslationKeys.ProviderHintSimplyCom;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Account Name",
-        Password = "API Key",
-        Zone = "Zone",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelAccountName,
+        Password = TranslationKeys.HeaderApiKey,
+        Zone = TranslationKeys.LabelZone,
         Server = true,
     };
 

@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -35,14 +36,14 @@ public sealed class DigitalOceanProvider : DNSProviderBase
     public override string Label => "DigitalOcean";
 
     /// <inheritdoc />
-    public override string Hint => "API token is a DigitalOcean API token with read and write scope. Apex domain is the domain, such as example.com.";
+    public override string Hint => TranslationKeys.ProviderHintDigitalOcean;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record Name",
-        Password = "API Token",
-        Zone = "Apex Domain",
+        Hostname = TranslationKeys.LabelRecordName,
+        Password = TranslationKeys.LabelApiToken,
+        Zone = TranslationKeys.LabelApexDomain,
         Server = true,
     };
 

@@ -1,11 +1,16 @@
 // remoteaccess_dashboard.js
 // The Dashboard tab: the share card, where visitors came from, banned addresses and what each address did.
 
-import { createConfigPage, confirmDialog, createWorldMap, linkWorldMap, createDataTable, createQrCode, createCollapsibleSection, renderRelative } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
-import { PLUGIN_ID, TABS, problemText, showText, MAP_LAYERS, countryCounts, countryRows, countryFilterOptions, activityQuery } from './configurationpage?name=remoteaccess_tabs.js';
+import { confirmDialog, createWorldMap, linkWorldMap, createDataTable, createQrCode, createCollapsibleSection, renderRelative } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
+import { PLUGIN_ID, t, translatedPage, tableText, htmlFormat, linkHtml, problemText, showText, MAP_LAYERS, countryCounts, countryRows, countryFilterOptions, activityQuery } from './configurationpage?name=remoteaccess_tabs.js';
 
-// The badge color for each kind of activity, matching the map layer for the same kind.
-var TYPE_COLORS = { User: 'blue', Failure: 'red', Blocked: 'purple', Seen: 'gray' };
+// The kinds of activity, each with its name and its badge color, which matches the map layer for the same kind.
+var TYPES = [
+    { value: 'User', nameKey: 'HeaderUser', color: 'blue' },
+    { value: 'Failure', nameKey: 'ActivityFailure', color: 'red' },
+    { value: 'Blocked', nameKey: 'HeaderBlocked', color: 'purple' },
+    { value: 'Seen', nameKey: 'ActivitySeen', color: 'gray' }
+];
 
 export default function (view) {
     'use strict';
@@ -32,14 +37,21 @@ export default function (view) {
     // place
     // The Activity row's country, or Local for your network.
     function place(row) {
-        if (row.IsLocal) return 'Local';
-        return row.Country || 'Unknown';
+        if (row.IsLocal) return t.tr('OptionLocal');
+        return row.Country || t.tr('Unknown');
     }
 
     // shortHost
     // The address without its scheme, which every row would repeat.
     function shortHost(host) {
         return (host || '').replace(/^https?:\/\//, '');
+    }
+
+    // typeBadge
+    // The badge of a kind of activity, gray with the kind itself for one this page does not know.
+    function typeBadge(type) {
+        var known = TYPES.filter(function (x) { return x.value === type; })[0];
+        return badge(known ? known.color : 'gray', known ? t.tr(known.nameKey) : type);
     }
 
     // badge
@@ -93,15 +105,21 @@ export default function (view) {
     // its button is off, a blocked address unblocks itself, an address its country's rule refuses unblocks the
     // country, and anything else can be blocked.
     function action(r) {
-        if (r.Banned) return rowButton('Unban', 'secondary', { unban: r.Ip }, '', 'Unban ' + r.Ip);
-        if (r.Exempt) return rowButton('Block', 'destructive', null, 'Your network and trusted networks are never blocked.', 'Block ' + r.Ip);
-        if (r.Listed) return rowButton('Unblock', 'secondary', { unblock: r.Ip }, '', 'Unblock ' + r.Ip);
+        if (r.Banned) return unbanButton(r.Ip);
+        if (r.Exempt) return rowButton(t.tr('ButtonBlock'), 'destructive', null, t.tr('TextNeverBlocked'), t.format('ButtonBlockAddress', r.Ip));
+        if (r.Listed) return rowButton(t.tr('ButtonUnblock'), 'secondary', { unblock: r.Ip }, '', t.format('ButtonUnblockAddress', r.Ip));
         // Blocked only by a range, where unblocking one address would not help, so say where it is changed.
-        if (r.Covered) return rowButton('Unblock', 'secondary', null, 'Blocked by a range under Advanced.', 'Unblock ' + r.Ip);
+        if (r.Covered) return rowButton(t.tr('ButtonUnblock'), 'secondary', null, t.tr('TextBlockedByRange'), t.format('ButtonUnblockAddress', r.Ip));
         if (r.CountryBlocked) {
-            return rowButton('Unblock', 'secondary', { 'unblock-country': r.CountryCode, country: r.Country }, 'Allow connections from ' + r.Country, 'Unblock ' + r.Country + ' for ' + r.Ip);
+            return rowButton(t.tr('ButtonUnblock'), 'secondary', { 'unblock-country': r.CountryCode, country: r.Country }, t.format('TextAllowCountry', r.Country), t.format('ButtonUnblockCountryFor', r.Country, r.Ip));
         }
-        return rowButton('Block', 'destructive', { block: r.Ip }, '', 'Block ' + r.Ip);
+        return rowButton(t.tr('ButtonBlock'), 'destructive', { block: r.Ip }, '', t.format('ButtonBlockAddress', r.Ip));
+    }
+
+    // unbanButton
+    // The Unban button of a banned address, in the Banned and Activity tables.
+    function unbanButton(ip) {
+        return rowButton(t.tr('ButtonUnban'), 'secondary', { unban: ip }, '', t.format('ButtonUnbanAddress', ip));
     }
 
     // showsArea
@@ -138,8 +156,8 @@ export default function (view) {
             activity.setFilterOptions('place', options);
         }
         var note = '';
-        if (data.Settings && data.Settings.Enabled === false) note = 'History is off, so nothing new is recorded. Turn on Record History under Advanced > History.';
-        else if (data.Recording === false) note = 'History is recorded while remote access is on.';
+        if (data.Settings && data.Settings.Enabled === false) note = t.tr('HistoryOffNote');
+        else if (data.Recording === false) note = t.tr('HistoryRecordedWhileOn');
         showText(Shared, 'peopleOff', note);
     }
 
@@ -163,7 +181,7 @@ export default function (view) {
             activityRows = (d && d.Activity) || [];
             return pageOf(query);
         }).catch(function () {
-            Shared.setStatus('activityStatus', 'Could not load Remote Access.', true, { timeout: 0 });
+            Shared.setStatus('activityStatus', t.tr('ErrorLoadDashboard'), true, { timeout: 0 });
             activityRows = [];
             return pageOf(query);
         });
@@ -198,8 +216,9 @@ export default function (view) {
     // unblockCountry
     // A country rule covers many people, so this one asks first.
     function unblockCountry(code, name) {
-        confirmDialog('Unblock ' + name + '? Individual blocked addresses stay blocked.', { title: 'Unblock Country', confirmText: 'Unblock' }).then(function (ok) {
-            if (ok) post('People/UnblockCountry?code=' + encodeURIComponent(code), 'Unblocked ' + name + '.', 'Could not unblock ' + name + '.');
+        var options = { title: t.tr('HeaderUnblockCountry'), confirmText: t.tr('ButtonUnblock'), cancelText: t.tr('ButtonCancel') };
+        confirmDialog(t.format('ConfirmUnblockCountry', name), options).then(function (ok) {
+            if (ok) post('People/UnblockCountry?code=' + encodeURIComponent(code), t.format('MessageUnblocked', name), t.format('ErrorUnblock', name));
         });
     }
 
@@ -212,11 +231,11 @@ export default function (view) {
         e.stopPropagation();
         var ip;
         if ((ip = b.getAttribute('data-unban'))) {
-            post('People/Unban?ip=' + encodeURIComponent(ip), 'Unbanned ' + ip + '.', 'Could not unban ' + ip + '.');
+            post('People/Unban?ip=' + encodeURIComponent(ip), t.format('MessageUnbanned', ip), t.format('ErrorUnban', ip));
         } else if ((ip = b.getAttribute('data-block'))) {
-            post('People/Block?ip=' + encodeURIComponent(ip), 'Blocked ' + ip + '.', 'Could not block ' + ip + '.');
+            post('People/Block?ip=' + encodeURIComponent(ip), t.format('MessageBlocked', ip), t.format('ErrorBlock', ip));
         } else if ((ip = b.getAttribute('data-unblock'))) {
-            post('People/Unblock?ip=' + encodeURIComponent(ip), 'Unblocked ' + ip + '.', 'Could not unblock ' + ip + '.');
+            post('People/Unblock?ip=' + encodeURIComponent(ip), t.format('MessageUnblocked', ip), t.format('ErrorUnblock', ip));
         } else {
             unblockCountry(b.getAttribute('data-unblock-country'), b.getAttribute('data-country'));
         }
@@ -226,10 +245,19 @@ export default function (view) {
     // The share card, a fixed section with the address as a QR code and its kind as a badge.
     function buildShare() {
         var body = Shared.getEl('shareBody');
-        share = createCollapsibleSection({ title: 'Share Your Server', collapsible: false, badge: { label: 'Public', color: 'green' }, content: body });
+        share = createCollapsibleSection({ title: t.tr('HeaderShareServer'), collapsible: false, badge: { label: t.tr('BadgePublic'), color: 'green' }, content: body });
         body.classList.remove('hidden');
         Shared.getEl('shareHost').appendChild(share.element);
-        qr = createQrCode({ label: 'QR code for your server\'s address', fileName: 'jellyfin-qr.png' });
+        Shared.getEl('shareHomeOnly').innerHTML = htmlFormat(Shared, 'ShareHomeOnly', [linkHtml(Shared, '#/configurationpage?name=remoteaccess_configuration', 'TabConfiguration')]);
+        qr = createQrCode({
+            label: t.tr('LabelQrCode'),
+            fileName: 'jellyfin-qr.png',
+            copyImageText: t.tr('ButtonCopyImage'),
+            downloadText: t.tr('Download'),
+            copiedText: t.tr('MessageCopied'),
+            copyFailedText: t.tr('ErrorCopy'),
+            tooLongText: t.tr('ErrorQrTooLong')
+        });
         Shared.getEl('shareQr').appendChild(qr.element);
     }
 
@@ -241,7 +269,7 @@ export default function (view) {
             Shared.setVisible('shareHost', !!url);
             if (!url) return;
             qr.setValue(url);
-            share.setBadge(s.HomeOnly ? { label: 'Home Only', color: 'orange' } : { label: 'Public', color: 'green' });
+            share.setBadge(s.HomeOnly ? { label: t.tr('BadgeHomeOnly'), color: 'orange' } : { label: t.tr('BadgePublic'), color: 'green' });
             Shared.setVisible('shareNote', !s.HomeOnly);
             Shared.setVisible('shareHomeOnly', !!s.HomeOnly);
             Shared.setVisible('btnShare', typeof navigator.share === 'function');
@@ -254,72 +282,72 @@ export default function (view) {
     // The world map and its country table, the Banned table and the Activity table.
     function buildTables() {
         map = createWorldMap({
-            layers: MAP_LAYERS.map(function (l) { return { key: l.key, label: l.label, color: l.color }; }),
-            label: 'Where visitors came from',
+            layers: MAP_LAYERS.map(function (l) { return { key: l.key, label: t.tr(l.labelKey), color: l.color }; }),
+            label: t.tr('LabelWorldMap'),
             onLayersChange: showLayers
         });
         Shared.getEl('worldMap').appendChild(map.element);
 
         var counts = MAP_LAYERS.map(function (l) {
-            return { key: l.column, label: l.label, icon: l.icon, align: 'end' };
+            return { key: l.column, label: t.tr(l.labelKey), icon: l.icon, align: 'end' };
         });
-        countries = createDataTable({
-            columns: [{ key: 'name', label: 'Country' }].concat(counts, [
-                { key: 'last', label: 'Last', width: 'auto', value: function (r) { return new Date(r.last); }, render: renderRelative('last') }
+        countries = createDataTable(Object.assign(tableText(), {
+            columns: [{ key: 'name', label: t.tr('HeaderCountry') }].concat(counts, [
+                { key: 'last', label: t.tr('HeaderLast'), width: 'auto', value: function (r) { return new Date(r.last); }, render: renderRelative('last') }
             ]),
             rows: [],
             rowKey: 'code',
             selectable: true,
             widthKey: 'remoteaccess-countries',
-            label: 'Countries',
-            emptyText: 'Nothing from the internet yet.'
-        });
+            label: t.tr('HeaderCountries'),
+            emptyText: t.tr('EmptyCountries')
+        }));
         Shared.getEl('countryTable').appendChild(countries.element);
         linkWorldMap(map, countries, { field: 'code', rowKey: 'code' });
 
-        banned = createDataTable({
+        banned = createDataTable(Object.assign(tableText(), {
             columns: [
-                { key: 'Ip', label: 'IP', width: 'auto', render: function (b) { return mono(b.Ip); } },
-                { key: 'Country', label: 'Country', value: function (b) { return b.Country || 'Unknown'; } },
-                { key: 'Failures', label: 'Failures', align: 'end', icon: 'warning' },
-                { key: 'BannedUtc', label: 'Banned', width: 'auto', value: function (b) { return new Date(b.BannedUtc); }, render: renderRelative('BannedUtc') },
-                { key: 'UntilUtc', label: 'Ends', width: 'auto', value: function (b) { return b.UntilUtc ? new Date(b.UntilUtc) : null; }, render: renderRelative('UntilUtc', { emptyText: 'Until Lifted' }) },
-                { key: 'action', label: 'Action', sortable: false, width: 'auto', render: function (b) { return rowButton('Unban', 'secondary', { unban: b.Ip }, '', 'Unban ' + b.Ip); } }
+                { key: 'Ip', label: t.tr('HeaderIp'), width: 'auto', render: function (b) { return mono(b.Ip); } },
+                { key: 'Country', label: t.tr('HeaderCountry'), value: function (b) { return b.Country || t.tr('Unknown'); } },
+                { key: 'Failures', label: t.tr('HeaderFailures'), align: 'end', icon: 'warning' },
+                { key: 'BannedUtc', label: t.tr('HeaderBanned'), width: 'auto', value: function (b) { return new Date(b.BannedUtc); }, render: renderRelative('BannedUtc') },
+                { key: 'UntilUtc', label: t.tr('HeaderEnds'), width: 'auto', value: function (b) { return b.UntilUtc ? new Date(b.UntilUtc) : null; }, render: renderRelative('UntilUtc', { emptyText: t.tr('TextUntilLifted') }) },
+                { key: 'action', label: t.tr('HeaderAction'), sortable: false, width: 'auto', render: function (b) { return unbanButton(b.Ip); } }
             ],
             rows: [],
             rowKey: 'Ip',
             widthKey: 'remoteaccess-banned',
-            label: 'Banned addresses',
-            emptyText: 'No banned addresses.'
-        });
+            label: t.tr('LabelBannedTable'),
+            emptyText: t.tr('EmptyBanned')
+        }));
         Shared.getEl('banned').appendChild(banned.element);
 
-        activity = createDataTable({
+        activity = createDataTable(Object.assign(tableText(), {
             // Eight columns fill the table at desktop width, so they share it evenly. A clipped value shows on hover,
             // and each column can be dragged wider.
             columns: [
-                { key: 'Type', label: 'Type', render: function (r) { return badge(TYPE_COLORS[r.Type] || 'gray', r.Type); } },
-                { key: 'User', label: 'User' },
-                { key: 'Ip', label: 'IP', render: function (r) { return mono(r.Ip); } },
-                { key: 'Device', label: 'Device' },
-                { key: 'Host', label: 'Address', value: function (r) { return shortHost(r.Host); } },
-                { key: 'place', label: 'Country', value: place },
-                { key: 'area', label: 'Area', hidden: true, value: function (r) { return r.IsLocal ? '' : r.City || ''; } },
-                { key: 'LastUtc', label: 'Last Seen', value: function (r) { return new Date(r.LastUtc); }, render: renderRelative('LastUtc') },
-                { key: 'action', label: 'Action', sortable: false, render: action }
+                { key: 'Type', label: t.tr('LabelType'), render: function (r) { return typeBadge(r.Type); } },
+                { key: 'User', label: t.tr('HeaderUser') },
+                { key: 'Ip', label: t.tr('HeaderIp'), render: function (r) { return mono(r.Ip); } },
+                { key: 'Device', label: t.tr('LabelDevice') },
+                { key: 'Host', label: t.tr('HeaderAddress'), value: function (r) { return shortHost(r.Host); } },
+                { key: 'place', label: t.tr('HeaderCountry'), value: place },
+                { key: 'area', label: t.tr('HeaderArea'), hidden: true, value: function (r) { return r.IsLocal ? '' : r.City || ''; } },
+                { key: 'LastUtc', label: t.tr('HeaderLastSeen'), value: function (r) { return new Date(r.LastUtc); }, render: renderRelative('LastUtc') },
+                { key: 'action', label: t.tr('HeaderAction'), sortable: false, render: action }
             ],
             fetch: fetchActivity,
             rowKey: function (r) { return r.Type + '|' + r.Ip + '|' + r.User + '|' + r.Host; },
             filters: [
-                { name: 'type', label: 'Types', options: ['User', 'Failure', 'Blocked', 'Seen'].map(function (t) { return { value: t, label: t }; }) },
-                { name: 'place', label: 'Countries', options: [{ value: 'local', label: 'Local' }] }
+                { name: 'type', label: t.tr('HeaderTypes'), options: TYPES.map(function (x) { return { value: x.value, label: t.tr(x.nameKey) }; }) },
+                { name: 'place', label: t.tr('HeaderCountries'), options: [{ value: 'local', label: t.tr('OptionLocal') }] }
             ],
             pageSize: ACTIVITY_PAGE,
             maxHeight: '32rem',
             widthKey: 'remoteaccess-activity',
-            label: 'Activity',
-            emptyText: 'Nothing recorded yet.'
-        });
+            label: t.tr('HeaderActivity'),
+            emptyText: t.tr('EmptyActivity')
+        }));
         Shared.getEl('activity').appendChild(activity.element);
 
         Shared.getEl('banned').addEventListener('click', onRowAction, true);
@@ -337,12 +365,11 @@ export default function (view) {
         });
     }
 
-    Shared = createConfigPage(view, {
+    Shared = translatedPage(view, {
         pluginId: PLUGIN_ID,
         apiPrefix: 'RemoteAccess',
         tabsKey: 'remoteaccess',
         tabIndex: 0,
-        tabs: TABS,
         bind: bind,
         load: function (shared, page) {
             loadShare();

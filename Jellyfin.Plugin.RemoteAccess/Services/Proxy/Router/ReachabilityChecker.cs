@@ -7,6 +7,8 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Services.Proxy.Router;
 
@@ -21,7 +23,9 @@ public sealed class ReachabilityChecker
     public const int Port = ProxyOptions.PublicHttpsPort;
 
     private const string Service = "https://check-host.net/";
-    private const string Unreachable = "The outside check could not be reached.";
+
+    // What the page shows when check-host.net itself could not be reached.
+    private static string Unreachable => ServerText.Get(TranslationKeys.ErrorCheckUnreachable);
 
     private static readonly TimeSpan _pollEvery = TimeSpan.FromSeconds(2);
     private const int Polls = 10;
@@ -172,7 +176,7 @@ public sealed class ReachabilityChecker
             {
                 Location = location,
                 Ok = state is { Ok: true },
-                Error = state is null ? "The check did not finish in time." : state.Value.Error
+                Error = state is null ? ServerText.Get(TranslationKeys.ErrorCheckTimedOut) : state.Value.Error
             });
         }
 
@@ -185,7 +189,7 @@ public sealed class ReachabilityChecker
         result.Reachable = result.Nodes.Any(n => n.Ok);
         if (result.Reachable == false)
         {
-            result.Error = $"No outside location could connect to port {Port}. Check that the router forwards port {Port} to this server.";
+            result.Error = ServerText.Format(TranslationKeys.ErrorNoOutsideConnection, Port);
         }
 
         return result;
@@ -218,7 +222,7 @@ public sealed class ReachabilityChecker
         {
             if (first.GetArrayLength() == 0)
             {
-                return (false, "The connection failed.");
+                return (false, ServerText.Get(TranslationKeys.ErrorConnectionFailed));
             }
 
             first = first[0];
@@ -231,7 +235,7 @@ public sealed class ReachabilityChecker
 
         if (first.ValueKind != JsonValueKind.Object)
         {
-            return (false, "The connection failed.");
+            return (false, ServerText.Get(TranslationKeys.ErrorConnectionFailed));
         }
 
         if (first.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
@@ -241,22 +245,22 @@ public sealed class ReachabilityChecker
 
         return first.TryGetProperty("time", out var time) && time.ValueKind == JsonValueKind.Number
             ? (true, string.Empty)
-            : (false, "The connection failed.");
+            : (false, ServerText.Get(TranslationKeys.ErrorConnectionFailed));
     }
 
     // The service's own words vary, so only what they mean is shown.
     private static string DescribeError(string error)
         => error.Contains("timed out", StringComparison.OrdinalIgnoreCase) || error.Contains("timeout", StringComparison.OrdinalIgnoreCase)
-            ? "The connection timed out."
+            ? ServerText.Get(TranslationKeys.ErrorConnectionTimedOut)
             : error.Contains("refused", StringComparison.OrdinalIgnoreCase)
-                ? "The connection was refused."
-                : "The connection failed.";
+                ? ServerText.Get(TranslationKeys.ErrorConnectionRefused)
+                : ServerText.Get(TranslationKeys.ErrorConnectionFailed);
 
     private async Task<ReachabilityResult> RunAsync(string hostname)
     {
         var started = DateTime.UtcNow;
         var result = string.IsNullOrEmpty(hostname) || !HostnameMatcher.IsPublicName(hostname) || hostname.StartsWith('*')
-            ? new ReachabilityResult { CheckedUtc = started, Error = "Add a public address people use from the internet first." }
+            ? new ReachabilityResult { CheckedUtc = started, Error = ServerText.Get(TranslationKeys.ErrorAddPublicAddress) }
             : await RunCheckAsync(hostname, started).ConfigureAwait(false);
 
         lock (_lock)
@@ -281,7 +285,7 @@ public sealed class ReachabilityChecker
         {
             // The service answers a request it will not run, such as one past its rate limit, with an error.
             var busy = startCode == 429 || startBody.Contains("\"error\"", StringComparison.Ordinal);
-            return new ReachabilityResult { CheckedUtc = started, Error = busy ? "The outside check is busy right now. Try again in a minute." : Unreachable };
+            return new ReachabilityResult { CheckedUtc = started, Error = busy ? ServerText.Get(TranslationKeys.ErrorCheckBusy) : Unreachable };
         }
 
         IReadOnlyDictionary<string, (bool Ok, string Error)?> states = new Dictionary<string, (bool, string)?>();

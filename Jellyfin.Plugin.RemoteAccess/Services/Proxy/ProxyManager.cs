@@ -214,7 +214,7 @@ public sealed class ProxyManager : IAsyncDisposable
             if (!settings.Enabled || File.Exists(_paths.DisableFlag))
             {
                 await StopHostAsync().ConfigureAwait(false);
-                _error = settings.Enabled ? "The recovery flag file is present, so the proxy is off." : string.Empty;
+                _error = settings.Enabled ? ServerText.Get(TranslationKeys.ErrorRecoveryFlagPresent) : string.Empty;
                 return;
             }
 
@@ -232,7 +232,7 @@ public sealed class ProxyManager : IAsyncDisposable
             if (clash.Count > 0)
             {
                 await StopHostAsync().ConfigureAwait(false);
-                _error = $"Jellyfin itself uses port {string.Join(" and ", clash)}, which the proxy needs. Change Jellyfin's ports under Dashboard > Networking.";
+                _error = ServerText.Format(TranslationKeys.ErrorJellyfinUsesPort, ServerText.List(clash.Cast<object>()));
                 return;
             }
 
@@ -374,7 +374,7 @@ public sealed class ProxyManager : IAsyncDisposable
         }
         catch (IOException ex)
         {
-            return "The proxy could not start a test listener: " + ex.Message;
+            return ServerText.Get(TranslationKeys.ErrorTestListener) + " " + ex.Message;
         }
         finally
         {
@@ -396,7 +396,7 @@ public sealed class ProxyManager : IAsyncDisposable
         var host = Volatile.Read(ref _host);
         if (host is null)
         {
-            return string.IsNullOrEmpty(_error) ? "The proxy is not running." : _error;
+            return string.IsNullOrEmpty(_error) ? ServerText.Get(TranslationKeys.ErrorProxyNotRunning) : _error;
         }
 
         var address = new UriBuilder(Uri.UriSchemeHttp, IPAddress.Loopback.ToString(), host.Listener.HttpPort).Uri;
@@ -432,12 +432,12 @@ public sealed class ProxyManager : IAsyncDisposable
         var settings = ReadSettings();
         if (settings.Certificate is not { Mode: CertificateMode.Automatic, AcceptTerms: true })
         {
-            return (false, "Choose Let's Encrypt and accept its terms first.");
+            return (false, ServerText.Get(TranslationKeys.ErrorChooseLetsEncrypt));
         }
 
         if (!IsRunning)
         {
-            return (false, "The proxy is not running, so Let's Encrypt cannot check your address.");
+            return (false, ServerText.Get(TranslationKeys.ErrorProxyNotRunningAcme));
         }
 
         var records = ReadRecords();
@@ -445,21 +445,20 @@ public sealed class ProxyManager : IAsyncDisposable
         if (await _acme.EnsureAsync(hostnames, records, _certificates.Status, cancellationToken, force: true).ConfigureAwait(false))
         {
             _certificates.Refresh();
-            return (true, "Let's Encrypt issued a new certificate.");
+            return (true, ServerText.Get(TranslationKeys.MessageCertificateIssued));
         }
 
         var acme = _acme.Describe(hostnames, records);
         if (!acme.Issuing && acme.RateLimited && acme.NextAttemptUtc is { } after && after > DateTime.UtcNow)
         {
-            return (false, "Let's Encrypt is limiting how often it issues certificates for these addresses. Asking again now would only extend the limit, so a new certificate can be requested after "
-                + after.ToString("u", System.Globalization.CultureInfo.InvariantCulture) + ".");
+            return (false, ServerText.Format(TranslationKeys.ErrorRateLimited, after.ToString("u", System.Globalization.CultureInfo.InvariantCulture)));
         }
 
         return (false, acme.Issuing
-            ? "A certificate is already being requested."
+            ? ServerText.Get(TranslationKeys.ErrorAlreadyRequesting)
             : acme.Names.Count == 0
-                ? "Let's Encrypt needs an address that is not a wildcard."
-                : acme.LastError.Length > 0 ? acme.LastError : "Let's Encrypt did not issue a certificate.");
+                ? ServerText.Get(TranslationKeys.StepNeedsAddress)
+                : acme.LastError.Length > 0 ? acme.LastError : ServerText.Get(TranslationKeys.StepLetsEncryptFailed));
     }
 
     // A new certificate on disk is loaded at once; the store then starts the HTTPS listener if it was off.
@@ -741,9 +740,9 @@ public sealed class ProxyManager : IAsyncDisposable
         const string Why = "Something in front of the proxy, such as rootless Docker, a tunnel or another proxy, may be hiding visitors' addresses. Bans, the block list and country rules cannot apply until it passes them on.";
         _logger.LogWarning("Most visitors in the last hour came from one local address. {Why}", Why);
         _activity?.Log(
-            "Most Visitors Seen as Local",
+            ServerText.Get(TranslationKeys.ActivityEveryoneLocal),
             "RemoteAccess.EveryoneLooksLocal",
-            $"Most of the last hour's requests for your public names, at least {LocalTrafficWatch.Threshold}, came from one local address, so something in front of the proxy, such as rootless Docker, a tunnel or another proxy, may be hiding visitors' addresses and bans, the block list and country rules cannot apply until it passes them on, see the Configuration tab",
+            ServerText.Format(TranslationKeys.ActivityEveryoneLocalOverview, LocalTrafficWatch.Threshold),
             LogLevel.Warning);
     }
 
@@ -769,7 +768,7 @@ public sealed class ProxyManager : IAsyncDisposable
             if (_reportedError.Length > 0)
             {
                 _reportedError = string.Empty;
-                _activity?.Log("Proxy Started", "RemoteAccess.ProxyStarted", "It is listening on " + addresses);
+                _activity?.Log(ServerText.Get(TranslationKeys.ActivityProxyStarted), "RemoteAccess.ProxyStarted", ServerText.Format(TranslationKeys.ActivityProxyStartedOverview, addresses));
             }
         }
         catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
@@ -781,7 +780,7 @@ public sealed class ProxyManager : IAsyncDisposable
             if (!string.Equals(_error, _reportedError, StringComparison.Ordinal))
             {
                 _reportedError = _error;
-                _activity?.Log("Proxy Failed to Start", "RemoteAccess.ProxyStartFailed", ActivityEntries.Plain(_error), LogLevel.Error);
+                _activity?.Log(ServerText.Get(TranslationKeys.ActivityProxyStartFailed), "RemoteAccess.ProxyStartFailed", ActivityEntries.Plain(_error), LogLevel.Error);
             }
         }
     }
@@ -805,18 +804,18 @@ public sealed class ProxyManager : IAsyncDisposable
     private string DescribeStartError(Exception ex, ListenerOptions listener)
     {
         var socket = FindSocketError(ex);
-        var ports = listener.HttpsPort is { } https ? $"{listener.HttpPort} and {https}" : listener.HttpPort.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var ports = listener.HttpsPort is { } https ? ServerText.List(new object[] { listener.HttpPort, https }) : listener.HttpPort.ToString(System.Globalization.CultureInfo.InvariantCulture);
         if (socket == SocketError.AccessDenied)
         {
             return OperatingSystem.IsLinux()
-                ? $"Jellyfin is not allowed to use port {ports}. Add AmbientCapabilities=CAP_NET_BIND_SERVICE to Jellyfin's service (sudo systemctl edit jellyfin), then restart Jellyfin. In Docker, publish ports 80 and 443 to the container."
-                : $"Jellyfin is not allowed to use port {ports}.";
+                ? ServerText.Format(TranslationKeys.ErrorPortNotAllowed, ports) + " " + ServerText.Get(TranslationKeys.ErrorPortNotAllowedLinux)
+                : ServerText.Format(TranslationKeys.ErrorPortNotAllowed, ports);
         }
 
         // Jellyfin's own ports are refused before binding, so a clash here is another program.
         if (socket == SocketError.AddressAlreadyInUse || ex.Message.Contains("address already in use", StringComparison.OrdinalIgnoreCase))
         {
-            return $"Port {ports} is already in use by another program.";
+            return ServerText.Format(TranslationKeys.ErrorPortInUse, ports);
         }
 
         return CredentialRedactor.Redact(ex.Message);
@@ -854,17 +853,17 @@ public sealed class ProxyManager : IAsyncDisposable
 
             if (!response.IsSuccessStatusCode)
             {
-                return $"Jellyfin answered {(int)response.StatusCode} through the proxy.";
+                return ServerText.Format(TranslationKeys.ErrorJellyfinAnswered, (int)response.StatusCode);
             }
 
             var body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
             using var json = JsonDocument.Parse(body);
             var id = json.RootElement.TryGetProperty("Id", out var value) ? value.GetString() : null;
-            return SameId(id, _systemId) ? null : "Something other than this Jellyfin server answered through the proxy.";
+            return SameId(id, _systemId) ? null : ServerText.Get(TranslationKeys.ErrorOtherServerAnswered);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException)
         {
-            return "Jellyfin could not be reached through the proxy: " + CredentialRedactor.Redact(ex.Message);
+            return ServerText.Get(TranslationKeys.ErrorJellyfinUnreachable) + " " + CredentialRedactor.Redact(ex.Message);
         }
     }
 

@@ -6,6 +6,8 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Services.Proxy.Router;
 
@@ -83,7 +85,7 @@ public sealed class NatPmpClient : IRouterClient
         var reply = await SendAsync(NatPmpPacket.MapTcpRequest(mapping.InternalPort, mapping.ExternalPort, (uint)mapping.LifetimeSeconds), cancellationToken).ConfigureAwait(false);
         if (reply is null || NatPmpPacket.ParseMap(reply) is not { } answer)
         {
-            return PortMapResult.Fail($"The router did not answer the request to open port {mapping.ExternalPort}.");
+            return PortMapResult.Fail(ServerText.Format(TranslationKeys.ErrorRouterNoAnswer, mapping.ExternalPort));
         }
 
         if (answer.ResultCode != 0)
@@ -249,9 +251,9 @@ internal static class NatPmpPacket
     /// <returns>A plain sentence.</returns>
     public static string Describe(int resultCode, int port) => resultCode switch
     {
-        2 => "The router does not allow this server to open ports. Turn on NAT-PMP or UPnP for it in the router's settings.",
-        3 => "The router is not connected to the internet right now.",
-        4 => "The router has no room left for more forwarded ports.",
-        _ => $"The router could not open port {port}."
+        2 => ServerText.Get(TranslationKeys.ErrorRouterNatPmpRefused),
+        3 => ServerText.Get(TranslationKeys.ErrorRouterOffline),
+        4 => ServerText.Get(TranslationKeys.ErrorRouterFull),
+        _ => ServerText.Format(TranslationKeys.ErrorRouterCouldNotOpen, port)
     };
 }

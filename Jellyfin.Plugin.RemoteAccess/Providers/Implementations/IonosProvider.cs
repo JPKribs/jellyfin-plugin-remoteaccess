@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -35,13 +36,13 @@ public sealed class IonosProvider : DNSProviderBase
     public override string Label => "IONOS";
 
     /// <inheritdoc />
-    public override string Hint => "API key is your IONOS API key, in the form prefix.secret.";
+    public override string Hint => TranslationKeys.ProviderHintIonos;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Password = "API Key",
+        Hostname = TranslationKeys.LabelHostname,
+        Password = TranslationKeys.HeaderApiKey,
         Server = true,
         Ttl = true,
     };

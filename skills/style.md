@@ -137,7 +137,7 @@ A message reports what happened in one sentence that ends with a period.
 | Nothing to do | `No <things> to <verb>.` | No banned addresses. |
 
 * Use the ellipsis character `…`, never three dots, and only for work in progress.
-* When the server gave a reason, show it with `problemText(err, 'Could not save.')` from `remoteaccess_tabs.js`, which reads the `Errors` list this plugin's endpoints return.
+* When the server gave a reason, show it with `problemText(err, t.tr('ErrorSave'))` from `remoteaccess_tabs.js`, which reads the `Errors` list this plugin's endpoints return.
 * Name the count with a correct plural. "Deleted 3 items." and "Deleted 1 item."
 * Never say "error occurred". Say what could not happen.
 
@@ -252,7 +252,7 @@ Every config page uses Jellyfin's page shell.
 
 ### Tabs
 
-* One registered page per tab, wired with `createConfigPage` and `setTabs`.
+* One registered page per tab, wired with `translatedPage`, which calls `createConfigPage` and `setTabs`.
 * Tab names are one Title Case word.
 * Keep the tab list in one place, the plugin's shared module, never copied into each page.
 * Order tabs from what is used most to what is set once. Remote Access is **Dashboard**, **Configuration**, **Advanced**, kept in `TABS` in `remoteaccess_tabs.js`.

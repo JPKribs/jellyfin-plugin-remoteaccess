@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -271,7 +270,7 @@ public sealed class RouterPortMapper : IAsyncDisposable
             ArmRenewal(false);
             _client = _mapped.Count == 0 ? null : _client;
             var error = desired.Enabled && lan is null && desired.Ports.Count > 0
-                ? "This server's LAN address could not be found. Set it in the Advanced settings."
+                ? ServerText.Get(TranslationKeys.ErrorLanAddressUnknown)
                 : string.Empty;
             SetStatus(new RouterStatus { Enabled = desired.Enabled, Error = error });
             if (error.Length > 0)
@@ -437,7 +436,7 @@ public sealed class RouterPortMapper : IAsyncDisposable
 
         _reportedError = error;
         _activity?.Log(
-            noRouter ? "Router Not Found" : "Router Ports Failed to Open",
+            ServerText.Get(noRouter ? TranslationKeys.ActivityRouterNotFound : TranslationKeys.ActivityRouterPortsFailed),
             noRouter ? "RemoteAccess.RouterNotFound" : "RemoteAccess.RouterPortsFailed",
             ActivityEntries.Plain(error),
             LogLevel.Warning);
@@ -453,7 +452,7 @@ public sealed class RouterPortMapper : IAsyncDisposable
 
         _reportedOpen = key;
         var ports = Ports(status.Ports);
-        var device = status.Device.Length > 0 ? status.Device : "the router";
+        var device = status.Device.Length > 0 ? status.Device : ServerText.Get(TranslationKeys.TextTheRouter);
         _logger.LogInformation("The device at {Device} answered through {Method} and says it forwards port {Ports} to {Address}", device, status.Method, ports, status.LanAddress);
         if (status.Device.Length > 0 && !status.DeviceIsGateway)
         {
@@ -461,18 +460,19 @@ public sealed class RouterPortMapper : IAsyncDisposable
         }
 
         _activity?.Log(
-            $"{(status.Ports.Count == 1 ? "Port" : "Ports")} {ports} Opened on Router",
+            ServerText.Format(status.Ports.Count == 1 ? TranslationKeys.ActivityPortOpened : TranslationKeys.ActivityPortsOpened, ports),
             "RemoteAccess.RouterPortsOpened",
-            $"The device at {device} answered through {status.Method} and says they forward to {status.LanAddress}, "
-            + (status.Device.Length > 0 && !status.DeviceIsGateway ? "it is not this server's default gateway so check it is your router, " : string.Empty)
-            + "confirm the rule on your router's port forwarding page");
+            ServerText.Format(
+                status.Device.Length > 0 && !status.DeviceIsGateway ? TranslationKeys.ActivityPortsOpenedNotGateway : TranslationKeys.ActivityPortsOpenedOverview,
+                device,
+                status.Method,
+                status.LanAddress));
     }
 
     // "80", "80 and 443".
     private static string Ports(IEnumerable<int> ports)
     {
-        var list = ports.Select(p => p.ToString(CultureInfo.InvariantCulture)).ToList();
-        return list.Count <= 1 ? string.Concat(list) : string.Join(", ", list.Take(list.Count - 1)) + " and " + list[^1];
+        return ServerText.List(ports.Cast<object>());
     }
 
     /// <summary>
@@ -483,7 +483,7 @@ public sealed class RouterPortMapper : IAsyncDisposable
     internal static string TakenSentence(IReadOnlyCollection<int> ports)
         => ports.Count == 1
             ? PortMapResult.Taken(ports.First()).Error
-            : $"The router already forwards ports {Ports(ports)} to another device.";
+            : ServerText.Format(TranslationKeys.ErrorRouterPortsTaken, Ports(ports));
 
     /// <summary>
     /// Says that no router answered.
@@ -493,6 +493,6 @@ public sealed class RouterPortMapper : IAsyncDisposable
     internal static string NoRouterSentence(IEnumerable<PortMapping> wanted)
     {
         var ports = wanted.Select(m => m.ExternalPort).ToList();
-        return $"No router answered a request to open ports. Turn on UPnP or NAT-PMP in the router's settings, or forward {(ports.Count == 1 ? "port" : "ports")} {Ports(ports)} to this server by hand.";
+        return ServerText.Format(ports.Count == 1 ? TranslationKeys.ErrorNoRouterPort : TranslationKeys.ErrorNoRouterPorts, Ports(ports));
     }
 }

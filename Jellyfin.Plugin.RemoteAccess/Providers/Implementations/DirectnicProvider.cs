@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -34,13 +35,13 @@ public sealed class DirectnicProvider : DNSProviderBase
     public override string Label => "Directnic";
 
     /// <inheritdoc />
-    public override string Hint => "Paste the full gateway URLs Directnic gives you for the record. Leave IPv6 gateway URL blank if you only update IPv4.";
+    public override string Hint => TranslationKeys.ProviderHintDirectnic;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Login = "IPv4 Gateway URL",
-        Password = "IPv6 Gateway URL",
+        Login = TranslationKeys.LabelIpv4GatewayUrl,
+        Password = TranslationKeys.LabelIpv6GatewayUrl,
         Server = true,
     };
 

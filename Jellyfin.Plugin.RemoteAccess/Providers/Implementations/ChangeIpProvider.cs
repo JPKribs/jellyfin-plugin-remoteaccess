@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -37,14 +38,14 @@ public sealed class ChangeIpProvider : DNSProviderBase
     public override string Label => "ChangeIP";
 
     /// <inheritdoc />
-    public override string Hint => "Username and Password are your ChangeIP account credentials.";
+    public override string Hint => TranslationKeys.ProviderHintChangeIp;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Username",
-        Password = "Password",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPassword,
         Server = true,
     };
 

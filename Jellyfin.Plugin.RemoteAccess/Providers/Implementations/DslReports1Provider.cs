@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -31,14 +32,14 @@ public sealed class DslReports1Provider : DNSProviderBase
     public override string Label => "DSLReports";
 
     /// <inheritdoc />
-    public override string Hint => "Username and Password are your DSLReports credentials. This protocol carries IPv4 only.";
+    public override string Hint => TranslationKeys.ProviderHintDslReports1;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Host",
-        Login = "Username",
-        Password = "Password",
+        Hostname = TranslationKeys.LabelServerHost,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPassword,
         Server = true,
         IPv6 = false,
         Advanced = new[] { "static" },

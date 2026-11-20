@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -32,14 +33,14 @@ public sealed class DynDns1Provider : DNSProviderBase
     public override string Label => "DynDNS v1";
 
     /// <inheritdoc />
-    public override string Hint => "Username and Password are your account credentials for the legacy DynDNS v1 protocol. This protocol carries IPv4 only.";
+    public override string Hint => TranslationKeys.ProviderHintDynDns1;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Username",
-        Password = "Password",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPassword,
         Server = true,
         IPv6 = false,
         Advanced = new[] { "wildcard", "static", "mx", "backupmx" },

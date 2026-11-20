@@ -89,7 +89,7 @@ public sealed class DNSUpdateService : IDisposable
 
         if (!await _runLock.WaitAsync(0, cancellationToken).ConfigureAwait(false))
         {
-            outcome.Warnings.Add("An update is already running, so this run was skipped.");
+            outcome.Warnings.Add(ServerText.Get(TranslationKeys.WarningUpdateRunning));
             return outcome;
         }
 
@@ -134,9 +134,9 @@ public sealed class DNSUpdateService : IDisposable
             {
                 status.PlaintextWarningLogged = true;
                 _activity.Log(
-                    "Credential Encryption Unavailable",
+                    ServerText.Get(TranslationKeys.ActivityEncryptionUnavailable),
                     "RemoteAccess.PlaintextCredentials",
-                    "The plugin could not set up its encryption keys so no DNS credential can be saved, reinstall the plugin and try again, then check the permissions on its folders",
+                    ServerText.Get(TranslationKeys.ActivityEncryptionUnavailableOverview),
                     LogLevel.Error);
             }
         }
@@ -252,9 +252,10 @@ public sealed class DNSUpdateService : IDisposable
                 result.Skipped = true;
                 result.Success = false;
                 result.Action = BackingOffAction;
-                result.Message = PauseSummary(record, backoffThreshold) + " Next attempt after "
-                    + record.BackoffUntilUtc!.Value.ToString("u", CultureInfo.InvariantCulture)
-                    + " or when the public IP changes.";
+                result.Message = ServerText.Format(
+                    record.ConsecutiveFailures >= backoffThreshold ? TranslationKeys.MessagePausedFailures : TranslationKeys.MessagePausedTransient,
+                    record.ConsecutiveFailures >= backoffThreshold ? record.ConsecutiveFailures : record.TransientFailures,
+                    record.BackoffUntilUtc!.Value.ToString("u", CultureInfo.InvariantCulture));
                 statusUpdates[record.Id] = result;
                 outcome.Records.Add(result);
                 continue;
@@ -283,7 +284,7 @@ public sealed class DNSUpdateService : IDisposable
             {
                 result.Success = false;
                 result.Action = "Failed";
-                result.Message = "No provider registered for " + record.Provider + ".";
+                result.Message = ServerText.Format(TranslationKeys.ErrorNoProvider, record.Provider);
                 statusUpdates[record.Id] = result;
                 outcome.Records.Add(result);
                 continue;
@@ -299,7 +300,7 @@ public sealed class DNSUpdateService : IDisposable
                 result.Success = false;
                 result.Action = "Failed";
                 result.Message = _secrets.IsAvailable
-                    ? "Stored credentials could not be decrypted. Please re-enter them in step 2, Address, on the Configuration tab."
+                    ? ServerText.Get(TranslationKeys.ErrorCredentialsUnreadable)
                     : CredentialEncryption.KeyStoreUnavailable;
                 statusUpdates[record.Id] = result;
                 outcome.Records.Add(result);
@@ -353,10 +354,11 @@ public sealed class DNSUpdateService : IDisposable
                 status.DetectionUnhealthyLogged = true;
                 var warnings = string.Join(", ", outcome.Warnings.Select(ActivityEntries.Phrase).Where(w => w.Length > 0));
                 _activity.Log(
-                    "Public IP Detection Failing",
+                    ServerText.Get(TranslationKeys.ActivityDetectionFailing),
                     "RemoteAccess.DetectionUnhealthy",
-                    ActivityEntries.Plain("Detection has failed for " + status.ConsecutiveDetectionFailures
-                    + " runs in a row" + (warnings.Length > 0 ? ": " + warnings : string.Empty)),
+                    ActivityEntries.Plain(warnings.Length > 0
+                        ? ServerText.Format(TranslationKeys.ActivityDetectionFailingWhy, status.ConsecutiveDetectionFailures, warnings)
+                        : ServerText.Format(TranslationKeys.ActivityDetectionFailingOverview, status.ConsecutiveDetectionFailures)),
                     LogLevel.Warning);
             }
 
@@ -366,9 +368,9 @@ public sealed class DNSUpdateService : IDisposable
         if (status.DetectionUnhealthyLogged)
         {
             _activity.Log(
-                "Public IP Detection Recovered",
+                ServerText.Get(TranslationKeys.ActivityDetectionRecovered),
                 "RemoteAccess.DetectionRecovered",
-                "Detection succeeded after " + status.ConsecutiveDetectionFailures + " failed runs");
+                ServerText.Format(TranslationKeys.ActivityDetectionRecoveredOverview, status.ConsecutiveDetectionFailures));
         }
 
         status.ConsecutiveDetectionFailures = 0;
@@ -514,14 +516,14 @@ public sealed class DNSUpdateService : IDisposable
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
             // The per request timeout fired rather than an outer cancellation.
-            return (DNSUpdateResult.Fail("Request timed out after " + timeout.TotalSeconds.ToString("0", CultureInfo.InvariantCulture) + "s."), true, attempt.IPv4Held, attempt.IPv6Held);
+            return (DNSUpdateResult.Fail(ServerText.Format(TranslationKeys.ErrorRequestTimedOut, timeout.TotalSeconds.ToString("0", CultureInfo.InvariantCulture))), true, attempt.IPv4Held, attempt.IPv6Held);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             // Logged without the exception itself: its message and stack can quote the request, credentials and all.
             var detail = CredentialRedactor.Redact(ex.Message, new[] { login, password });
             _logger.LogError("Unexpected error updating {Host}: {Error}: {Message}", record.Hostname, ex.GetType().Name, detail);
-            return (DNSUpdateResult.Fail("Unexpected error: " + detail), false, attempt.IPv4Held, attempt.IPv6Held);
+            return (DNSUpdateResult.Fail(ServerText.Format(TranslationKeys.ErrorUnexpected, detail)), false, attempt.IPv4Held, attempt.IPv6Held);
         }
     }
 

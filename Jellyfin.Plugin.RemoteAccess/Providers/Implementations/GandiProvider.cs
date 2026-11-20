@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -39,15 +40,15 @@ public sealed class GandiProvider : DNSProviderBase
     public override string Label => "Gandi LiveDNS";
 
     /// <inheritdoc />
-    public override string Hint => "Set Auth keyword to the word token for a Personal Access Token, or any other value for an API key. Domain is the domain, such as example.com.";
+    public override string Hint => TranslationKeys.ProviderHintGandi;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record Name",
-        Login = "Auth Keyword",
-        Password = "API Key or Token",
-        Zone = "Domain",
+        Hostname = TranslationKeys.LabelRecordName,
+        Login = TranslationKeys.LabelAuthKeyword,
+        Password = TranslationKeys.LabelApiKeyOrToken,
+        Zone = TranslationKeys.LabelDomain,
         Server = true,
         Ttl = true,
     };

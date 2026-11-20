@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -40,14 +41,14 @@ public sealed class FreeDnsProvider : DNSProviderBase
     public override string Label => "FreeDNS";
 
     /// <inheritdoc />
-    public override string Hint => "FreeDNS at afraid.org. Username and Password are your afraid.org credentials, used to get the update token.";
+    public override string Hint => TranslationKeys.ProviderHintFreeDns;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Username",
-        Password = "Password",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPassword,
         Server = true,
     };
 

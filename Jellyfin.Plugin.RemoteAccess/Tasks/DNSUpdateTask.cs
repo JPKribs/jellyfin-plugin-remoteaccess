@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Services;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Tasks;
 
@@ -25,13 +26,13 @@ public sealed class DNSUpdateTask : PluginScheduledTask
     }
 
     /// <inheritdoc />
-    public override string Name => "Update DDNS";
+    public override string Name => ServerText.Get(TranslationKeys.TaskUpdateDdns);
 
     /// <inheritdoc />
     public override string Key => "RemoteAccessUpdate";
 
     /// <inheritdoc />
-    public override string Description => "Finds the server's public IP and updates each DDNS record that points somewhere else.";
+    public override string Description => ServerText.Get(TranslationKeys.TaskUpdateDdnsDescription);
 
     /// <inheritdoc />
     public override async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)

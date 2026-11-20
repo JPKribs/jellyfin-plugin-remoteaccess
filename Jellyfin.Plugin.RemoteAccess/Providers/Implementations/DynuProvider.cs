@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -46,15 +47,15 @@ public sealed class DynuProvider : DNSProviderBase
     public override string Label => "Dynu";
 
     /// <inheritdoc />
-    public override string Hint => "Username and Password are your Dynu credentials. Fill in Custom domain only for your own domain.";
+    public override string Hint => TranslationKeys.ProviderHintDynu;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Login = "Username",
-        Password = "Password",
-        Zone = "Custom Domain",
+        Hostname = TranslationKeys.LabelHostname,
+        Login = TranslationKeys.LabelUsername,
+        Password = TranslationKeys.LabelPassword,
+        Zone = TranslationKeys.LabelCustomDomain,
         Server = true,
     };
 

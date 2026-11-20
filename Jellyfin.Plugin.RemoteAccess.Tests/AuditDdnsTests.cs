@@ -382,7 +382,8 @@ public class AuditDdnsTests
     {
         foreach (var provider in AllProviders())
         {
-            var hint = provider.Hint;
+            var hint = ServerText.Get(provider.Hint);
+            Assert.NotEqual(provider.Hint, hint);
             Assert.DoesNotContain(';', hint);
             Assert.DoesNotContain('(', hint);
             Assert.DoesNotContain(')', hint);

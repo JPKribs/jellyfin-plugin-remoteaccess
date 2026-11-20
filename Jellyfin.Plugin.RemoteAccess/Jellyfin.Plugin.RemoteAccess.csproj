@@ -48,4 +48,46 @@
     <EmbeddedResource Include="Web\**\*" />
   </ItemGroup>
 
+
+
+
+  <ItemGroup>
+    <!-- Jellyfin strings the pages and messages use, built in by Base in every language Jellyfin has. -->
+    <JellyfinString Include="Auto" />
+    <JellyfinString Include="ButtonCancel" />
+    <JellyfinString Include="ButtonOk" />
+    <JellyfinString Include="ButtonQuickStartGuide" />
+    <JellyfinString Include="ButtonRemove" />
+    <JellyfinString Include="Download" />
+    <JellyfinString Include="GuideProviderLogin" />
+    <JellyfinString Include="HeaderActivity" />
+    <JellyfinString Include="HeaderApiKey" />
+    <JellyfinString Include="HeaderPerformance" />
+    <JellyfinString Include="HeaderUser" />
+    <JellyfinString Include="HeaderUsers" />
+    <JellyfinString Include="LabelDevice" />
+    <JellyfinString Include="LabelFailed" />
+    <JellyfinString Include="LabelName" />
+    <JellyfinString Include="LabelPassword" />
+    <JellyfinString Include="LabelServerHost" />
+    <JellyfinString Include="LabelSource" />
+    <JellyfinString Include="LabelType" />
+    <JellyfinString Include="LabelUser" />
+    <JellyfinString Include="LabelUsername" />
+    <JellyfinString Include="NameExtraNumbered" Source="server" />
+    <JellyfinString Include="None" />
+    <JellyfinString Include="Off" />
+    <JellyfinString Include="OptionWeekly" />
+    <JellyfinString Include="Reset" />
+    <JellyfinString Include="Save" />
+    <JellyfinString Include="Share" />
+    <JellyfinString Include="TabAdvanced" />
+    <JellyfinString Include="TabDashboard" />
+    <JellyfinString Include="TabScheduledTasks" />
+    <JellyfinString Include="Unknown" />
+    <JellyfinString Include="ValueSeconds" />
+    <!-- A DNS record, not a TV recording. -->
+    <JellyfinTextMatch Include="HeaderRecord" />
+  </ItemGroup>
+
 </Project>

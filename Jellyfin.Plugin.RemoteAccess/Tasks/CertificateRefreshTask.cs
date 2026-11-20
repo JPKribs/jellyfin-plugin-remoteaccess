@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
@@ -40,13 +41,13 @@ public sealed class CertificateRefreshTask : PluginScheduledTask
     }
 
     /// <inheritdoc />
-    public override string Name => "Refresh Certificate";
+    public override string Name => ServerText.Get(TranslationKeys.TaskRefreshCertificate);
 
     /// <inheritdoc />
     public override string Key => "RemoteAccessCertificateRefresh";
 
     /// <inheritdoc />
-    public override string Description => "Requests a Let's Encrypt certificate when one is missing, no longer covers your addresses or expires within 30 days, and reloads or replaces other certificates as needed.";
+    public override string Description => ServerText.Get(TranslationKeys.TaskRefreshCertificateDescription);
 
     /// <inheritdoc />
     public override async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
@@ -72,16 +73,16 @@ public sealed class CertificateRefreshTask : PluginScheduledTask
         if (!status.Loaded && status.Mode != CertificateMode.Automatic)
         {
             _logger.LogError("Remote access certificate could not be loaded: {Error}", status.Error);
-            _activity.Log("Certificate Failed to Load", "RemoteAccess.CertificateFailed", ActivityEntries.Plain(status.Error), LogLevel.Error);
+            _activity.Log(ServerText.Get(TranslationKeys.ActivityCertificateFailedToLoad), "RemoteAccess.CertificateFailed", ActivityEntries.Plain(status.Error), LogLevel.Error);
         }
         else if (status.Loaded && status.NotAfterUtc is { } expires && expires - DateTime.UtcNow < _warnBefore)
         {
             var message = $"The certificate for {string.Join(", ", status.Names)} expires {expires:yyyy-MM-dd}. Renew it so remote access keeps working.";
             _logger.LogWarning("{Message}", message);
             _activity.Log(
-                "Certificate Expiring Soon",
+                ServerText.Get(TranslationKeys.ActivityCertificateExpiring),
                 "RemoteAccess.CertificateExpiring",
-                $"The certificate for {string.Join(", ", status.Names)} expires {expires:yyyy-MM-dd}, renew it so remote access keeps working",
+                ServerText.Format(TranslationKeys.ActivityCertificateExpiringOverview, string.Join(", ", status.Names), expires.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
                 LogLevel.Warning);
         }
 

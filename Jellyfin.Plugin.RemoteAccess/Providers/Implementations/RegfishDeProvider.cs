@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -39,13 +40,13 @@ public sealed class RegfishDeProvider : DNSProviderBase
     public override string Label => "regfish.de";
 
     /// <inheritdoc />
-    public override string Hint => "Update token is the regfish DDNS token for the record.";
+    public override string Hint => TranslationKeys.ProviderHintRegfishDe;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Hostname",
-        Password = "Update Token",
+        Hostname = TranslationKeys.LabelHostname,
+        Password = TranslationKeys.LabelUpdateToken,
         Server = true,
     };
 

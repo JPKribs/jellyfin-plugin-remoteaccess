@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -42,13 +43,13 @@ public sealed class HeNetProvider : DNSProviderBase
     public override string Label => "Hurricane Electric";
 
     /// <inheritdoc />
-    public override string Hint => "Record is the record name. DDNS key is the key dns.he.net generates for that record.";
+    public override string Hint => TranslationKeys.ProviderHintHeNet;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record",
-        Password = "DDNS Key",
+        Hostname = TranslationKeys.HeaderRecord,
+        Password = TranslationKeys.LabelDdnsKey,
         Server = true,
     };
 

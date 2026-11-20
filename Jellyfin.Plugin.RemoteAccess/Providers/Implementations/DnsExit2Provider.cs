@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -51,14 +52,14 @@ public sealed class DnsExit2Provider : DNSProviderBase
     public override string Label => "DNSExit";
 
     /// <inheritdoc />
-    public override string Hint => "API key is your DNSExit API key. Domain is the domain, such as example.com, and the record name is used when it is left blank.";
+    public override string Hint => TranslationKeys.ProviderHintDnsExit2;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Record Name",
-        Password = "API Key",
-        Zone = "Domain",
+        Hostname = TranslationKeys.LabelRecordName,
+        Password = TranslationKeys.HeaderApiKey,
+        Zone = TranslationKeys.LabelDomain,
         Server = true,
         Ttl = true,
     };

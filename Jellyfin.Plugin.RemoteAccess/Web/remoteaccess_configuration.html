@@ -8,7 +8,7 @@
                 <div class="verticalSection verticalSection-extrabottompadding">
 
                     <div class="sectionTitleContainer flex align-items-center">
-                        <h1 class="sectionTitle">Configuration</h1>
+                        <h1 class="sectionTitle" data-str="TabConfiguration">Configuration</h1>
                     </div>
 
                     <!-- Summary -->
@@ -27,9 +27,9 @@
                             <div class="checkboxContainer checkboxContainer-withDescription">
                                 <label class="emby-checkbox-label">
                                     <input type="checkbox" is="emby-checkbox" id="enabled" />
-                                    <span class="checkboxLabel">Enabled</span>
+                                    <span class="checkboxLabel" data-str="LabelEnabled">Enabled</span>
                                 </label>
-                                <div class="fieldDescription checkboxFieldDescription">Starts the proxy when you save.</div>
+                                <div class="fieldDescription checkboxFieldDescription" data-str="DescriptionProxyEnabled">Starts the proxy when you save.</div>
                             </div>
                         </div>
 
@@ -38,55 +38,55 @@
                         <div id="bodyAddress">
                             <div class="fieldDescription" id="textAddress" role="status"></div>
                             <div id="nameDetails" class="base-record-card hidden">
-                                <div class="base-record-row"><span class="base-record-label">Name</span><span id="nameHostname" class="base-mono"></span></div>
-                                <div class="base-record-row"><span class="base-record-label">Points to</span><span id="nameAddresses" class="base-mono"></span></div>
-                                <div id="namePublicRow" class="base-record-row"><span class="base-record-label">This server</span><span id="namePublic" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label" data-str="LabelName">Name</span><span id="nameHostname" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label" data-str="LabelPointsTo">Points to</span><span id="nameAddresses" class="base-mono"></span></div>
+                                <div id="namePublicRow" class="base-record-row"><span class="base-record-label" data-str="LabelThisServer">This server</span><span id="namePublic" class="base-mono"></span></div>
                             </div>
 
                             <div id="extraRecords" class="base-warn hidden"></div>
                             <div id="loadError" class="base-error hidden"></div>
-                            <div class="fieldDescription"><strong>Use the most limited token your provider allows.</strong></div>
+                            <div class="fieldDescription"><strong data-str="TextLimitedToken">Use the most limited token your provider allows.</strong></div>
 
                             <div class="selectContainer">
-                                <label class="selectLabel" for="recProvider">Provider</label>
+                                <label class="selectLabel" for="recProvider" data-str="LabelProvider">Provider</label>
                                 <select is="emby-select" id="recProvider"></select>
                             </div>
                             <div id="providerHint" class="base-info"></div>
                             <div class="inputContainer">
-                                <label for="recHostname">Hostname</label>
+                                <label for="recHostname" data-str="LabelHostname">Hostname</label>
                                 <input is="emby-input" type="text" id="recHostname" autocomplete="off" placeholder="home.example.com" />
-                                <div id="recHostnameDescription" class="fieldDescription">The name people use to reach Jellyfin.</div>
+                                <div id="recHostnameDescription" class="fieldDescription" data-str="DescriptionHostname">The name people use to reach Jellyfin.</div>
                             </div>
                             <div class="inputContainer">
-                                <label for="recLogin">Login</label>
+                                <label for="recLogin" data-str="GuideProviderLogin">Login</label>
                                 <input is="emby-input" type="text" id="recLogin" autocomplete="off" />
-                                <button is="emby-button" type="button" id="btnClearLogin" class="raised base-button secondary small hidden" title="Remove the saved value when saved" aria-label="Clear the saved login">
-                                    <span>Clear Saved Value</span>
+                                <button is="emby-button" type="button" id="btnClearLogin" class="raised base-button secondary small hidden" title="Remove the saved value when saved" aria-label="Clear the saved login" data-str-title="TitleClearSaved" data-str-label="LabelClearLogin">
+                                    <span data-str="ButtonClearSavedValue">Clear Saved Value</span>
                                 </button>
                             </div>
                             <div class="inputContainer">
-                                <label for="recPassword">Password</label>
+                                <label for="recPassword" data-str="LabelPassword">Password</label>
                                 <input is="emby-input" type="password" id="recPassword" autocomplete="off" />
-                                <button is="emby-button" type="button" id="btnClearPassword" class="raised base-button secondary small hidden" title="Remove the saved value when saved" aria-label="Clear the saved password">
-                                    <span>Clear Saved Value</span>
+                                <button is="emby-button" type="button" id="btnClearPassword" class="raised base-button secondary small hidden" title="Remove the saved value when saved" aria-label="Clear the saved password" data-str-title="TitleClearSaved" data-str-label="LabelClearPassword">
+                                    <span data-str="ButtonClearSavedValue">Clear Saved Value</span>
                                 </button>
                             </div>
                             <div class="inputContainer">
-                                <label for="recZone">Zone</label>
+                                <label for="recZone" data-str="LabelZone">Zone</label>
                                 <input is="emby-input" type="text" id="recZone" autocomplete="off" placeholder="example.com" />
                             </div>
 
                             <!-- How the record last went -->
                             <div id="recStatusCard" class="base-record-card">
-                                <div class="base-record-row"><span class="base-record-label">Public IP</span><span id="stIp" class="base-mono"></span></div>
-                                <div class="base-record-row"><span class="base-record-label">Last update</span><span id="stChecked" class="base-mono"></span></div>
-                                <div class="base-record-row"><span class="base-record-label">Result</span><span id="stResult" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label" data-str="LabelPublicIp">Public IP</span><span id="stIp" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label" data-str="LabelLastUpdate">Last update</span><span id="stChecked" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label" data-str="LabelResult">Result</span><span id="stResult" class="base-mono"></span></div>
                             </div>
                             <div id="detectionWarning" class="base-warn hidden"></div>
                             <div class="base-button-row">
-                                <button is="emby-button" type="button" id="btnRunNow" class="raised base-button secondary small" title="Update Now">
+                                <button is="emby-button" type="button" id="btnRunNow" class="raised base-button secondary small" title="Update Now" data-str-title="ButtonUpdateNow">
                                     <span class="material-icons" aria-hidden="true">sync</span>
-                                    <span>Update Now</span>
+                                    <span data-str="ButtonUpdateNow">Update Now</span>
                                 </button>
                             </div>
                             <span id="runStatus" class="base-status-text" role="status"></span>
@@ -96,54 +96,54 @@
                         <div id="bodyCertificate">
                             <div class="fieldDescription" id="textCertificate" role="status"></div>
                             <div class="selectContainer">
-                                <label class="selectLabel" for="certMode">Source</label>
+                                <label class="selectLabel" for="certMode" data-str="LabelSource">Source</label>
                                 <select is="emby-select" id="certMode">
-                                    <option value="Automatic">Let's Encrypt</option>
-                                    <option value="PemFiles">PEM files</option>
-                                    <option value="Pkcs12File">PKCS#12 file</option>
-                                    <option value="SelfSigned">Self-signed</option>
-                                    <option value="None">None</option>
+                                    <option value="Automatic" data-str="OptionLetsEncrypt">Let's Encrypt</option>
+                                    <option value="PemFiles" data-str="OptionPemFiles">PEM files</option>
+                                    <option value="Pkcs12File" data-str="OptionPkcs12File">PKCS#12 file</option>
+                                    <option value="SelfSigned" data-str="OptionSelfSigned">Self-signed</option>
+                                    <option value="None" data-str="None">None</option>
                                 </select>
                                 <div id="certModeDescription" class="fieldDescription"></div>
                             </div>
                             <div id="certTermsField" class="checkboxContainer checkboxContainer-withDescription">
                                 <label class="emby-checkbox-label">
                                     <input type="checkbox" is="emby-checkbox" id="certTerms" />
-                                    <span class="checkboxLabel">Accept the Let's Encrypt Terms</span>
+                                    <span class="checkboxLabel" data-str="LabelAcceptTerms">Accept the Let's Encrypt Terms</span>
                                 </label>
-                                <div class="fieldDescription checkboxFieldDescription">Required before a certificate is requested. Read the <a href="https://letsencrypt.org/repository/" target="_blank" rel="noopener noreferrer" class="button-link">Let's Encrypt Subscriber Agreement</a>.</div>
+                                <div id="certTermsDescription" class="fieldDescription checkboxFieldDescription">Required before a certificate is requested. Read the <a href="https://letsencrypt.org/repository/" target="_blank" rel="noopener noreferrer" class="button-link">Let's Encrypt Subscriber Agreement</a>.</div>
                             </div>
                             <div id="certMethod" class="base-info hidden"></div>
                             <div id="certFileFields">
                                 <div class="inputContainer">
-                                    <label for="certPath">Certificate File</label>
+                                    <label for="certPath" data-str="LabelCertificateFile">Certificate File</label>
                                     <input is="emby-input" type="text" id="certPath" autocomplete="off" />
                                     <div id="certPathDescription" class="fieldDescription"></div>
                                 </div>
                                 <div id="certKeyField" class="inputContainer">
-                                    <label for="certKeyPath">Private Key File</label>
+                                    <label for="certKeyPath" data-str="LabelPrivateKeyFile">Private Key File</label>
                                     <input is="emby-input" type="text" id="certKeyPath" autocomplete="off" />
-                                    <div class="fieldDescription">For example privkey.pem.</div>
+                                    <div class="fieldDescription" data-str="DescriptionPrivateKeyFile">For example privkey.pem.</div>
                                 </div>
                                 <div class="inputContainer">
-                                    <label for="certPassword">Password</label>
+                                    <label for="certPassword" data-str="LabelPassword">Password</label>
                                     <input is="emby-input" type="password" id="certPassword" autocomplete="new-password" />
-                                    <div class="fieldDescription">The file's password if it has one, stored encrypted.</div>
+                                    <div class="fieldDescription" data-str="DescriptionCertificatePassword">The file's password if it has one, stored encrypted.</div>
                                 </div>
                             </div>
                             <div id="certStatus" class="base-record-card hidden">
-                                <div class="base-record-row"><span class="base-record-label">Covers</span><span id="certNames" class="base-mono"></span></div>
-                                <div class="base-record-row"><span class="base-record-label">Expires</span><span id="certExpires" class="base-mono"></span></div>
-                                <div class="base-record-row"><span class="base-record-label">Issued by</span><span id="certIssuer" class="base-mono"></span></div>
-                                <div id="certRootExpiresRow" class="base-record-row hidden"><span class="base-record-label">Root expires</span><span id="certRootExpires" class="base-mono"></span></div>
-                                <div id="certRootFingerprintRow" class="base-record-row hidden"><span class="base-record-label">Root SHA-256</span><span id="certRootFingerprint" class="base-mono ra-fingerprint"></span></div>
+                                <div class="base-record-row"><span class="base-record-label" data-str="LabelCovers">Covers</span><span id="certNames" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label" data-str="LabelExpires">Expires</span><span id="certExpires" class="base-mono"></span></div>
+                                <div class="base-record-row"><span class="base-record-label" data-str="LabelIssuedBy">Issued by</span><span id="certIssuer" class="base-mono"></span></div>
+                                <div id="certRootExpiresRow" class="base-record-row hidden"><span class="base-record-label" data-str="LabelRootExpires">Root expires</span><span id="certRootExpires" class="base-mono"></span></div>
+                                <div id="certRootFingerprintRow" class="base-record-row hidden"><span class="base-record-label" data-str="LabelRootFingerprint">Root SHA-256</span><span id="certRootFingerprint" class="base-mono ra-fingerprint"></span></div>
                             </div>
                             <div id="certProblem" class="base-warn hidden"></div>
                             <div id="certRootField" class="hidden">
-                                <div class="fieldDescription">Install it on each device that should trust this server.</div>
+                                <div class="fieldDescription" data-str="DescriptionInstallRoot">Install it on each device that should trust this server.</div>
                                 <div class="base-button-row">
                                     <button is="emby-button" type="button" id="btnDownloadRoot" class="raised base-button secondary small">
-                                        <span>Download Root Certificate</span>
+                                        <span data-str="ButtonDownloadRoot">Download Root Certificate</span>
                                     </button>
                                 </div>
                             </div>
@@ -158,7 +158,7 @@
                             </div>
                             <div class="base-button-row">
                                 <button is="emby-button" type="button" id="btnRouterRetry" class="raised base-button secondary small">
-                                    <span>Try Again</span>
+                                    <span data-str="ButtonTryAgain">Try Again</span>
                                 </button>
                             </div>
                             <span id="routerStatus" class="base-status-text" role="status"></span>
@@ -167,15 +167,15 @@
                         <!-- Trust the Proxy -->
                         <div id="bodyTrust">
                             <div class="fieldDescription" id="textTrust" role="status"></div>
-                            <div class="fieldDescription">Restarts Jellyfin once.</div>
+                            <div class="fieldDescription" data-str="DescriptionRestartsOnce">Restarts Jellyfin once.</div>
                             <div id="trustError" class="base-error hidden"></div>
                             <div id="jellyfinExposed" class="base-warn hidden"></div>
                             <div class="base-button-row">
                                 <button is="emby-button" type="button" id="btnTrust" class="raised base-button primary small">
-                                    <span>Trust the Proxy</span>
+                                    <span data-str="HeaderTrustProxy">Trust the Proxy</span>
                                 </button>
                                 <button is="emby-button" type="button" id="btnRestore" class="raised base-button destructive small hidden">
-                                    <span>Undo</span>
+                                    <span data-str="ButtonUndo">Undo</span>
                                 </button>
                             </div>
                             <span id="trustStatus" class="base-status-text" role="status"></span>
@@ -185,10 +185,10 @@
                         <div id="bodyReach">
                             <div class="fieldDescription" id="textReach" role="status"></div>
                             <div id="reachNodes" class="base-record-card hidden"></div>
-                            <div class="fieldDescription">Sends your address to check-host.net, which tries it from other countries.</div>
+                            <div class="fieldDescription" data-str="DescriptionReachTest">Sends your address to check-host.net, which tries it from other countries.</div>
                             <div class="base-button-row">
                                 <button is="emby-button" type="button" id="btnReach" class="raised base-button secondary small">
-                                    <span>Test from Outside</span>
+                                    <span data-str="ButtonTestFromOutside">Test from Outside</span>
                                 </button>
                             </div>
                             <span id="reachStatus" class="base-status-text" role="status"></span>

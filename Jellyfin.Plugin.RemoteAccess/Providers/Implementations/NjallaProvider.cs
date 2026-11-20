@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Models;
+using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers.Implementations;
@@ -33,13 +34,13 @@ public sealed class NjallaProvider : DNSProviderBase
     public override string Label => "Njalla";
 
     /// <inheritdoc />
-    public override string Hint => "DDNS key is the dynamic DNS key Njalla shows for the record.";
+    public override string Hint => TranslationKeys.ProviderHintNjalla;
 
     /// <inheritdoc />
     public override ProviderFields Fields => new()
     {
-        Hostname = "Host",
-        Password = "DDNS Key",
+        Hostname = TranslationKeys.LabelServerHost,
+        Password = TranslationKeys.LabelDdnsKey,
         Server = true,
     };
 

@@ -153,7 +153,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
 
         if (!settings.Enabled)
         {
-            return new TakeoverResult(false, "Turn the proxy on and save first.", false);
+            return new TakeoverResult(false, ServerText.Get(TranslationKeys.ErrorTurnProxyOnFirst), false);
         }
 
         await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
@@ -165,7 +165,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
                 var phase = _store.Load().Phase;
                 if (phase == TakeoverPhase.PendingRestart)
                 {
-                    return new TakeoverResult(false, "Jellyfin is still restarting from the last change to trusting the proxy. Try again once it is back.", false);
+                    return new TakeoverResult(false, ServerText.Get(TranslationKeys.ErrorStillRestarting), false);
                 }
 
                 if (phase != TakeoverPhase.Managed)
@@ -176,7 +176,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
 
             if (File.Exists(_paths.DisableFlag))
             {
-                return new TakeoverResult(false, $"Remove the recovery flag file first: {_paths.DisableFlag}", false);
+                return new TakeoverResult(false, ServerText.Format(TranslationKeys.ErrorRemoveRecoveryFlag, _paths.DisableFlag), false);
             }
 
             var errors = ProxySettingsValidator.Validate(settings);
@@ -189,7 +189,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             var clash = new[] { options.HttpPort, options.HttpsPort }.Intersect(new[] { proxy.Jellyfin.HttpPort, proxy.Jellyfin.HttpsPort }).ToList();
             if (clash.Count > 0)
             {
-                return new TakeoverResult(false, $"Port {string.Join(", ", clash)} is Jellyfin's own port. Give the proxy different ports.", false);
+                return new TakeoverResult(false, ServerText.Format(TranslationKeys.ErrorJellyfinOwnPort, ServerText.List(clash.Cast<object>())), false);
             }
 
             // Trusting a proxy that is not listening only costs a restart and gains nothing, for example when this
@@ -197,7 +197,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             if (checkProxy && !proxy.IsRunning)
             {
                 var reason = await proxy.CheckRunningAsync(cancellationToken).ConfigureAwait(false);
-                return new TakeoverResult(false, "The proxy is not running. " + (reason ?? string.Empty), false);
+                return new TakeoverResult(false, (ServerText.Get(TranslationKeys.ErrorProxyNotRunning) + " " + (reason ?? string.Empty)).Trim(), false);
             }
 
             var probe = checkProxy ? await proxy.ProbeAsync(settings, cancellationToken).ConfigureAwait(false) : null;
@@ -296,11 +296,10 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             _store.Save(state);
         }
 
-        const string Message = "Jellyfin now trusts the proxy and keeps its own ports. Jellyfin is restarting.";
         _logger.LogInformation("Jellyfin now trusts the reverse proxy; restarting Jellyfin");
-        _activity?.Log("Proxy Trust Turned On", "RemoteAccess.TakeoverStarted", "Jellyfin now trusts the proxy and keeps its own ports, and is restarting", userId: userId);
+        _activity?.Log(ServerText.Get(TranslationKeys.ActivityTrustOn), "RemoteAccess.TakeoverStarted", ServerText.Get(TranslationKeys.ActivityTrustOnOverview), userId: userId);
         ScheduleRestart();
-        return new TakeoverResult(true, Message, true);
+        return new TakeoverResult(true, ServerText.Get(TranslationKeys.MessageTrustOn), true);
     }
 
     /// <summary>
@@ -362,9 +361,9 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             _configuration.SaveConfiguration(NetworkKey, network);
             _logger.LogInformation("Updated the addresses Jellyfin gives its clients to follow the proxy's hostnames");
             _activity?.Log(
-                "Published Address Updated",
+                ServerText.Get(TranslationKeys.ActivityPublishedAddressUpdated),
                 "RemoteAccess.TakeoverAddressUpdated",
-                "Jellyfin now gives its clients the address " + external.Replace("external=", string.Empty, StringComparison.OrdinalIgnoreCase),
+                ServerText.Format(TranslationKeys.ActivityPublishedAddressOverview, external.Replace("external=", string.Empty, StringComparison.OrdinalIgnoreCase)),
                 userId: userId);
             return true;
         }
@@ -409,7 +408,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
                 _store.Save(new TakeoverState());
             }
 
-            return new TakeoverResult(false, "Jellyfin's network settings are not managed by the proxy.", false);
+            return new TakeoverResult(false, ServerText.Get(TranslationKeys.ErrorNotManaged), false);
         }
 
         var network = _configuration.GetNetworkConfiguration();
@@ -417,20 +416,21 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
         _configuration.SaveConfiguration(NetworkKey, network);
         _store.Save(new TakeoverState());
 
-        const string Message = "Jellyfin's network settings were put back.";
-        _logger.LogInformation("{Message} {Reason}", Message, reason);
+        _logger.LogInformation("Jellyfin's network settings were put back. {Reason}", reason);
         var why = ActivityEntries.Phrase(reason);
         _activity?.Log(
-            "Network Settings Restored",
+            ServerText.Get(TranslationKeys.ActivityNetworkRestored),
             "RemoteAccess.TakeoverRestored",
-            "Jellyfin's network settings were put back" + (why.Length > 0 ? ", " + char.ToLowerInvariant(why[0]) + why[1..] : string.Empty),
+            why.Length > 0
+                ? ServerText.Format(TranslationKeys.ActivityNetworkRestoredBecause, char.ToLowerInvariant(why[0]) + why[1..])
+                : ServerText.Get(TranslationKeys.ActivityNetworkRestoredOverview),
             userId: userId);
         if (restart)
         {
             ScheduleRestart();
         }
 
-        return new TakeoverResult(true, Message + (restart ? " Jellyfin is restarting." : string.Empty), restart);
+        return new TakeoverResult(true, ServerText.Get(restart ? TranslationKeys.MessageNetworkRestoredRestarting : TranslationKeys.MessageNetworkRestored), restart);
     }
 
     /// <summary>
@@ -462,7 +462,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
         {
             if (state.Snapshot is not null)
             {
-                Restore("The recovery flag file is present.", restart: true);
+                Restore(ServerText.Get(TranslationKeys.ReasonRecoveryFlag), restart: true);
             }
 
             return;
@@ -497,7 +497,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             if (problem is not null)
             {
                 _logger.LogError("Jellyfin could not be reached through the proxy: {Problem}", problem);
-                _activity?.Log("Proxy Check Failed", "RemoteAccess.TakeoverCheckFailed", ActivityEntries.Plain("Jellyfin could not be reached through the proxy: " + ActivityEntries.Phrase(problem)), LogLevel.Error);
+                _activity?.Log(ServerText.Get(TranslationKeys.ActivityProxyCheckFailed), "RemoteAccess.TakeoverCheckFailed", ActivityEntries.Plain(ServerText.Format(TranslationKeys.ActivityProxyCheckFailedOverview, ActivityEntries.Phrase(problem))), LogLevel.Error);
                 if (state.Snapshot is { BoundToLoopback: true })
                 {
                     ReportStillClosed(problem);
@@ -505,7 +505,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             }
             else if (wasPending)
             {
-                _activity?.Log("Proxy Trust Confirmed", "RemoteAccess.TakeoverCompleted", "The proxy started and Jellyfin answered through it");
+                _activity?.Log(ServerText.Get(TranslationKeys.ActivityTrustConfirmed), "RemoteAccess.TakeoverCompleted", ServerText.Get(TranslationKeys.ActivityTrustConfirmedOverview));
             }
         }
         finally
@@ -533,11 +533,9 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             network,
             problem);
         _activity?.Log(
-            "Jellyfin Kept on This Machine Only",
+            ServerText.Get(TranslationKeys.ActivityKeptLocal),
             "RemoteAccess.TakeoverLoopbackKept",
-            "Jellyfin could not be reached through the proxy so it stays closed until the proxy works, to turn the proxy off by hand create an empty file named DISABLE at "
-            + _paths.DisableFlag
-            + " and restart Jellyfin, and until the proxy is on again make sure your router forwards no ports to this server, the server log has every step",
+            ServerText.Format(TranslationKeys.ActivityKeptLocalOverview, _paths.DisableFlag),
             LogLevel.Error);
     }
 
@@ -551,7 +549,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
             return await proxy.CheckRunningAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        string? problem = "The proxy did not start.";
+        string? problem = ServerText.Get(TranslationKeys.ErrorProxyDidNotStart);
         while (DateTime.UtcNow < deadline && !cancellationToken.IsCancellationRequested)
         {
             problem = await proxy.CheckRunningAsync(cancellationToken).ConfigureAwait(false);
@@ -601,7 +599,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
     }
 
     private string UnreadableState()
-        => "Remote Access could not read its record of Jellyfin's network settings, so nothing was changed. Try again in a moment. If this keeps happening, check the file " + _paths.StateFile + ".";
+        => ServerText.Format(TranslationKeys.ErrorUnreadableState, _paths.StateFile);
 
     // Jellyfin's network settings as saved on disk, or null when the file is missing or cannot be read.
     private NetworkConfiguration? ReadSavedNetwork()
@@ -667,9 +665,9 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
                 Interlocked.Exchange(ref _restartScheduled, 0);
                 _logger.LogError(ex, "Jellyfin could not be restarted. Restart it by hand so the network change takes effect");
                 _activity?.Log(
-                    "Jellyfin Restart Failed",
+                    ServerText.Get(TranslationKeys.ActivityRestartFailed),
                     "RemoteAccess.RestartFailed",
-                    "Restart Jellyfin by hand so the change to its network settings takes effect",
+                    ServerText.Get(TranslationKeys.ActivityRestartFailedOverview),
                     LogLevel.Error);
             }
         });

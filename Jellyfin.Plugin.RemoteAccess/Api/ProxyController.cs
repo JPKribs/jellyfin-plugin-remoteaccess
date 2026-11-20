@@ -100,12 +100,12 @@ public class ProxyController : ControllerBase
                 || string.Equals((incoming.Certificate.KeyPath ?? string.Empty).Trim(), stored.Certificate.KeyPath, StringComparison.Ordinal));
         if (XmlText.FindInvalid(incoming) is { } bad)
         {
-            return BadRequest(new { Errors = new List<string> { $"{bad} holds a character that cannot be saved." } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Format(TranslationKeys.ErrorInvalidCharacter, bad) } });
         }
 
         if (SecretProtector.IsProtected(incoming.Certificate.Password))
         {
-            return BadRequest(new { Errors = new List<string> { "An encrypted value cannot be entered as the certificate password." } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Get(TranslationKeys.ErrorEncryptedCertificatePassword) } });
         }
 
         // A new certificate password could only be stored in the clear without the key store, which is never done.
@@ -123,7 +123,7 @@ public class ProxyController : ControllerBase
         var errors = ProxySettingsValidator.Validate(incoming, rawHostnames);
         if (!incoming.Enabled && _orchestrator.State.Snapshot is not null)
         {
-            errors.Add("Undo Trust the Proxy before turning the proxy off, so Jellyfin's remote access goes back to how it was.");
+            errors.Add(ServerText.Get(TranslationKeys.ErrorUndoBeforeOff));
         }
 
         var lockout = SelfLockout(incoming);
@@ -154,7 +154,7 @@ public class ProxyController : ControllerBase
                 return BadRequest(new { Errors = new List<string> { result.Message } });
             }
 
-            restart = result.Restarting ? "Jellyfin is restarting so the change takes effect." : null;
+            restart = result.Restarting ? ServerText.Get(TranslationKeys.MessageJellyfinRestarting) : null;
         }
 
         // While Jellyfin listens on this machine only, the proxy is the only way in. A save that stops a working
@@ -170,7 +170,7 @@ public class ProxyController : ControllerBase
         {
             var why = await _proxy.CheckRunningAsync(CancellationToken.None).ConfigureAwait(false);
             await PutBackAsync(plugin, stored).ConfigureAwait(false);
-            return BadRequest(new { Errors = new List<string> { "The proxy could not start with these settings, so they were not saved. Jellyfin only listens on this machine, so the proxy has to keep running. " + why } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Get(TranslationKeys.ErrorProxyCouldNotStart) + " " + why } });
         }
 
         if (loopbackChanged && loopbackNow)
@@ -182,7 +182,7 @@ public class ProxyController : ControllerBase
                 return BadRequest(new { Errors = new List<string> { result.Message } });
             }
 
-            restart = result.Restarting ? "Jellyfin is restarting so the change takes effect." : null;
+            restart = result.Restarting ? ServerText.Get(TranslationKeys.MessageJellyfinRestarting) : null;
         }
         else if (!loopbackChanged)
         {
@@ -195,9 +195,9 @@ public class ProxyController : ControllerBase
         if (changed.Count > 0)
         {
             _activity.Log(
-                "Proxy Settings Changed",
+                ServerText.Get(TranslationKeys.ActivityProxySettingsChanged),
                 "RemoteAccess.ProxySettingsChanged",
-                "Changed " + string.Join(", ", changed) + ", and the proxy is " + (incoming.Enabled ? "on" : "off"),
+                ServerText.Format(incoming.Enabled ? TranslationKeys.ActivityChangedProxyOn : TranslationKeys.ActivityChangedProxyOff, string.Join(", ", changed)),
                 userId: user);
         }
 
@@ -294,7 +294,7 @@ public class ProxyController : ControllerBase
     [HttpPost("Restore")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<TakeoverResult> Restore()
-        => Ok(_orchestrator.Restore("Undone from the Remote Access page.", restart: true, ActivityUser.Of(User)));
+        => Ok(_orchestrator.Restore(ServerText.Get(TranslationKeys.ActivityUndoneFromPage), restart: true, ActivityUser.Of(User)));
 
     /// <summary>
     /// Returns the root the self-signed certificate is issued from, for installing on devices. It is public: it
@@ -315,7 +315,7 @@ public class ProxyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> RequestCertificate()
     {
-        _activity.Log("Certificate Requested", "RemoteAccess.CertificateRequested", "A new certificate was requested from the Remote Access page", userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Get(TranslationKeys.ActivityCertificateRequested), "RemoteAccess.CertificateRequested", ServerText.Get(TranslationKeys.ActivityCertificateRequestedOverview), userId: ActivityUser.Of(User));
         var (ok, message) = await _proxy.RequestCertificateAsync(CancellationToken.None).ConfigureAwait(false);
         return Ok(new { Ok = ok, Message = message, Status = _proxy.GetStatus(_orchestrator.State) });
     }
@@ -358,24 +358,24 @@ public class ProxyController : ControllerBase
         var changed = new List<string>();
         if (before.Enabled != after.Enabled)
         {
-            changed.Add(after.Enabled ? "remote access turned on" : "remote access turned off");
+            changed.Add(ServerText.Get(after.Enabled ? TranslationKeys.ActivityRemoteAccessOn : TranslationKeys.ActivityRemoteAccessOff));
         }
 
         if (Json(before.Hostnames) != Json(after.Hostnames))
         {
-            changed.Add("addresses");
+            changed.Add(ServerText.Get(TranslationKeys.ActivitySectionAddresses));
         }
 
         var a = before.Certificate;
         var b = after.Certificate;
         if (a.Mode != b.Mode || a.Path != b.Path || a.KeyPath != b.KeyPath || a.AcceptTerms != b.AcceptTerms || a.Password != b.Password)
         {
-            changed.Add("certificate");
+            changed.Add(ServerText.Get(TranslationKeys.ActivitySectionCertificate));
         }
 
         if (Json(before.Advanced) != Json(after.Advanced))
         {
-            changed.Add("Advanced settings");
+            changed.Add(ServerText.Get(TranslationKeys.ActivitySectionAdvanced));
         }
 
         return changed;
@@ -399,7 +399,7 @@ public class ProxyController : ControllerBase
 
         if (NetworkClassifier.ParseNetworks(options.BlockedAddresses).Any(n => n.Contains(ip)))
         {
-            return $"The blocked addresses include your own address, {ip}. Remove it, or change the list from your home network.";
+            return ServerText.Format(TranslationKeys.ErrorBlocksOwnAddress, ip);
         }
 
         if (!CountryRules.NeedsDatabase(options))
@@ -413,8 +413,9 @@ public class ProxyController : ControllerBase
             return null;
         }
 
-        var where = location.Country.Length > 0 ? location.Country : "a country the location database does not know";
-        return $"These country rules would block your own connection from {where}. Allow it, or change the rules from your home network.";
+        return location.Country.Length > 0
+            ? ServerText.Format(TranslationKeys.ErrorCountryBlocksYou, location.Country)
+            : ServerText.Get(TranslationKeys.ErrorCountryBlocksYouUnknown);
     }
 
     private static ProxySettings Redact(ProxySettings settings)

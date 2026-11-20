@@ -14,6 +14,7 @@ Folders in `Jellyfin.Plugin.RemoteAccess/`. The namespace matches the folder.
 | `Configuration/` | `PluginConfiguration.cs` and the classes it is made of. No web files. |
 | `Web/` | Every file served to a browser, the dashboard pages as HTML, JS, and CSS. They are embedded by `Web\**\*`. |
 | `Assets/` | The plugin logo. |
+| `Localization/` | The plugin's own strings, `en-us.json`, per [translations.md](translations.md). |
 | `Models/` | Data types for records and detection. |
 | `Providers/` | The DNS providers, one class each under `Implementations/`, and their shared base. |
 | `Services/` | IP detection, DNS lookup, and the update run. |
@@ -52,7 +53,8 @@ Development files that never ship go in `tools/` at the repository root.
 | SQLite versioning | `DatabaseSchema` |
 | Text from outside, for a log or the settings file | `FormatUtilities.SanitizeForLog` |
 | The clock | `TimeProvider`, and `UtcTime` for stored times |
-| Config page lifecycle | `createConfigPage` |
+| Config page lifecycle | `createConfigPage`, through `translatedPage` in `remoteaccess_tabs.js` |
+| Strings in the viewer's language | `loadTranslations` and `BaseTranslations`, per [translations.md](translations.md) |
 | Saving a page | `createSaveBar` with `fill: true`, per [style.md](style.md#saving) |
 | Dialogs | `confirmDialog`, `promptDialog`, `openDialog` |
 | A setup in steps that each have a state | `createSetupChecklist` |
@@ -162,7 +164,8 @@ export function countryRows(data, active) {
 
 ## JavaScript Conventions
 
-* Each config page is an ES module whose default export calls `createConfigPage` with `TABS` and `PLUGIN_ID` from `remoteaccess_tabs.js`.
+* Each config page is an ES module whose default export calls `translatedPage` with `PLUGIN_ID` from `remoteaccess_tabs.js`. It loads the strings, then runs `createConfigPage` with the shared tabs.
+* Every word on a page comes from a key, per [translations.md](translations.md).
 * Build each Base component once in `bind`, and update it with `setValue`, `setRows`, or `setCounts` on each load.
 * Use `const` and `let` in new code. Arrow functions are fine for callbacks.
 * Escape every value placed in HTML with `escapeHtml`. Prefer building a node and setting `textContent`.

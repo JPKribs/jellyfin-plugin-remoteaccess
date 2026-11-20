@@ -12,6 +12,7 @@ using Jellyfin.Plugin.RemoteAccess.Configuration;
 using Jellyfin.Plugin.RemoteAccess.Models;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Net;
 using Microsoft.Extensions.Logging;
 
@@ -192,8 +193,7 @@ public sealed class IPDetectionService
 
         if (responders >= 2)
         {
-            var disagree = "Public " + family + " detection endpoints disagreed on the address, so nothing "
-                + "was published. Remove an unreliable endpoint or add a trusted one so two can agree.";
+            var disagree = ServerText.Format(TranslationKeys.DetectionDisagreed, family);
             problem.Failed(level => _logger.Log(level, "Public {Family} detection endpoints disagreed across {Count} endpoint(s).", family, endpoints.Count));
             return (null, disagree);
         }
@@ -202,16 +202,12 @@ public sealed class IPDetectionService
         {
             // Detection reached an endpoint and got an answer, but it was a private or reserved address.
             // The server most likely has no public address of this family, so nothing can be published.
-            var note = "The " + family + " address returned by detection looks internal or private, so no "
-                + family + " records were updated. This usually means the server has no public " + family
-                + " address, for example when it sits behind CGNAT or a router whose public side the "
-                + "detection endpoint cannot see.";
+            var note = ServerText.Format(TranslationKeys.DetectionInternal, family);
             problem.Failed(level => _logger.Log(level, "Public {Family} detection saw only internal addresses across {Count} endpoint(s).", family, endpoints.Count));
             return (null, note);
         }
 
-        var failure = "Public " + family + " detection failed. None of the configured or fallback endpoints "
-            + "returned a usable address.";
+        var failure = ServerText.Format(TranslationKeys.DetectionFailed, family);
         problem.Failed(level => _logger.Log(level, "Public {Family} detection failed across {Count} endpoint(s).", family, endpoints.Count));
         return (null, failure);
     }
