@@ -13,7 +13,7 @@ namespace Jellyfin.Plugin.RemoteAccess.Providers;
 
 /// <summary>
 /// Shared logic for the provider implementations: per-family aggregation, server resolution, and HTTP
-/// over the shared <see cref="JpkHttp"/> helper.
+/// over the shared <see cref="BaseHttp"/> helper.
 /// </summary>
 public abstract class DNSProviderBase : IDNSProvider
 {
@@ -285,7 +285,7 @@ public abstract class DNSProviderBase : IDNSProvider
         string? login = null,
         string? password = null)
     {
-        var result = await JpkHttp.SendAsync(_httpClientFactory, method, url, cancellationToken, headers, body, contentType, login, password).ConfigureAwait(false);
+        var result = await BaseHttp.SendAsync(_httpClientFactory, method, url, cancellationToken, headers, body, contentType, login, password).ConfigureAwait(false);
         ProviderAttempt.Current?.Observe(result.Status);
         if (result.Status == 0)
         {
@@ -309,10 +309,10 @@ public abstract class DNSProviderBase : IDNSProvider
     /// <summary>Returns the first whitespace-delimited token of a response body.</summary>
     /// <param name="body">The body.</param>
     /// <returns>The first token, or an empty string.</returns>
-    protected static string FirstToken(string body) => JpkHttp.FirstToken(body);
+    protected static string FirstToken(string body) => BaseHttp.FirstToken(body);
 
     /// <summary>Returns the first line of a response body.</summary>
     /// <param name="body">The body.</param>
     /// <returns>The first line, trimmed.</returns>
-    protected static string FirstLine(string body) => JpkHttp.FirstLine(body);
+    protected static string FirstLine(string body) => BaseHttp.FirstLine(body);
 }

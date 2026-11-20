@@ -448,7 +448,7 @@ public class DNSUpdateServiceRunTests
     public async Task OnlyAAAATimesOut_ThrowingLikeBase1019_KeepsTheIPv4Push()
     {
         // The per request timeout spans both families. The AAAA push waits on the request token and its
-        // cancellation escapes as an exception, as JpkHttp does from 2026.10.19 on.
+        // cancellation escapes as an exception, as BaseHttp does from 2026.10.19 on.
         using var h = new OrchestratorHarness(http => new IDNSProvider[]
         {
             new PerFamilyProvider(http, async (_, type, ct) =>
@@ -483,7 +483,7 @@ public class DNSUpdateServiceRunTests
     [Fact]
     public async Task OnlyAAAATimesOut_SwallowedLikeBase1016_KeepsTheIPv4Push()
     {
-        // The AAAA request hangs until the request timeout cancels it; JpkHttp 2026.10.16 turns that into
+        // The AAAA request hangs until the request timeout cancels it; BaseHttp 2026.10.16 turns that into
         // status zero.
         using var h = new OrchestratorHarness(http => new IDNSProvider[]
         {

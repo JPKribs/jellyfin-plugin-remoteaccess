@@ -42,7 +42,7 @@ Development files that never ship go in `tools/` at the repository root.
 | :--- | :--- |
 | Plugin class and config lock | `PluginBase<TPlugin, TConfiguration>` |
 | Scheduled task | `PluginScheduledTask` |
-| Provider HTTP calls | `JpkHttp` and `HttpResult`, through `DNSProviderBase.SendAsync` |
+| Provider HTTP calls | `BaseHttp` and `HttpResult`, through `DNSProviderBase.SendAsync` |
 | Retry and backoff | `BackoffPolicy`, `RetryPolicy`, `CircuitBreaker` |
 | Secrets | `SecretProtector`, `StableSecretProtection`, `AddPluginSecretProtector` |
 | Comparing a presented secret | `SecretCompare.FixedTimeEquals` |
