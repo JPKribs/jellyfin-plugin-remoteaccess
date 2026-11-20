@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
-using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
-using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Settings;
 using MediaBrowser.Common.Net;
 using Xunit;
 

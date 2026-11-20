@@ -8,10 +8,10 @@ using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
-using Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
-using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
-using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Hosting;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Settings;
 using JPKribs.Jellyfin.Base;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -252,7 +252,7 @@ public sealed class ProxyHostTests : IAsyncLifetime
     [Fact]
     public async Task Recorder_GetsTheAddressUsedAndRefusedSignIns()
     {
-        var recorder = new Jellyfin.Plugin.RemoteAccess.People.AccessRecorder();
+        var recorder = new Jellyfin.Plugin.RemoteAccess.Services.People.AccessRecorder();
         await using var proxy = await StartProxyAsync(recorder: recorder);
         using var client = Client(proxy.HttpsPort);
 
@@ -276,7 +276,7 @@ public sealed class ProxyHostTests : IAsyncLifetime
     [Fact]
     public async Task Recorder_GetsTheNameALocalClientTried()
     {
-        var recorder = new Jellyfin.Plugin.RemoteAccess.People.AccessRecorder();
+        var recorder = new Jellyfin.Plugin.RemoteAccess.Services.People.AccessRecorder();
         await using var proxy = await StartProxyAsync(loopbackIsLocal: true, recorder: recorder);
         using var client = Client(proxy.HttpPort);
 

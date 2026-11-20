@@ -73,7 +73,7 @@ Build with `./build.sh`, unzip the zip from `dist/` into `<config>/plugins/Remot
 
 ### In the Page Harness
 
-When no test server is at hand, serve the page files outside Jellyfin. A small server in a scratch folder maps `configurationpage?name=<file>` to `Jellyfin.Plugin.RemoteAccess/Configuration/<file>`, and `remoteaccess_jpkribs_shared.*` to Base's `assets/` in the NuGet package. A shell page stubs `ApiClient`, `LibraryMenu`, and `Dashboard`, answers each `RemoteAccess/...` request from fixtures, imports the page controller, and dispatches `viewshow`.
+When no test server is at hand, serve the page files outside Jellyfin. A small server in a scratch folder maps `configurationpage?name=<file>` to `Jellyfin.Plugin.RemoteAccess/Web/<file>`, and `remoteaccess_jpkribs_shared.*` to Base's `assets/` in the NuGet package. A shell page stubs `ApiClient`, `LibraryMenu`, and `Dashboard`, answers each `RemoteAccess/...` request from fixtures, imports the page controller, and dispatches `viewshow`.
 
 * Keep the harness and its fixtures outside the repository.
 * Use fixtures with generic names only.

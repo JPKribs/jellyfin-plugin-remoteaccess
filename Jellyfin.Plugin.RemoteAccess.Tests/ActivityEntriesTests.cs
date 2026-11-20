@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Jellyfin.Database.Implementations.Entities;
-using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Services.People;
 using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Activity;

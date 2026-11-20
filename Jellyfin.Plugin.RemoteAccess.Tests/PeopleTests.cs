@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using Jellyfin.Plugin.RemoteAccess.People;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.People;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 

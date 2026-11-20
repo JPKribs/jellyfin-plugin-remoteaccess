@@ -1,6 +1,6 @@
 using System;
 using System.Net;
-using Jellyfin.Plugin.RemoteAccess.Proxy.Hosting;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Hosting;
 using Xunit;
 
 namespace Jellyfin.Plugin.RemoteAccess.Tests;

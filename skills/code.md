@@ -2,6 +2,28 @@
 
 How to write, comment, and test code in this plugin. It covers C#, JavaScript, HTML, CSS, and YAML.
 
+## Layout
+
+Folders in `Jellyfin.Plugin.RemoteAccess/`. The namespace matches the folder.
+
+| Path | Holds |
+| :--- | :--- |
+| `Plugin.cs` | The plugin class. |
+| `PluginServiceRegistrator.cs` | Service registration. |
+| `Api/` | The controllers and the types only they use. |
+| `Configuration/` | `PluginConfiguration.cs` and the classes it is made of. No web files. |
+| `Web/` | Every file served to a browser, the dashboard pages as HTML, JS, and CSS. They are embedded by `Web\**\*`. |
+| `Assets/` | The plugin logo. |
+| `Models/` | Data types for records and detection. |
+| `Providers/` | The DNS providers, one class each under `Implementations/`, and their shared base. |
+| `Services/` | IP detection, DNS lookup, and the update run. |
+| `Services/People/` | History, bans, the block list, country rules, and locations. |
+| `Services/Proxy/` | The HTTPS proxy, certificates, the router, and Trust the Proxy. |
+| `Tasks/` | The scheduled tasks. |
+| `Utilities/` | Static helpers and extension methods. |
+
+Development files that never ship go in `tools/` at the repository root.
+
 ## Base First
 
 [JPKribs.Jellyfin.Base](https://github.com/JPKribs/jellyfin-plugin-base) holds everything two plugins could share. Its docs site lists every component and helper. Read it before you write anything new.

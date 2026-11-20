@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Configuration;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Utilities;
 using MediaBrowser.Common.Net;
 using Microsoft.Extensions.Logging;

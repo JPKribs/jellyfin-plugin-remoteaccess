@@ -12,12 +12,12 @@ var configDir = '';
 var baseEntry = '';
 
 // initialize
-// Finds the Configuration folder and Base's bundle.
+// Finds the Web folder and Base's bundle.
 //
 // Inputs
 // data [object]: root is the repository folder.
 export async function initialize(data) {
-    configDir = join(data.root, 'Jellyfin.Plugin.RemoteAccess', 'Configuration');
+    configDir = join(data.root, 'Jellyfin.Plugin.RemoteAccess', 'Web');
     var csproj = readFileSync(join(data.root, 'Jellyfin.Plugin.RemoteAccess', 'Jellyfin.Plugin.RemoteAccess.csproj'), 'utf8');
     var version = /Include="JPKribs\.Jellyfin\.Base" Version="([^"]+)"/.exec(csproj)[1];
     var packages = process.env.NUGET_PACKAGES || join(homedir(), '.nuget', 'packages');

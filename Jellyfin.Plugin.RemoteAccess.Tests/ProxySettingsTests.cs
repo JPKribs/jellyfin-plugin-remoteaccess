@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
-using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Settings;
 using Xunit;
 
 namespace Jellyfin.Plugin.RemoteAccess.Tests;

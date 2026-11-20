@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Services.People;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Model.Tasks;
 

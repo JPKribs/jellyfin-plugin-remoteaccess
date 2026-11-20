@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Services;
 using Jellyfin.Plugin.RemoteAccess.Utilities;
 using MediaBrowser.Common.Configuration;

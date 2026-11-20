@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Net;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 using Microsoft.AspNetCore.Http;
 using Xunit;
 

@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Jellyfin.Plugin.RemoteAccess.People;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.People;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 using Xunit;
 
 namespace Jellyfin.Plugin.RemoteAccess.Tests;

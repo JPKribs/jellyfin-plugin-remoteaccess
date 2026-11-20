@@ -7,8 +7,8 @@ using Jellyfin.Plugin.RemoteAccess.Api;
 using Jellyfin.Plugin.RemoteAccess.Configuration;
 using Jellyfin.Plugin.RemoteAccess.Models;
 using Jellyfin.Plugin.RemoteAccess.Providers;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
-using Jellyfin.Plugin.RemoteAccess.Proxy.Network;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Network;
 using Jellyfin.Plugin.RemoteAccess.Services;
 using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
@@ -303,7 +303,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
 
         // The router would otherwise keep forwarding to this server until the lease ran out. Best effort and
         // bounded: it never throws and waits a few seconds at most.
-        Proxy.Router.RouterPortMapper.RemoveForUninstall();
+        Services.Proxy.Router.RouterPortMapper.RemoveForUninstall();
 
         base.OnUninstalling();
     }
@@ -328,7 +328,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
         yield return new PluginPageInfo
         {
             Name = "remoteaccess_dashboard",
-            EmbeddedResourcePath = $"{ns}.Configuration.remoteaccess_dashboard.html",
+            EmbeddedResourcePath = $"{ns}.Web.remoteaccess_dashboard.html",
             MenuSection = "server",
             DisplayName = "Remote Access",
             EnableInMainMenu = true,
@@ -338,7 +338,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
         yield return new PluginPageInfo
         {
             Name = "remoteaccess_dashboard.js",
-            EmbeddedResourcePath = $"{ns}.Configuration.remoteaccess_dashboard.js"
+            EmbeddedResourcePath = $"{ns}.Web.remoteaccess_dashboard.js"
         };
 
         // Tabs 2 and 3: Configuration, the numbered steps holding every setting needed to reach Jellyfin from
@@ -348,13 +348,13 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
             yield return new PluginPageInfo
             {
                 Name = name,
-                EmbeddedResourcePath = $"{ns}.Configuration.{name}.html"
+                EmbeddedResourcePath = $"{ns}.Web.{name}.html"
             };
 
             yield return new PluginPageInfo
             {
                 Name = name + ".js",
-                EmbeddedResourcePath = $"{ns}.Configuration.{name}.js"
+                EmbeddedResourcePath = $"{ns}.Web.{name}.js"
             };
         }
 
@@ -364,7 +364,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
             yield return new PluginPageInfo
             {
                 Name = module,
-                EmbeddedResourcePath = $"{ns}.Configuration.{module}"
+                EmbeddedResourcePath = $"{ns}.Web.{module}"
             };
         }
 

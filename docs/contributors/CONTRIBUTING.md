@@ -23,15 +23,17 @@ Credentials stay encrypted under the name `Jellyfin.Plugin.DynamicDns`, so their
 saved under that name are moved to the new one on startup by `LegacyDataMigration`.
 
 ```
-API/            controller endpoints for the dashboard pages
-Configuration/  the html and js pages, and the plugin configuration
-Models/         data types for records and detection
-People/         visitor history, bans, the block list and country rules
-Providers/      one class per DNS provider plus the shared base
-Proxy/          the reverse proxy, certificates, Let's Encrypt and Trust the Proxy
-Services/       IP detection, DNS lookup and the update run
-Tasks/          the scheduled tasks
-Utilities/      shared helpers such as credential encryption
+Api/              controller endpoints for the dashboard pages
+Assets/           the plugin logo
+Configuration/    the plugin configuration
+Models/           data types for records and detection
+Providers/        one class per DNS provider plus the shared base
+Services/         IP detection, DNS lookup and the update run
+Services/People/  visitor history, bans, the block list and country rules
+Services/Proxy/   the reverse proxy, certificates, Let's Encrypt and Trust the Proxy
+Tasks/            the scheduled tasks
+Utilities/        shared helpers such as credential encryption
+Web/              the dashboard pages, as html, js and css
 ```
 
 Keep a type in its own file named after it. Providers are discovered by scanning the assembly, so a new one needs

@@ -4,8 +4,8 @@ using System.Net;
 using Jellyfin.Plugin.RemoteAccess.Api;
 using Jellyfin.Plugin.RemoteAccess.Configuration;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
-using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 

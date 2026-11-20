@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using Jellyfin.Plugin.RemoteAccess.Models;
-using Jellyfin.Plugin.RemoteAccess.People;
-using Jellyfin.Plugin.RemoteAccess.Proxy.Settings;
+using Jellyfin.Plugin.RemoteAccess.Services.People;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Settings;
 using MediaBrowser.Model.Plugins;
 
 namespace Jellyfin.Plugin.RemoteAccess.Configuration;

@@ -60,10 +60,11 @@ Explain what you would change, why, and what it risks. Wait for an answer before
 | Path | What it holds |
 | :--- | :--- |
 | `Jellyfin.Plugin.RemoteAccess/` | The plugin source. |
-| `Jellyfin.Plugin.RemoteAccess/Configuration/` | The dashboard pages, as HTML, JS, and CSS, and the plugin configuration. |
+| `Jellyfin.Plugin.RemoteAccess/Web/` | The dashboard pages, as HTML, JS, and CSS. |
+| `Jellyfin.Plugin.RemoteAccess/Configuration/` | The plugin configuration. |
 | `Jellyfin.Plugin.RemoteAccess/Providers/` | The DNS providers, one class each under `Implementations/`. |
-| `Jellyfin.Plugin.RemoteAccess/Proxy/` | The HTTPS proxy, certificates, the router, and Trust the Proxy. |
-| `Jellyfin.Plugin.RemoteAccess/People/` | History, bans, the block list, country rules, and locations. |
+| `Jellyfin.Plugin.RemoteAccess/Services/Proxy/` | The HTTPS proxy, certificates, the router, and Trust the Proxy. |
+| `Jellyfin.Plugin.RemoteAccess/Services/People/` | History, bans, the block list, country rules, and locations. |
 | `Jellyfin.Plugin.RemoteAccess.Tests/` | The C# tests, and the page module tests in `js/`. |
 | `docs/` | The documentation site, built with MkDocs. |
 | `build.yaml` | The version, the artifacts, and the release notes. |

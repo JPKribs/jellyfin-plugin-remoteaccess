@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Jellyfin.Plugin.RemoteAccess.Configuration;
 using Jellyfin.Plugin.RemoteAccess.Models;
 using Jellyfin.Plugin.RemoteAccess.Providers;
-using Jellyfin.Plugin.RemoteAccess.Proxy;
+using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Jellyfin.Plugin.RemoteAccess.People;
+using Jellyfin.Plugin.RemoteAccess.Services.People;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
 
