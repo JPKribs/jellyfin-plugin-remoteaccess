@@ -43,8 +43,8 @@ How many failures ban an address, and for how long, is set under **Advanced > Bl
 
 ## Activity
 
-Every address that reached the proxy, newest first, up to the latest 500. Filter it by **Type** and **Country**.
-The **Country** filter also has **Local**, for visitors from your own network.
+Every address that reached the proxy, newest first, up to the latest 500. Filter it by **Types** and **Countries**.
+The **Countries** filter also has **Local**, for visitors from your own network.
 
 | Type | Meaning |
 |---|---|
