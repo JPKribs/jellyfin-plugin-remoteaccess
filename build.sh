@@ -66,6 +66,62 @@ get_plugin_info() {
     echo "$name|$guid"
 }
 
+# True when a project file entry names a file or, as a pattern, matches at least one. MSBuild's ** spans any number
+# of folders, which a bash glob only does with globstar (bash 4+, not macOS's /bin/bash 3.2), so those patterns go
+# to find, whose -path wildcard already crosses folders.
+resource_exists() {
+    local file="$1"
+    case "$file" in
+        *'**'*) ;;
+        *[*?]*) compgen -G "$file" > /dev/null; return ;;
+        *) [[ -f "$file" ]]; return ;;
+    esac
+    local base="${file%%\*\**}"
+    base="${base%/}"
+    local pattern="${file//\*\*\//*}"
+    pattern="${pattern//\*\*/*}"
+    [[ -d "$base" ]] && [[ -n "$(find "$base" -type f -path "$pattern" -print -quit)" ]]
+}
+
+# Validate embedded resources exist: every <EmbeddedResource Include="..."> in the project file.
+validate_resources() {
+    log "INFO" "Validating embedded resources exist"
+
+    local missing_files=()
+    local config_files=()
+    local include
+    while IFS= read -r include; do
+        # The project file writes paths Windows-style and relative to the project folder.
+        config_files+=("$PROJECT_DIR/${include//\\//}")
+    done < <(sed -n 's/.*<EmbeddedResource[^>]*Include="\([^"]*\)".*/\1/p' "$PROJECT_FILE")
+
+    if [[ ${#config_files[@]} -eq 0 ]]; then
+        log "ERROR" "No EmbeddedResource entries found in $PROJECT_FILE"
+        return 1
+    fi
+
+    # An entry may be a pattern (Web\**\*), which needs at least one file.
+    for file in "${config_files[@]}"; do
+        if ! resource_exists "$file"; then
+            missing_files+=("$file")
+        else
+            log "SUCCESS" "Found: $file"
+        fi
+    done
+
+    if [[ ${#missing_files[@]} -gt 0 ]]; then
+        log "ERROR" "Missing embedded resource files:"
+        for file in "${missing_files[@]}"; do
+            log "ERROR" "  - $file"
+        done
+        log "ERROR" "These files are listed in $PROJECT_FILE and the build embeds them"
+        return 1
+    fi
+
+    log "SUCCESS" "All embedded resources found"
+    return 0
+}
+
 # Main build process
 main() {
     log "INFO" "Starting Remote Access plugin build"
@@ -88,6 +144,11 @@ main() {
     # Check if project file exists
     if [[ ! -f "$PROJECT_FILE" ]]; then
         log "ERROR" "Project file not found: $PROJECT_FILE"
+        exit 1
+    fi
+
+    # Validate embedded resources
+    if ! validate_resources; then
         exit 1
     fi
 
