@@ -71,14 +71,14 @@ git push
 
 ## Publish
 
-1. **Draft.** A push to `master` that changes more than `build.yaml` and the docs starts **Create/Update Release Draft**. It builds the zip and writes a draft release named `v<version>` with the changelog as its notes. When `v<version>` is already published, it raises the bug part, commits "Auto-increment version to ...", and drafts that version. A push that only changes `build.yaml` starts nothing, so run the workflow from the Actions tab.
-2. **Check.** Open the draft. The notes must match `build.yaml`, and the zip and its `.md5` must be attached.
+1. **Draft.** A push to `master` that changes more than `build.yaml` and the docs starts **Create/Update Release Draft**. It builds the zip and writes a draft release named `v<version>` with the changelog as its notes. When `v<version>` is already published, it raises the bug part, commits "Auto-increment version to ...", and drafts that version. A push that only changes `build.yaml` starts nothing, so run the workflow from the Actions tab. Draft builds run one at a time, so a push and a manual start that overlap build one after the other.
+2. **Check.** Wait until no draft build is queued or running, since each one replaces the zip. Then open the draft. The notes must match `build.yaml`, and the zip and its `.md5` must be attached.
 
     ```bash
     gh release view v<version>
     ```
 
-3. **Release.** Publish the draft. The **Publish Plugin** workflow takes the attached zip's checksum, adds the version to `manifest.json`, and commits "Update manifest for release v<version>".
+3. **Release.** Publish the draft. The **Publish Plugin** workflow waits for any draft build still running, hashes the attached zip, checks it against the `.md5`, adds the version to `manifest.json`, and commits "Update manifest for release v<version>". A draft build never replaces the assets of a published release.
 
     ```bash
     gh release edit v<version> --draft=false
