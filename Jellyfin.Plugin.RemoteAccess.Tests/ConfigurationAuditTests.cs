@@ -59,8 +59,8 @@ public class ConfigurationAuditTests
 
         var entry = Assert.Single(_entries);
         Assert.Equal("RemoteAccess.RecordAdded", entry.Type);
-        Assert.Equal("1 DNS Record Added", entry.Name);
-        Assert.Equal("1 DNS record was added for host.example.com (1) with Cloudflare (1)", entry.ShortOverview);
+        Assert.Equal("1 DNS record added", entry.Name);
+        Assert.Equal("Added for host.example.com (1) with Cloudflare (1)", entry.ShortOverview);
     }
 
     [Fact]
@@ -102,8 +102,8 @@ public class ConfigurationAuditTests
 
         var entry = Assert.Single(_entries);
         Assert.Equal("RemoteAccess.RecordAdded", entry.Type);
-        Assert.Equal("2 DNS Records Added", entry.Name);
-        Assert.Equal("2 DNS records were added for host.example.com (1), other.example.com (1) with Cloudflare (2)", entry.ShortOverview);
+        Assert.Equal("2 DNS records added", entry.Name);
+        Assert.Equal("Added for host.example.com (1), other.example.com (1) with Cloudflare (2)", entry.ShortOverview);
     }
 
     [Fact]
@@ -120,13 +120,13 @@ public class ConfigurationAuditTests
         ConfigurationAudit.LogRecordChanges(_activity, before, after, admin);
 
         var changed = Assert.Single(_entries, e => e.Type == "RemoteAccess.RecordChanged");
-        Assert.Equal("2 DNS Records Changed", changed.Name);
-        Assert.Equal("2 DNS records were changed for a2.example.com (1), b.example.com (1), now disabled (1), enabled (1)", changed.ShortOverview);
+        Assert.Equal("2 DNS records changed", changed.Name);
+        Assert.Equal("Changed for a2.example.com (1), b.example.com (1), now off (1), on (1)", changed.ShortOverview);
         Assert.Equal(admin, changed.UserId);
 
         var removed = Assert.Single(_entries, e => e.Type == "RemoteAccess.RecordRemoved");
-        Assert.Equal("1 DNS Record Removed", removed.Name);
-        Assert.Equal("1 DNS record was removed for gone.example.com (1) with Cloudflare (1)", removed.ShortOverview);
+        Assert.Equal("1 DNS record removed", removed.Name);
+        Assert.Equal("Removed for gone.example.com (1) with Cloudflare (1)", removed.ShortOverview);
 
         var credentials = Assert.Single(_entries, e => e.Type == "RemoteAccess.RecordCredentialsChanged");
         Assert.Equal("Credentials Changed for b.example.com", credentials.Name);

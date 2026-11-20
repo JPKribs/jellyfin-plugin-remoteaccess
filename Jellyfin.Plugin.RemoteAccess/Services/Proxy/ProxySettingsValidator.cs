@@ -56,60 +56,61 @@ public static class ProxySettingsValidator
     /// </summary>
     /// <param name="settings">The normalized settings.</param>
     /// <param name="rawHostnames">The hostnames as entered, to report ones normalization dropped.</param>
+    /// <param name="language">The language of the problems, or <c>null</c> for the server's.</param>
     /// <returns>Human-readable problems.</returns>
-    public static List<string> Validate(ProxySettings settings, IEnumerable<string>? rawHostnames = null)
+    public static List<string> Validate(ProxySettings settings, IEnumerable<string>? rawHostnames = null, string? language = null)
     {
         ArgumentNullException.ThrowIfNull(settings);
         var errors = new List<string>();
 
         // Enum values can arrive as any number. One that names nothing would fail to save as XML, which would
         // leave Jellyfin unable to store the plugin's settings at all, so it is refused here.
-        CheckEnum(errors, ServerText.Get(TranslationKeys.ErrorFieldCertificateSource), settings.Certificate.Mode);
-        CheckEnum(errors, ServerText.Get(TranslationKeys.ErrorFieldCountryRule), settings.Advanced.CountryMode ?? CountryRuleMode.Off);
+        CheckEnum(errors, language, Text(language, TranslationKeys.ErrorFieldCertificateSource), settings.Certificate.Mode);
+        CheckEnum(errors, language, Text(language, TranslationKeys.ErrorFieldCountryRule), settings.Advanced.CountryMode ?? CountryRuleMode.Off);
 
         var o = ProxyOptions.From(settings.Advanced);
-        CheckPort(errors, ServerText.Get(TranslationKeys.ErrorFieldHttpPort), o.HttpPort);
-        CheckPort(errors, ServerText.Get(TranslationKeys.ErrorFieldHttpsPort), o.HttpsPort);
+        CheckPort(errors, language, Text(language, TranslationKeys.ErrorFieldHttpPort), o.HttpPort);
+        CheckPort(errors, language, Text(language, TranslationKeys.ErrorFieldHttpsPort), o.HttpsPort);
         if (o.HttpPort == o.HttpsPort)
         {
-            errors.Add(ServerText.Get(TranslationKeys.ErrorSamePorts));
+            errors.Add(Text(language, TranslationKeys.ErrorSamePorts));
         }
 
         // Local clients are then sent to the public address, so there has to be one that is not a wildcard.
         if (o.JellyfinLoopbackOnly && !settings.Hostnames.Any(h => !h.StartsWith('*')))
         {
-            errors.Add(ServerText.Get(TranslationKeys.ErrorLoopbackNeedsAddress));
+            errors.Add(Text(language, TranslationKeys.ErrorLoopbackNeedsAddress));
         }
 
         if (o.LanAddress.Length > 0 && !IPAddress.TryParse(o.LanAddress, out _))
         {
-            errors.Add(ServerText.Format(TranslationKeys.ErrorLanAddress, o.LanAddress));
+            errors.Add(Text(language, TranslationKeys.ErrorLanAddress, o.LanAddress));
         }
 
         if (rawHostnames is not null)
         {
             foreach (var raw in rawHostnames.Where(r => !string.IsNullOrWhiteSpace(r) && HostnameMatcher.Normalize(r).Length == 0))
             {
-                errors.Add(ServerText.Format(TranslationKeys.ErrorHostname, raw.Trim()));
+                errors.Add(Text(language, TranslationKeys.ErrorHostname, raw.Trim()));
             }
         }
 
         if (o.CountryMode == CountryRuleMode.AllowOnly && o.Countries.Count == 0)
         {
-            errors.Add(ServerText.Get(TranslationKeys.ErrorAllowOnlyNeedsCountry));
+            errors.Add(Text(language, TranslationKeys.ErrorAllowOnlyNeedsCountry));
         }
 
         foreach (var raw in o.TrustedNetworks.Where(n => !NetworkClassifier.TryParseNetwork(n, out _)))
         {
-            errors.Add(ServerText.Format(TranslationKeys.ErrorTrustedNetwork, raw));
+            errors.Add(Text(language, TranslationKeys.ErrorTrustedNetwork, raw));
         }
 
         foreach (var raw in o.BlockedAddresses.Where(n => !NetworkClassifier.TryParseNetwork(n, out _)))
         {
-            errors.Add(ServerText.Format(TranslationKeys.ErrorBlockedAddress, raw));
+            errors.Add(Text(language, TranslationKeys.ErrorBlockedAddress, raw));
         }
 
-        CheckCertificate(errors, settings.Certificate);
+        CheckCertificate(errors, language, settings.Certificate);
         return errors;
     }
 
@@ -123,33 +124,37 @@ public static class ProxySettingsValidator
     private static int? ClampOptional(int? value, int min, int max)
         => value is { } v ? Math.Clamp(v, min, max) : null;
 
-    private static void CheckEnum<T>(List<string> errors, string label, T value)
+    private static void CheckEnum<T>(List<string> errors, string? language, string label, T value)
         where T : struct, Enum
     {
         if (!Enum.IsDefined(value))
         {
-            errors.Add(ServerText.Format(TranslationKeys.ErrorUnknownValue, label));
+            errors.Add(Text(language, TranslationKeys.ErrorUnknownValue, label));
         }
     }
 
-    private static void CheckPort(List<string> errors, string label, int port)
+    private static void CheckPort(List<string> errors, string? language, string label, int port)
     {
         if (port is < 1 or > 65535)
         {
-            errors.Add(ServerText.Format(TranslationKeys.ErrorPortRange, label));
+            errors.Add(Text(language, TranslationKeys.ErrorPortRange, label));
         }
     }
 
-    private static void CheckCertificate(List<string> errors, ProxyCertificateSettings certificate)
+    private static void CheckCertificate(List<string> errors, string? language, ProxyCertificateSettings certificate)
     {
         switch (certificate.Mode)
         {
             case CertificateMode.Pkcs12File when certificate.Path.Length == 0:
-                errors.Add(ServerText.Get(TranslationKeys.ErrorChoosePkcs12));
+                errors.Add(Text(language, TranslationKeys.ErrorChoosePkcs12));
                 break;
             case CertificateMode.PemFiles when certificate.Path.Length == 0 || certificate.KeyPath.Length == 0:
-                errors.Add(ServerText.Get(TranslationKeys.ErrorChoosePemFiles));
+                errors.Add(Text(language, TranslationKeys.ErrorChoosePemFiles));
                 break;
         }
     }
+
+    // One string in the language asked for, else the server's.
+    private static string Text(string? language, string key, params object?[] args)
+        => BaseTranslations.Format(key, language ?? ServerText.Language, args);
 }

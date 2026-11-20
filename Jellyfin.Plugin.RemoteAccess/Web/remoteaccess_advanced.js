@@ -2,7 +2,7 @@
 // The Advanced tab: Dynamic DNS tuning, the record's finer settings, addresses, security, blocking, history and limits.
 
 import { confirmDialog, createChipSelect, createSaveBar, COUNTRY_CODES, WORLD } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
-import { PLUGIN_ID, t, translatedPage, saveBarText, htmlFormat, linkHtml, listText, problemText, showText, loadProviders, primaryRecord, recordNames, otherAddresses, addressLines, saveProxyHostnames } from './configurationpage?name=remoteaccess_tabs.js';
+import { PLUGIN_ID, t, translatedPage, htmlFormat, linkHtml, listText, problemText, showText, loadProviders, primaryRecord, recordNames, otherAddresses, addressLines, saveProxyHostnames } from './configurationpage?name=remoteaccess_tabs.js';
 
 export default function (view) {
     'use strict';
@@ -264,7 +264,7 @@ export default function (view) {
     }
 
     function clearHistory() {
-        var options = { title: t.tr('HeaderClearHistory'), confirmText: t.tr('ButtonClear'), cancelText: t.tr('ButtonCancel'), destructive: true };
+        var options = { title: t.tr('HeaderClearHistory'), confirmText: t.tr('ButtonClear'), destructive: true };
         confirmDialog(t.tr('ConfirmClearHistory'), options).then(function (ok) {
             if (!ok) return;
             Shared.apiRequest('People/History', 'DELETE').then(function () {
@@ -407,7 +407,7 @@ export default function (view) {
         var button = Shared.getEl('btnRemoveRecord');
         if (button.disabled || !record) return;
         var label = record.Hostname || record.Name;
-        var options = { title: t.tr('HeaderRemoveRecord'), confirmText: t.tr('ButtonRemove'), cancelText: t.tr('ButtonCancel'), destructive: true };
+        var options = { title: t.tr('HeaderRemoveRecord'), confirmText: t.tr('ButtonRemove'), destructive: true };
         confirmDialog(label ? t.format('ConfirmRemoveRecordNamed', label) : t.tr('ConfirmRemoveRecord'), options).then(function (ok) {
             if (!ok) return;
             button.disabled = true;
@@ -456,7 +456,7 @@ export default function (view) {
     function requestCertificate() {
         var button = Shared.getEl('btnRequestCert');
         if (button.disabled || !certRequestable) return;
-        var options = { title: t.tr('HeaderRequestCertificate'), confirmText: t.tr('ButtonRequest'), cancelText: t.tr('ButtonCancel') };
+        var options = { title: t.tr('HeaderRequestCertificate'), confirmText: t.tr('ButtonRequest') };
         confirmDialog(t.tr('ConfirmRequestCertificate'), options).then(function (ok) {
             if (!ok) return;
             button.disabled = true;
@@ -547,7 +547,7 @@ export default function (view) {
         var current = read();
         var effective = function (v) { return v == null ? !!(defaults && defaults.JellyfinLoopbackOnly) : v; };
         if (!effective(current.JellyfinLoopbackOnly) || effective(loaded.JellyfinLoopbackOnly)) return doSave();
-        var options = { title: t.tr('LabelLoopbackOnly'), confirmText: t.tr('ButtonTurnOn'), cancelText: t.tr('ButtonCancel') };
+        var options = { title: t.tr('LabelLoopbackOnly'), confirmText: t.tr('ButtonTurnOn') };
         return confirmDialog(t.tr('ConfirmLoopbackOnly'), options).then(function (ok) {
             if (!ok) throw new Error(t.tr('ErrorNothingSaved'));
             return doSave();
@@ -631,7 +631,7 @@ export default function (view) {
     var KEPT_ON_RESET = ['TrustedNetworks', 'BlockedAddresses', 'CountryMode', 'Countries'];
 
     function reset() {
-        var options = { title: t.tr('HeaderResetDefaults'), confirmText: t.tr('Reset'), cancelText: t.tr('ButtonCancel') };
+        var options = { title: t.tr('HeaderResetDefaults'), confirmText: t.tr('Reset') };
         confirmDialog(t.tr('ConfirmResetDefaults'), options).then(function (ok) {
             if (!ok) return;
             var current = read();
@@ -657,15 +657,12 @@ export default function (view) {
         Shared.getEl('recordEmpty').innerHTML = htmlFormat(Shared, 'RecordEmpty', [linkHtml(Shared, '#/configurationpage?name=remoteaccess_configuration', 'TabConfiguration')]);
         countries = createChipSelect({
             options: countryOptions(),
-            placeholder: t.tr('PlaceholderAddCountry'),
-            removeText: t.tr('ButtonRemove'),
-            noResultsText: t.tr('EmptyNoMatches'),
-            errorText: t.tr('ErrorSearch')
+            placeholder: t.tr('PlaceholderAddCountry')
         });
         Shared.getEl('countryPicker').appendChild(countries.element);
         Shared.getEl('advCountryMode').addEventListener('change', showCountryMode);
         Shared.getEl('advBlockWithoutDatabase').addEventListener('change', showCountryMode);
-        saveBar = createSaveBar(Object.assign(saveBarText(), { fill: true, form: Shared.getEl('RemoteAccessAdvancedForm'), onSave: save }));
+        saveBar = createSaveBar({ fill: true, form: Shared.getEl('RemoteAccessAdvancedForm'), onSave: save });
         Shared.getEl('saveBar').replaceWith(saveBar.element);
         ['input', 'change'].forEach(function (type) {
             view.addEventListener(type, function () { saveBar.setDirty(isDirty()); });

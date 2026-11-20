@@ -2,7 +2,7 @@
 // The Dashboard tab: the share card, where visitors came from, banned addresses and what each address did.
 
 import { confirmDialog, createWorldMap, linkWorldMap, createDataTable, createQrCode, createCollapsibleSection, renderRelative } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
-import { PLUGIN_ID, t, translatedPage, tableText, htmlFormat, linkHtml, problemText, showText, MAP_LAYERS, countryCounts, countryRows, countryFilterOptions, activityQuery } from './configurationpage?name=remoteaccess_tabs.js';
+import { PLUGIN_ID, t, translatedPage, htmlFormat, linkHtml, problemText, showText, MAP_LAYERS, countryCounts, countryRows, countryFilterOptions, activityQuery } from './configurationpage?name=remoteaccess_tabs.js';
 
 // The kinds of activity, each with its name and its badge color, which matches the map layer for the same kind.
 var TYPES = [
@@ -216,7 +216,7 @@ export default function (view) {
     // unblockCountry
     // A country rule covers many people, so this one asks first.
     function unblockCountry(code, name) {
-        var options = { title: t.tr('HeaderUnblockCountry'), confirmText: t.tr('ButtonUnblock'), cancelText: t.tr('ButtonCancel') };
+        var options = { title: t.tr('HeaderUnblockCountry'), confirmText: t.tr('ButtonUnblock') };
         confirmDialog(t.format('ConfirmUnblockCountry', name), options).then(function (ok) {
             if (ok) post('People/UnblockCountry?code=' + encodeURIComponent(code), t.format('MessageUnblocked', name), t.format('ErrorUnblock', name));
         });
@@ -251,12 +251,7 @@ export default function (view) {
         Shared.getEl('shareHomeOnly').innerHTML = htmlFormat(Shared, 'ShareHomeOnly', [linkHtml(Shared, '#/configurationpage?name=remoteaccess_configuration', 'TabConfiguration')]);
         qr = createQrCode({
             label: t.tr('LabelQrCode'),
-            fileName: 'jellyfin-qr.png',
-            copyImageText: t.tr('ButtonCopyImage'),
-            downloadText: t.tr('Download'),
-            copiedText: t.tr('MessageCopied'),
-            copyFailedText: t.tr('ErrorCopy'),
-            tooLongText: t.tr('ErrorQrTooLong')
+            fileName: 'jellyfin-qr.png'
         });
         Shared.getEl('shareQr').appendChild(qr.element);
     }
@@ -291,7 +286,7 @@ export default function (view) {
         var counts = MAP_LAYERS.map(function (l) {
             return { key: l.column, label: t.tr(l.labelKey), icon: l.icon, align: 'end' };
         });
-        countries = createDataTable(Object.assign(tableText(), {
+        countries = createDataTable({
             columns: [{ key: 'name', label: t.tr('HeaderCountry') }].concat(counts, [
                 { key: 'last', label: t.tr('HeaderLast'), width: 'auto', value: function (r) { return new Date(r.last); }, render: renderRelative('last') }
             ]),
@@ -301,11 +296,11 @@ export default function (view) {
             widthKey: 'remoteaccess-countries',
             label: t.tr('HeaderCountries'),
             emptyText: t.tr('EmptyCountries')
-        }));
+        });
         Shared.getEl('countryTable').appendChild(countries.element);
         linkWorldMap(map, countries, { field: 'code', rowKey: 'code' });
 
-        banned = createDataTable(Object.assign(tableText(), {
+        banned = createDataTable({
             columns: [
                 { key: 'Ip', label: t.tr('HeaderIp'), width: 'auto', render: function (b) { return mono(b.Ip); } },
                 { key: 'Country', label: t.tr('HeaderCountry'), value: function (b) { return b.Country || t.tr('Unknown'); } },
@@ -319,10 +314,10 @@ export default function (view) {
             widthKey: 'remoteaccess-banned',
             label: t.tr('LabelBannedTable'),
             emptyText: t.tr('EmptyBanned')
-        }));
+        });
         Shared.getEl('banned').appendChild(banned.element);
 
-        activity = createDataTable(Object.assign(tableText(), {
+        activity = createDataTable({
             // Eight columns fill the table at desktop width, so they share it evenly. A clipped value shows on hover,
             // and each column can be dragged wider.
             columns: [
@@ -347,7 +342,7 @@ export default function (view) {
             widthKey: 'remoteaccess-activity',
             label: t.tr('HeaderActivity'),
             emptyText: t.tr('EmptyActivity')
-        }));
+        });
         Shared.getEl('activity').appendChild(activity.element);
 
         Shared.getEl('banned').addEventListener('click', onRowAction, true);

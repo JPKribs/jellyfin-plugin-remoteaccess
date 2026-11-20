@@ -100,12 +100,12 @@ public class ProxyController : ControllerBase
                 || string.Equals((incoming.Certificate.KeyPath ?? string.Empty).Trim(), stored.Certificate.KeyPath, StringComparison.Ordinal));
         if (XmlText.FindInvalid(incoming) is { } bad)
         {
-            return BadRequest(new { Errors = new List<string> { ServerText.Format(TranslationKeys.ErrorInvalidCharacter, bad) } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Reply(Request, TranslationKeys.ErrorInvalidCharacter, bad) } });
         }
 
         if (SecretProtector.IsProtected(incoming.Certificate.Password))
         {
-            return BadRequest(new { Errors = new List<string> { ServerText.Get(TranslationKeys.ErrorEncryptedCertificatePassword) } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Reply(Request, TranslationKeys.ErrorEncryptedCertificatePassword) } });
         }
 
         // A new certificate password could only be stored in the clear without the key store, which is never done.
@@ -120,10 +120,10 @@ public class ProxyController : ControllerBase
         ProxySettingsValidator.Normalize(incoming);
 
         var options = ProxyOptions.From(incoming.Advanced);
-        var errors = ProxySettingsValidator.Validate(incoming, rawHostnames);
+        var errors = ProxySettingsValidator.Validate(incoming, rawHostnames, ServerText.LanguageOf(Request));
         if (!incoming.Enabled && _orchestrator.State.Snapshot is not null)
         {
-            errors.Add(ServerText.Get(TranslationKeys.ErrorUndoBeforeOff));
+            errors.Add(ServerText.Reply(Request, TranslationKeys.ErrorUndoBeforeOff));
         }
 
         var lockout = SelfLockout(incoming);
@@ -154,7 +154,7 @@ public class ProxyController : ControllerBase
                 return BadRequest(new { Errors = new List<string> { result.Message } });
             }
 
-            restart = result.Restarting ? ServerText.Get(TranslationKeys.MessageJellyfinRestarting) : null;
+            restart = result.Restarting ? ServerText.Reply(Request, TranslationKeys.MessageJellyfinRestarting) : null;
         }
 
         // While Jellyfin listens on this machine only, the proxy is the only way in. A save that stops a working
@@ -170,7 +170,7 @@ public class ProxyController : ControllerBase
         {
             var why = await _proxy.CheckRunningAsync(CancellationToken.None).ConfigureAwait(false);
             await PutBackAsync(plugin, stored).ConfigureAwait(false);
-            return BadRequest(new { Errors = new List<string> { ServerText.Get(TranslationKeys.ErrorProxyCouldNotStart) + " " + why } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Reply(Request, TranslationKeys.ErrorProxyCouldNotStart) + " " + why } });
         }
 
         if (loopbackChanged && loopbackNow)
@@ -182,7 +182,7 @@ public class ProxyController : ControllerBase
                 return BadRequest(new { Errors = new List<string> { result.Message } });
             }
 
-            restart = result.Restarting ? ServerText.Get(TranslationKeys.MessageJellyfinRestarting) : null;
+            restart = result.Restarting ? ServerText.Reply(Request, TranslationKeys.MessageJellyfinRestarting) : null;
         }
         else if (!loopbackChanged)
         {
@@ -399,7 +399,7 @@ public class ProxyController : ControllerBase
 
         if (NetworkClassifier.ParseNetworks(options.BlockedAddresses).Any(n => n.Contains(ip)))
         {
-            return ServerText.Format(TranslationKeys.ErrorBlocksOwnAddress, ip);
+            return ServerText.Reply(Request, TranslationKeys.ErrorBlocksOwnAddress, ip);
         }
 
         if (!CountryRules.NeedsDatabase(options))
@@ -414,8 +414,8 @@ public class ProxyController : ControllerBase
         }
 
         return location.Country.Length > 0
-            ? ServerText.Format(TranslationKeys.ErrorCountryBlocksYou, location.Country)
-            : ServerText.Get(TranslationKeys.ErrorCountryBlocksYouUnknown);
+            ? ServerText.Reply(Request, TranslationKeys.ErrorCountryBlocksYou, location.Country)
+            : ServerText.Reply(Request, TranslationKeys.ErrorCountryBlocksYouUnknown);
     }
 
     private static ProxySettings Redact(ProxySettings settings)

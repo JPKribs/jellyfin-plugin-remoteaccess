@@ -69,14 +69,15 @@ public class DynamicDNSController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<IEnumerable<object>> GetProviders()
     {
+        var language = ServerText.LanguageOf(Request);
         var list = _providers
             .OrderBy(p => p.Label, StringComparer.OrdinalIgnoreCase)
             .Select(p => new
             {
                 value = p.Kind.ToString(),
                 label = p.Label,
-                hint = ServerText.Get(p.Hint),
-                fields = p.Fields.Translated()
+                hint = BaseTranslations.Get(p.Hint, language),
+                fields = p.Fields.Translated(language)
             });
 
         return Ok(list);
@@ -142,7 +143,7 @@ public class DynamicDNSController : ControllerBase
         incoming.Records ??= new();
         if (incoming.Records.Any(r => r is null || !Enum.IsDefined(r.Provider)))
         {
-            return BadRequest(new { Errors = new List<string> { ServerText.Get(TranslationKeys.ErrorUnknownProvider) } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Reply(Request, TranslationKeys.ErrorUnknownProvider) } });
         }
 
         // Status the page shows is echoed back with every save. The server keeps its own copy, so what the
@@ -150,17 +151,17 @@ public class DynamicDNSController : ControllerBase
         ClearRuntimeStatus(incoming);
         if (XmlText.FindInvalid(incoming) is { } bad)
         {
-            return BadRequest(new { Errors = new List<string> { ServerText.Format(TranslationKeys.ErrorInvalidCharacter, bad) } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Reply(Request, TranslationKeys.ErrorInvalidCharacter, bad) } });
         }
 
         if (MissingHostname(incoming.Records, _providers))
         {
-            return BadRequest(new { Errors = new List<string> { ServerText.Get(TranslationKeys.ErrorRecordNeedsHostname) } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Reply(Request, TranslationKeys.ErrorRecordNeedsHostname) } });
         }
 
         if (incoming.Records.Any(r => SecretProtector.IsProtected(r.Login) || SecretProtector.IsProtected(r.Password)))
         {
-            return BadRequest(new { Errors = new List<string> { ServerText.Get(TranslationKeys.ErrorEncryptedCredentials) } });
+            return BadRequest(new { Errors = new List<string> { ServerText.Reply(Request, TranslationKeys.ErrorEncryptedCredentials) } });
         }
 
         // Without the key store a typed credential could only be stored in the clear, which is never done.

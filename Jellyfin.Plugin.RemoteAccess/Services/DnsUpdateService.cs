@@ -335,10 +335,10 @@ public sealed class DNSUpdateService : IDisposable
     }
 
     // Describes why a record is paused: definitive failures earn the long pause, temporary ones a short one.
-    private static string PauseSummary(DNSRecord record, int threshold)
+    private static string PauseSummary(DNSRecord record, int threshold, string until)
         => record.ConsecutiveFailures >= threshold
-            ? record.ConsecutiveFailures + " consecutive failures"
-            : record.TransientFailures + " consecutive timeouts, network errors or provider server errors";
+            ? ServerText.Format(TranslationKeys.ActivityPausedFailures, record.ConsecutiveFailures, until)
+            : ServerText.Format(TranslationKeys.ActivityPausedTransient, record.TransientFailures, until);
 
     /// <summary>
     /// Tracks detection health across runs so a persistent inability to find a public IP surfaces once
@@ -397,7 +397,7 @@ public sealed class DNSUpdateService : IDisposable
             if (result.Success && record is { ConsecutiveFailures: > 0 })
             {
                 _logger.LogInformation("Dynamic DNS update for {Host} works again after {Count} failed attempts", result.Hostname, record.ConsecutiveFailures);
-                batch.Add(ActivityEntries.RecordsRecovered, result.Hostname, $"{record.ConsecutiveFailures} failed attempts");
+                batch.Add(ActivityEntries.RecordsRecovered, result.Hostname, ServerText.Format(record.ConsecutiveFailures == 1 ? TranslationKeys.ActivityFailedAttemptsOne : TranslationKeys.ActivityFailedAttemptsMany, record.ConsecutiveFailures));
             }
 
             if (result.Success && record is not null && Unchanged(record, ip))
@@ -570,8 +570,7 @@ public sealed class DNSUpdateService : IDisposable
                 batch.Add(
                     ActivityEntries.RecordsPaused,
                     record.Hostname,
-                    PauseSummary(record, backoffThreshold) + " until "
-                    + record.BackoffUntilUtc.Value.ToString("u", CultureInfo.InvariantCulture));
+                    PauseSummary(record, backoffThreshold, record.BackoffUntilUtc.Value.ToString("u", CultureInfo.InvariantCulture)));
             }
 
             written[record.Id] = RecordStatus.FromRecord(record);

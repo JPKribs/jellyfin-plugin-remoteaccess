@@ -48,7 +48,7 @@ public class TranslationsTests
     public void JellyfinStringsComeInJellyfinsLanguages()
     {
         Assert.Equal("Dashboard", BaseTranslations.Get(TranslationKeys.TabDashboard, "en-us"));
-        Assert.NotEqual("Cancel", BaseTranslations.Get(TranslationKeys.ButtonCancel, "de"));
+        Assert.NotEqual("Remove", BaseTranslations.Get(TranslationKeys.ButtonRemove, "de"));
         Assert.Equal(BaseTranslations.Get(TranslationKeys.HeaderTrustProxy, "en-us"), BaseTranslations.Get(TranslationKeys.HeaderTrustProxy, "de"));
     }
 
@@ -58,6 +58,17 @@ public class TranslationsTests
         Assert.Equal("Port 8096 is already in use by another program.", ServerText.Format(TranslationKeys.ErrorPortInUse, 8096));
         Assert.Equal("80 and 443", ServerText.List(new object[] { 80, 443 }));
         Assert.Equal("80, 443 and 8920", ServerText.List(new object[] { 80, 443, 8920 }));
+    }
+
+    [Fact]
+    public void ReplyFollowsThePagesLanguage()
+    {
+        var request = new Microsoft.AspNetCore.Http.DefaultHttpContext().Request;
+        request.Headers[BaseTranslations.LanguageHeader] = "de";
+
+        Assert.Equal("de", ServerText.LanguageOf(request));
+        Assert.Equal(BaseTranslations.Get(TranslationKeys.ButtonRemove, "de"), ServerText.Reply(request, TranslationKeys.ButtonRemove));
+        Assert.Equal("Remove", ServerText.Reply(null, TranslationKeys.ButtonRemove));
     }
 
     // The plugin's Web folder, found from the test's output folder.

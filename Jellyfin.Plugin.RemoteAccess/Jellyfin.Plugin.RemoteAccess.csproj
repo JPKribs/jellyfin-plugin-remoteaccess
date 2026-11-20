@@ -24,7 +24,7 @@
       <PrivateAssets>all</PrivateAssets>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
-    <PackageReference Include="JPKribs.Jellyfin.Base" Version="12.4.0" />
+    <PackageReference Include="JPKribs.Jellyfin.Base" Version="12.4.1" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
     <PackageReference Include="MaxMind.Db" Version="5.3.0" />
     <!-- SQLite comes from Jellyfin, which ships and initializes it; compiling against the same version. -->
@@ -54,11 +54,9 @@
   <ItemGroup>
     <!-- Jellyfin strings the pages and messages use, built in by Base in every language Jellyfin has. -->
     <JellyfinString Include="Auto" />
-    <JellyfinString Include="ButtonCancel" />
     <JellyfinString Include="ButtonOk" />
     <JellyfinString Include="ButtonQuickStartGuide" />
     <JellyfinString Include="ButtonRemove" />
-    <JellyfinString Include="Download" />
     <JellyfinString Include="GuideProviderLogin" />
     <JellyfinString Include="HeaderActivity" />
     <JellyfinString Include="HeaderApiKey" />
@@ -79,7 +77,6 @@
     <JellyfinString Include="Off" />
     <JellyfinString Include="OptionWeekly" />
     <JellyfinString Include="Reset" />
-    <JellyfinString Include="Save" />
     <JellyfinString Include="Share" />
     <JellyfinString Include="TabAdvanced" />
     <JellyfinString Include="TabDashboard" />

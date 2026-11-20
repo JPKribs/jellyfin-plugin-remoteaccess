@@ -177,17 +177,17 @@ public sealed class BlockingTests : IDisposable
         summary.Dispose();
         lock (entries)
         {
-            var summed = entries.Where(e => e.Name.EndsWith(" Banned", StringComparison.Ordinal) && e.Name.Contains("Client", StringComparison.Ordinal)).ToList();
-            var single = entries.Where(e => e.Name.EndsWith(" Banned", StringComparison.Ordinal) && !e.Name.Contains("Client", StringComparison.Ordinal)).ToList();
+            var summed = entries.Where(e => e.Name.EndsWith(" banned", StringComparison.OrdinalIgnoreCase) && e.Name.Contains("client", StringComparison.OrdinalIgnoreCase)).ToList();
+            var single = entries.Where(e => e.Name.EndsWith(" banned", StringComparison.OrdinalIgnoreCase) && !e.Name.Contains("client", StringComparison.OrdinalIgnoreCase)).ToList();
             Assert.True(single.Count >= 5);
             Assert.Equal(8, single.Count + summed.Sum(e => int.Parse(e.Name.Split(' ')[0], System.Globalization.CultureInfo.InvariantCulture)));
             if (single.Count == 5)
             {
                 var entry = Assert.Single(summed);
-                Assert.Equal("3 Clients Banned", entry.Name);
+                Assert.Equal("3 clients banned", entry.Name);
                 Assert.Equal("RemoteAccess.AddressBanned", entry.Type);
                 Assert.Equal(LogLevel.Warning, entry.LogSeverity);
-                Assert.Equal("3 clients were banned after failed sign-ins, too many to list one by one, from an unknown country (3)", entry.ShortOverview);
+                Assert.Equal("Banned after failed sign-ins, too many to list one by one, from an unknown country (3)", entry.ShortOverview);
             }
         }
     }

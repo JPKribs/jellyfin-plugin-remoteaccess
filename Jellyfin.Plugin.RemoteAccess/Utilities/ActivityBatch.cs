@@ -6,8 +6,8 @@ namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
 /// Counts one run's events, such as a DNS update run or a configuration save, and writes one summary entry
-/// per outcome when the run ends, worded as the shared library's <see cref="ActivitySummary"/> words them.
-/// Unlike that summary it writes at once and can name the administrator who made the change.
+/// per outcome when the run ends, in the server's display language, worded as Base's <see cref="ActivitySummary"/>
+/// words them. Unlike that summary it writes at once and can name the administrator who made the change.
 /// </summary>
 public sealed class ActivityBatch
 {
@@ -45,14 +45,18 @@ public sealed class ActivityBatch
     /// <param name="userId">The administrator behind the run, empty when none.</param>
     public void Write(ActivityLogger? activity, Guid userId = default)
     {
+        var language = ServerText.Language;
         foreach (var outcome in _order)
         {
             var tally = _tallies[outcome];
             var counted = new ActivityTally(tally.Total, tally.Sources, tally.Reasons);
+            var keyed = outcome.NameOne is not null && outcome.NameMany is not null && outcome.LanguageOverview is not null;
             activity?.Log(
-                ActivityText.SummaryName(tally.Total, outcome.Outcome, outcome.Noun),
+                keyed
+                    ? BaseTranslations.Format(tally.Total == 1 ? outcome.NameOne! : outcome.NameMany!, language, tally.Total)
+                    : ActivityText.SummaryName(tally.Total, outcome.Outcome, outcome.Noun),
                 outcome.Type,
-                ActivityText.Sentence(outcome.Overview(counted)),
+                ActivityText.Sentence(keyed ? outcome.LanguageOverview!(counted, language) : outcome.Overview(counted)),
                 outcome.Severity,
                 userId);
         }

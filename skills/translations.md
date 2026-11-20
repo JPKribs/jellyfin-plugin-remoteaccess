@@ -19,9 +19,11 @@ How this plugin shows its text in the viewer's language. Base builds the strings
 * Keep placeholders as `{0}`, `{1}`. Never build a sentence from pieces, since word order differs by language.
 * A key is PascalCase and says what the text is, such as `HeaderQueue`, `LabelApiKey`, `ButtonRetry`, `ToastSaved`, `ErrorServerUnreachable`.
 * Log lines and exception text for admins in the log stay in English and need no key.
-* The server writes its text in the server's display language, through `ServerText` in `Utilities/`. That covers the messages the pages show, the activity log, the scheduled tasks, and the provider hints and field labels.
+* Text the server writes for everyone is in the server's display language, through `ServerText` in `Utilities/`. That covers the activity log, the scheduled tasks, and the states the pages show.
+* A controller's own reply follows the page's language. Use `ServerText.Reply(Request, key, ...)`, or `ServerText.LanguageOf(Request)` to pass the language on, as the provider hints and field labels and `ProxySettingsValidator.Validate` take it. Base's `apiRequest` sends the page's language, and `BaseTranslations.RequestLanguage` reads it.
 * A provider's `Hint` and its `Fields` labels are keys. The Providers endpoint turns them into text.
-* Base's activity summaries, such as "3 DNS Records Updated", and the replies a DNS provider sends stay in English.
+* A summed activity entry is an `ActivityOutcome` built from keys, a `...One` and a `...Many` name with `{0}` for the count and an overview built in the language it is given, per Base's [Activity Log](https://jpkribs.github.io/jellyfin-plugin-base/components/csharp/activity-log/) page. `ActivityBatch` and the `ActivitySummary` write them in the server's display language.
+* The replies a DNS provider sends stay as the provider wrote them.
 
 ## Add a String
 
@@ -33,7 +35,7 @@ How this plugin shows its text in the viewer's language. Base builds the strings
     * Script: `t.tr('Key')` or `t.format('Key', value)`, with `t` from `remoteaccess_tabs.js`. Each page is wired with `translatedPage`, which runs `loadTranslations('RemoteAccess/Translations')` and translates the markup before `bind` runs.
     * A sentence with a link or bold text: `htmlFormat(shared, 'Key', [html])`, with `linkHtml` for a link.
     * A list of names: `listText(items)` on a page, `ServerText.List(items)` in C#.
-    * A Base component's own words, such as the Save Bar's: pass them in, as `saveBarText()` and `tableText()` do.
+    * A Base component's own words, such as the Save Bar's: Base translates them. Pass an option only for text that says something different from Base's default.
     * C#: `ServerText.Get(TranslationKeys.Key)` or `ServerText.Format(TranslationKeys.Key, value)`, which read `BaseTranslations` in the server's display language.
 5. Build. Fix every `JPKT` error and warning.
 6. Run `dotnet test`. `TranslationsTests` checks every key the pages use is built in.

@@ -4,6 +4,7 @@ using Jellyfin.Plugin.RemoteAccess.Providers;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy;
 using Jellyfin.Plugin.RemoteAccess.Services.Proxy.Network;
 using Jellyfin.Plugin.RemoteAccess.Services;
+using Jellyfin.Plugin.RemoteAccess.Utilities;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller;
@@ -43,9 +44,9 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
             .AddHttpMessageHandler(() => new SameHostRedirectHandler());
         serviceCollection.AddActivityLogger();
 
-        // Sums bursts, such as a flood of bans, into one activity entry per outcome. The container disposes it
-        // on shutdown, which writes whatever is still waiting.
-        serviceCollection.AddSingleton(sp => new ActivitySummary(sp.GetRequiredService<ActivityLogger>()));
+        // Sums bursts, such as a flood of bans, into one activity entry per outcome in the server's display language.
+        // The container disposes it on shutdown, which writes whatever is still waiting.
+        serviceCollection.AddSingleton(sp => new ActivitySummary(sp.GetRequiredService<ActivityLogger>(), language: () => ServerText.Language));
         serviceCollection.AddSingleton<IPDetectionService>();
         serviceCollection.AddSingleton<DNSLookupService>();
         serviceCollection.AddSingleton<StatusStoreService>();

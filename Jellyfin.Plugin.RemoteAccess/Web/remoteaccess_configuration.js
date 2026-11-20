@@ -2,7 +2,7 @@
 // The Configuration tab, a Setup Checklist from turning the proxy on to a test from outside.
 
 import { confirmDialog, createSetupChecklist, createSaveBar } from './configurationpage?name=remoteaccess_jpkribs_shared.js';
-import { PLUGIN_ID, t, translatedPage, saveBarText, htmlFormat, linkHtml, listText, problemText, showText, trustTheProxy, routerInstructionHtml, routerStateText, loadProviders, primaryRecord, readDdnsSecret, recordNames, saveProxyHostnames, stepState } from './configurationpage?name=remoteaccess_tabs.js';
+import { PLUGIN_ID, t, translatedPage, htmlFormat, linkHtml, listText, problemText, showText, trustTheProxy, routerInstructionHtml, routerStateText, loadProviders, primaryRecord, readDdnsSecret, recordNames, saveProxyHostnames, stepState } from './configurationpage?name=remoteaccess_tabs.js';
 
 // The Configuration tab: a checklist from turning the proxy on to a test from outside. Each step holds only what
 // most people need: the proxy switch, the one DDNS record whose name is the proxy's address, the certificate, the
@@ -523,7 +523,7 @@ export default function (view) {
     function restore() {
         var button = Shared.getEl('btnRestore');
         if (button.disabled) return;
-        var options = { title: t.tr('HeaderUndoTrust'), confirmText: t.tr('ButtonUndo'), cancelText: t.tr('ButtonCancel'), destructive: true };
+        var options = { title: t.tr('HeaderUndoTrust'), confirmText: t.tr('ButtonUndo'), destructive: true };
         confirmDialog(t.tr('ConfirmUndoTrust'), options).then(function (ok) {
             if (!ok) return;
             button.disabled = true;
@@ -946,10 +946,7 @@ export default function (view) {
 
     function bind() {
         checklist = createSetupChecklist({
-            steps: STEPS.map(function (s) { return { key: s.key, title: t.tr(s.titleKey), state: 'todo', content: Shared.getEl('body' + s.key) }; }),
-            navLabel: t.tr('LabelSetupProgress'),
-            summaryText: t.tr('ChecklistSummary'),
-            stateLabels: { done: t.tr('StateDone'), attention: t.tr('StateAttention'), todo: t.tr('StateToDo'), optional: t.tr('StateOptional') }
+            steps: STEPS.map(function (s) { return { key: s.key, title: t.tr(s.titleKey), state: 'todo', content: Shared.getEl('body' + s.key) }; })
         });
         Shared.getEl('checklist').appendChild(checklist.element);
         Shared.getEl('certTermsDescription').innerHTML = htmlFormat(Shared, 'DescriptionAcceptTerms', [linkHtml(Shared, 'https://letsencrypt.org/repository/', 'LinkSubscriberAgreement')]);
@@ -966,7 +963,7 @@ export default function (view) {
         Shared.getEl('btnRestore').addEventListener('click', restore);
         Shared.getEl('btnReach').addEventListener('click', testReach);
 
-        saveBar = createSaveBar(Object.assign(saveBarText(), { fill: true, form: Shared.getEl('RemoteAccessConfigurationForm'), onSave: save }));
+        saveBar = createSaveBar({ fill: true, form: Shared.getEl('RemoteAccessConfigurationForm'), onSave: save });
         Shared.getEl('saveBar').replaceWith(saveBar.element);
         ['input', 'change'].forEach(function (type) {
             view.addEventListener(type, function () { saveBar.setDirty(isDirty()); });

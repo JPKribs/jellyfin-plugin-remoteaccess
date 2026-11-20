@@ -70,31 +70,6 @@ export function translatedPage(view, opts) {
     }));
 }
 
-// saveBarText
-// The Save Bar's words in the viewer's language, for createSaveBar.
-//
-// Output
-// [object]: { saveText, pendingText, savingText, savedText, failedText, invalidText }.
-export function saveBarText() {
-    return {
-        saveText: t.tr('Save'),
-        pendingText: t.tr('SaveBarPending'),
-        savingText: t.tr('SaveBarSaving'),
-        savedText: t.tr('MessageChangesSaved'),
-        failedText: t.tr('ErrorSave'),
-        invalidText: t.tr('SaveBarInvalid')
-    };
-}
-
-// tableText
-// A Data Table's own words in the viewer's language, for createDataTable.
-//
-// Output
-// [object]: { allText, resizeText }, where {label} and {value} are filled by the table.
-export function tableText() {
-    return { allText: t.tr('TableAll'), resizeText: t.tr('TableResize') };
-}
-
 // listText
 // Joins names into a list in the viewer's language, such as "80 and 443".
 //
@@ -169,7 +144,7 @@ export function showText(shared, id, text) {
 // Trust the Proxy, as step 5 of the Configuration tab offers it: confirm, run an optional step first such as saving
 // the form, then ask Jellyfin to trust the proxy. Resolves to true once Jellyfin answered that it worked.
 export function trustTheProxy(shared, statusId, prepare) {
-    var options = { title: t.tr('HeaderTrustProxy'), confirmText: t.tr('ButtonTrust'), cancelText: t.tr('ButtonCancel') };
+    var options = { title: t.tr('HeaderTrustProxy'), confirmText: t.tr('ButtonTrust') };
     return confirmDialog(t.tr('ConfirmTrustProxy'), options).then(function (ok) {
         if (!ok) return false;
         return Promise.resolve(prepare ? prepare() : true).then(function (ready) {

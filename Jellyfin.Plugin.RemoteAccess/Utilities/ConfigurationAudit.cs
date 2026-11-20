@@ -49,7 +49,7 @@ public static class ConfigurationAudit
             kept.Add(record.Id);
             if (SettingsDiffer(old, record))
             {
-                batch.Add(ActivityEntries.RecordsChanged, Label(record), record.Enabled ? "enabled" : "disabled");
+                batch.Add(ActivityEntries.RecordsChanged, Label(record), ServerText.Get(record.Enabled ? TranslationKeys.ValueOn : TranslationKeys.ValueOff));
             }
 
             if (!string.Equals(record.Login, old.Login, StringComparison.Ordinal)

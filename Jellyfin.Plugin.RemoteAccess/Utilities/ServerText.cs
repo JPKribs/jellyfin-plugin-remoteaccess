@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using System.Linq;
 using JPKribs.Jellyfin.Base;
 using MediaBrowser.Controller.Configuration;
+using Microsoft.AspNetCore.Http;
 
 namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
-/// The plugin's strings in the server's display language, for text the server writes for whoever reads it: messages
-/// the pages show, activity log entries, and the scheduled tasks. It reads <see cref="BaseTranslations"/> with the
-/// language set once by the plugin, and US English until then.
+/// The plugin's strings in the server's display language, for text the server writes for whoever reads it, such as
+/// activity log entries, the scheduled tasks and the states the pages show. A controller's own reply follows the
+/// page's language through <see cref="Reply"/>.
 /// </summary>
 internal static class ServerText
 {
@@ -31,6 +32,19 @@ internal static class ServerText
     /// <param name="args">The values for <c>{0}</c>, <c>{1}</c> and on.</param>
     /// <returns>The string in the server's language.</returns>
     internal static string Format(string key, params object?[] args) => BaseTranslations.Format(key, Language, args);
+
+    /// <summary>Gets the language a page asked for, from its request, for a controller's reply.</summary>
+    /// <param name="request">The page's request, or <c>null</c> for the server's language.</param>
+    /// <returns>The language, such as de or pt-br.</returns>
+    internal static string LanguageOf(HttpRequest? request) => request is null ? Language : BaseTranslations.RequestLanguage(request);
+
+    /// <summary>Reads one string in the language a page asked for and fills its placeholders, for a controller's reply.</summary>
+    /// <param name="request">The page's request, or <c>null</c> for the server's language.</param>
+    /// <param name="key">The key, from <see cref="TranslationKeys"/>.</param>
+    /// <param name="args">The values for <c>{0}</c>, <c>{1}</c> and on.</param>
+    /// <returns>The string in the page's language.</returns>
+    internal static string Reply(HttpRequest? request, string key, params object?[] args)
+        => BaseTranslations.Format(key, LanguageOf(request), args);
 
     /// <summary>Joins names into a list in the server's language, such as "80 and 443".</summary>
     /// <param name="items">The names.</param>

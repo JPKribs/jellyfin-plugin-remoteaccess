@@ -139,20 +139,20 @@ public class PeopleController : ControllerBase
         var plugin = Plugin.Instance;
         if (plugin is null || !BlockGuard.TryParseTarget(ip, out var target))
         {
-            return Refuse(ServerText.Get(TranslationKeys.ErrorNotAnAddress));
+            return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorNotAnAddress));
         }
 
         var address = target.BaseAddress;
         var trusted = plugin.ReadConfiguration(c => NetworkClassifier.ParseNetworks(c.Proxy.Advanced.TrustedNetworks));
         if (BlockGuard.IsExempt(address, _network, trusted))
         {
-            return Refuse(ServerText.Get(TranslationKeys.TextNeverBlocked));
+            return Refuse(ServerText.Reply(Request, TranslationKeys.TextNeverBlocked));
         }
 
         var client = HttpContext?.Connection.RemoteIpAddress;
         if (client is not null && target.Contains(NetworkClassifier.Normalize(client)))
         {
-            return Refuse(ServerText.Get(TranslationKeys.ErrorOwnAddress));
+            return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorOwnAddress));
         }
 
         var text = BlockGuard.Text(target);
@@ -193,7 +193,7 @@ public class PeopleController : ControllerBase
         var plugin = Plugin.Instance;
         if (plugin is null || !BlockGuard.TryParseTarget(ip, out var target))
         {
-            return Refuse(ServerText.Get(TranslationKeys.ErrorNotAnAddress));
+            return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorNotAnAddress));
         }
 
         var address = BlockGuard.Text(target);
@@ -205,7 +205,7 @@ public class PeopleController : ControllerBase
         });
         if (removed == 0)
         {
-            return Refuse(ServerText.Get(TranslationKeys.ErrorNotListed));
+            return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorNotListed));
         }
 
         _activity.Log(ServerText.Format(TranslationKeys.ActivityUnblocked, address), "RemoteAccess.AddressUnblocked", ServerText.Get(TranslationKeys.ActivityRemovedFromBlockList), userId: ActivityUser.Of(User));
@@ -230,7 +230,7 @@ public class PeopleController : ControllerBase
 
         if (!Enum.IsDefined(incoming.Location))
         {
-            return Refuse(ServerText.Get(TranslationKeys.ErrorUnknownLocation));
+            return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorUnknownLocation));
         }
 
         incoming.HistoryDays = Math.Clamp(incoming.HistoryDays, 1, 3650);
@@ -300,12 +300,12 @@ public class PeopleController : ControllerBase
         }
         else
         {
-            return Refuse(ServerText.Get(TranslationKeys.ErrorNotAnAddress));
+            return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorNotAnAddress));
         }
 
         if (lifted.Count == 0)
         {
-            return Refuse(ServerText.Get(TranslationKeys.ErrorNotBanned));
+            return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorNotBanned));
         }
 
         _activity.Log(ServerText.Format(TranslationKeys.ActivityBanLifted, string.Join(", ", lifted)), "RemoteAccess.BanLifted", ServerText.Get(TranslationKeys.ActivityLiftedFromPage), userId: ActivityUser.Of(User));
@@ -327,7 +327,7 @@ public class PeopleController : ControllerBase
         var country = (code ?? string.Empty).Trim().ToUpperInvariant();
         if (plugin is null || country.Length != 2 || !country.All(char.IsAsciiLetterUpper))
         {
-            return Refuse(ServerText.Get(TranslationKeys.ErrorNotCountryCode));
+            return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorNotCountryCode));
         }
 
         var changed = false;
@@ -354,7 +354,7 @@ public class PeopleController : ControllerBase
         });
         if (!changed)
         {
-            return Refuse(ServerText.Get(TranslationKeys.ErrorCountryNotBlocked));
+            return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorCountryNotBlocked));
         }
 
         _activity.Log(ServerText.Format(TranslationKeys.ActivityUnblocked, CountryName(country)), "RemoteAccess.CountryUnblocked", ServerText.Get(TranslationKeys.ActivityCountryLetIn), userId: ActivityUser.Of(User));

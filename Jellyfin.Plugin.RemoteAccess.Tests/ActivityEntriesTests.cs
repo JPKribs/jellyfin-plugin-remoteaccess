@@ -13,7 +13,7 @@ namespace Jellyfin.Plugin.RemoteAccess.Tests;
 
 /// <summary>
 /// The wording of every summed activity entry: a "<c>count nouns outcome</c>" name over one sentence that
-/// lists where each came from, with counts.
+/// lists where each came from, with counts, in US English when no server language is set.
 /// </summary>
 public sealed class ActivityEntriesTests
 {
@@ -32,10 +32,10 @@ public sealed class ActivityEntriesTests
     {
         var entry = Write(ActivityEntries.RecordsUpdated, ("a.example.com", "203.0.113.5"), ("b.example.com", "203.0.113.5"));
 
-        Assert.Equal("2 DNS Records Updated", entry.Name);
+        Assert.Equal("2 DNS records updated", entry.Name);
         Assert.Equal("RemoteAccess.RecordUpdated", entry.Type);
         Assert.Equal(LogLevel.Information, entry.LogSeverity);
-        Assert.Equal("2 DNS records were updated for a.example.com (1), b.example.com (1) to 203.0.113.5 (2)", entry.ShortOverview);
+        Assert.Equal("Updated for a.example.com (1), b.example.com (1) to 203.0.113.5 (2)", entry.ShortOverview);
     }
 
     [Fact]
@@ -43,9 +43,9 @@ public sealed class ActivityEntriesTests
     {
         var entry = Write(ActivityEntries.RecordsRecovered, ("a.example.com", "3 failed attempts"));
 
-        Assert.Equal("1 DNS Record Recovered", entry.Name);
+        Assert.Equal("1 DNS record recovered", entry.Name);
         Assert.Equal("RemoteAccess.RecordRecovered", entry.Type);
-        Assert.Equal("1 DNS record was updated again for a.example.com (1) after 3 failed attempts (1)", entry.ShortOverview);
+        Assert.Equal("Updated again for a.example.com (1) after 3 failed attempts (1)", entry.ShortOverview);
     }
 
     [Fact]
@@ -53,10 +53,10 @@ public sealed class ActivityEntriesTests
     {
         var entry = Write(ActivityEntries.RecordsFailed, ("a.example.com", "badauth"), ("b.example.com", "badauth"), ("c.example.com", "Timed out"));
 
-        Assert.Equal("3 DNS Records Failed", entry.Name);
+        Assert.Equal("3 DNS records failed", entry.Name);
         Assert.Equal("RemoteAccess.RecordFailed", entry.Type);
         Assert.Equal(LogLevel.Error, entry.LogSeverity);
-        Assert.Equal("3 DNS records were not updated for a.example.com (1), b.example.com (1), c.example.com (1): badauth (2), Timed out (1)", entry.ShortOverview);
+        Assert.Equal("Not updated for a.example.com (1), b.example.com (1), c.example.com (1): badauth (2), Timed out (1)", entry.ShortOverview);
     }
 
     [Fact]
@@ -64,9 +64,9 @@ public sealed class ActivityEntriesTests
     {
         var entry = Write(ActivityEntries.RecordsFailedServing, ("a.example.com", "AAAA rejected"));
 
-        Assert.Equal("1 DNS Record Failed", entry.Name);
+        Assert.Equal("1 DNS record failed", entry.Name);
         Assert.Equal(LogLevel.Warning, entry.LogSeverity);
-        Assert.Equal("1 DNS record was not updated for a.example.com (1): AAAA rejected (1), though DNS already serves the current address so nothing is cut off yet", entry.ShortOverview);
+        Assert.Equal("Not updated for a.example.com (1): AAAA rejected (1), though DNS already serves the current address so nothing is cut off yet", entry.ShortOverview);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public sealed class ActivityEntriesTests
     {
         var entry = Write(ActivityEntries.RecordsPaused, ("a.example.com", "5 consecutive failures until 2026-11-14 10:00:00Z"));
 
-        Assert.Equal("1 DNS Record Paused", entry.Name);
+        Assert.Equal("1 DNS record paused", entry.Name);
         Assert.Equal("RemoteAccess.RecordBackoff", entry.Type);
         Assert.Equal(LogLevel.Warning, entry.LogSeverity);
         Assert.Equal("Updates were paused for a.example.com (1) after 5 consecutive failures until 2026-11-14 10:00:00Z (1), or until the public IP changes", entry.ShortOverview);
@@ -85,10 +85,10 @@ public sealed class ActivityEntriesTests
     {
         var entry = Write(ActivityEntries.TxtRecordsLeftOver, ("_acme-challenge.a.example.com", null), ("_acme-challenge.b.example.com", null));
 
-        Assert.Equal("2 TXT Records Left Over", entry.Name);
+        Assert.Equal("2 TXT records left over", entry.Name);
         Assert.Equal("RemoteAccess.AcmeTxtLeftOver", entry.Type);
         Assert.Equal(LogLevel.Warning, entry.LogSeverity);
-        Assert.Equal("2 Let's Encrypt TXT records were still published at the DNS provider for _acme-challenge.a.example.com (1), _acme-challenge.b.example.com (1), they do no harm but can be deleted there", entry.ShortOverview);
+        Assert.Equal("Still published at the DNS provider for _acme-challenge.a.example.com (1), _acme-challenge.b.example.com (1), they do no harm but can be deleted there", entry.ShortOverview);
     }
 
     [Fact]
@@ -96,9 +96,9 @@ public sealed class ActivityEntriesTests
     {
         var entry = Write(ActivityEntries.ClientsBanned, ("China", null), ("China", null), ("an unknown country", null));
 
-        Assert.Equal("3 Clients Banned", entry.Name);
+        Assert.Equal("3 clients banned", entry.Name);
         Assert.Equal("RemoteAccess.AddressBanned", entry.Type);
-        Assert.Equal("3 clients were banned after failed sign-ins, too many to list one by one, from China (2), an unknown country (1)", entry.ShortOverview);
+        Assert.Equal("Banned after failed sign-ins, too many to list one by one, from China (2), an unknown country (1)", entry.ShortOverview);
     }
 
     [Fact]
@@ -106,8 +106,8 @@ public sealed class ActivityEntriesTests
     {
         var (name, overview) = ActivityEntries.Refused(new RefusalTotals(Address: 1, Ban: 3, Country: 9));
 
-        Assert.Equal("13 Connections Refused", name);
-        Assert.Equal("13 internet connections were refused in the last hour by the country rules (9), bans (3), the block list (1), the Remote Access page lists the addresses", overview);
+        Assert.Equal("13 connections refused", name);
+        Assert.Equal("Internet connections were refused in the last hour by the country rules (9), bans (3), the block list (1), the Remote Access page lists the addresses", overview);
     }
 
     [Fact]
@@ -115,8 +115,8 @@ public sealed class ActivityEntriesTests
     {
         var (name, overview) = ActivityEntries.Refused(new RefusalTotals(0, 0, 0) { Limit = 1 });
 
-        Assert.Equal("1 Connection Refused", name);
-        Assert.Equal("1 internet connection was refused in the last hour by the connection limits (1), the Remote Access page lists the addresses", overview);
+        Assert.Equal("1 connection refused", name);
+        Assert.Equal("Internet connections were refused in the last hour by the connection limits (1), the Remote Access page lists the addresses", overview);
     }
 
     [Fact]
@@ -128,8 +128,8 @@ public sealed class ActivityEntriesTests
         batch.Write(_activity);
         batch.Write(_activity);
 
-        Assert.Equal(new[] { "1 DNS Record Failed", "1 DNS Record Updated" }, _entries.ConvertAll(e => e.Name));
-        Assert.Equal("1 DNS record was updated for a.example.com (1)", _entries[1].ShortOverview);
+        Assert.Equal(new[] { "1 DNS record failed", "1 DNS record updated" }, _entries.ConvertAll(e => e.Name));
+        Assert.Equal("Updated for a.example.com (1)", _entries[1].ShortOverview);
         Assert.True(batch.IsEmpty);
     }
 

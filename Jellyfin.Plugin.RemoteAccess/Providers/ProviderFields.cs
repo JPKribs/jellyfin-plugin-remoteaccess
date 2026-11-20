@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Jellyfin.Plugin.RemoteAccess.Utilities;
+using JPKribs.Jellyfin.Base;
 
 namespace Jellyfin.Plugin.RemoteAccess.Providers;
 
@@ -40,20 +41,21 @@ public sealed class ProviderFields
     public IReadOnlyList<string> Advanced { get; init; } = Array.Empty<string>();
 
     /// <summary>
-    /// Gets a copy with each label read from its key in the server's language, as the dashboard shows it.
+    /// Gets a copy with each label read from its key in a language, as the dashboard shows it.
     /// </summary>
+    /// <param name="language">The page's language, or <c>null</c> for the server's.</param>
     /// <returns>The fields with their labels.</returns>
-    public ProviderFields Translated() => new()
+    public ProviderFields Translated(string? language = null) => new()
     {
-        Hostname = Label(Hostname),
-        Login = Label(Login),
-        Password = Label(Password),
-        Zone = Label(Zone),
+        Hostname = Label(Hostname, language),
+        Login = Label(Login, language),
+        Password = Label(Password, language),
+        Zone = Label(Zone, language),
         Server = Server,
         Ttl = Ttl,
         IPv6 = IPv6,
         Advanced = Advanced
     };
 
-    private static string? Label(string? key) => key is null ? null : ServerText.Get(key);
+    private static string? Label(string? key, string? language) => key is null ? null : BaseTranslations.Get(key, language ?? ServerText.Language);
 }
