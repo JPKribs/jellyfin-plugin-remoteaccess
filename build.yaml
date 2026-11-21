@@ -1,7 +1,7 @@
 ---
 name: "Remote Access"
 guid: "8150dce5-6153-4924-a985-a6927be95baa"
-version: "12.4.5.1"
+version: "12.4.5.2"
 targetAbi: "12.4.0.0"
 framework: "net10.0"
 overview: "Reach your server from anywhere."
@@ -21,5 +21,5 @@ changelog:
   fixed:
   - The Types and Countries filters on the Activity table offered All Types and All Countries. They read All types and All countries
   developer:
-  - Uses JPKribs.Jellyfin.Base 12.4.2, which writes the labels it fills into its own text in sentence case, such as All types on a filter
+  - Uses JPKribs.Jellyfin.Base 12.4.3, which writes the labels it fills into its own text in sentence case, such as All types on a filter
   - Sync Branches also runs when the release draft or publish workflow finishes, so the commits they push to master reach unstable at once
