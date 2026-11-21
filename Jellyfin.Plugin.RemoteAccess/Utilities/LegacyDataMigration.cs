@@ -71,7 +71,7 @@ internal static class LegacyDataMigration
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            logger?.LogError("Could not move {From} to {To}: {Message}. Move it by hand and restart Jellyfin.", from, to, ex.Message);
+            logger?.LogError(ex, "Could not move {From} to {To}, move it by hand and restart Jellyfin", from, to);
         }
     }
 }

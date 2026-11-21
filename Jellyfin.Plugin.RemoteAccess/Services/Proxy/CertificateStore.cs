@@ -248,7 +248,7 @@ public sealed class CertificateStore : IDisposable
         catch (Exception ex) when (ex is IOException or CryptographicException or UnauthorizedAccessException or ArgumentException)
         {
             _failedStamp = stamp;
-            _logger.LogWarning("Proxy certificate could not be loaded: {Message}", ex.Message);
+            _logger.LogWarning(ex, "Proxy certificate could not be loaded");
             if (settingsChanged)
             {
                 // The settings changed, so the old certificate is no longer the one asked for: serving it on would
@@ -406,7 +406,7 @@ public sealed class CertificateStore : IDisposable
         }
         catch (CryptographicException ex)
         {
-            _logger.LogWarning("The self-signed certificate could not be read and is being replaced: {Message}", ex.Message);
+            _logger.LogWarning(ex, "The self-signed certificate could not be read and is being replaced");
         }
 
         return null;

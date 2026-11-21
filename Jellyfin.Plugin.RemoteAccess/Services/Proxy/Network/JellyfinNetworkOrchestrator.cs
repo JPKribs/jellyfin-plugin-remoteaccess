@@ -416,13 +416,13 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
         _configuration.SaveConfiguration(NetworkKey, network);
         _store.Save(new TakeoverState());
 
-        _logger.LogInformation("Jellyfin's network settings were put back. {Reason}", reason);
+        _logger.LogInformation("Jellyfin's network settings were put back ({Reason})", ActivityEntries.Phrase(reason));
         var why = ActivityEntries.Phrase(reason);
         _activity?.Log(
             ServerText.Get(TranslationKeys.ActivityNetworkRestored),
             "RemoteAccess.TakeoverRestored",
             why.Length > 0
-                ? ServerText.Format(TranslationKeys.ActivityNetworkRestoredBecause, char.ToLowerInvariant(why[0]) + why[1..])
+                ? ServerText.Format(TranslationKeys.ActivityNetworkRestoredBecause, why)
                 : ServerText.Get(TranslationKeys.ActivityNetworkRestoredOverview),
             userId: userId);
         if (restart)
@@ -592,7 +592,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
         {
-            _logger.LogWarning("Could not read {Path}: {Message}", _paths.StateFile, ex.Message);
+            _logger.LogWarning(ex, "Could not read {Path}", _paths.StateFile);
         }
 
         return false;
@@ -618,7 +618,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException or XmlException)
         {
-            _logger.LogDebug("Could not read Jellyfin's saved network settings, using the loaded ones: {Message}", ex.Message);
+            _logger.LogDebug(ex, "Could not read Jellyfin's saved network settings, using the loaded ones");
             return null;
         }
     }
@@ -640,7 +640,7 @@ public sealed class JellyfinNetworkOrchestrator : IDisposable
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            _logger.LogWarning("Could not save a copy of Jellyfin's network settings: {Message}", ex.Message);
+            _logger.LogWarning(ex, "Could not save a copy of Jellyfin's network settings");
         }
     }
 

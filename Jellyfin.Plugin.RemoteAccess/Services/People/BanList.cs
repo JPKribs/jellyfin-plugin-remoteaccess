@@ -202,11 +202,11 @@ public sealed class BanList : IFailureTracker
         Save(() => _store.SaveBan(ban));
         var where = location.Country.Length > 0 ? location.Country : ServerText.Get(TranslationKeys.ActivityUnknownCountry);
         var overview = minutes > 0
-            ? ServerText.Format(TranslationKeys.ActivityBannedForMinutes, count, where, minutes)
-            : ServerText.Format(TranslationKeys.ActivityBannedUntilLifted, count, where);
-        if (LogActivity(now, ServerText.Format(TranslationKeys.ActivityAddressBanned, key), overview))
+            ? ServerText.Format(TranslationKeys.ActivityBannedForMinutes, key, minutes, count, where)
+            : ServerText.Format(TranslationKeys.ActivityBannedUntilLifted, key, count, where);
+        if (LogActivity(now, ServerText.Get(TranslationKeys.ActivityAddressBanned), overview))
         {
-            _logger.LogWarning("Banned {Key} in {Country} after {Failures} failed sign-ins", key, where, count);
+            _logger.LogDebug("Banned {Key} in {Country} after {Failures} failed sign-ins", key, where, count);
         }
         else
         {
@@ -288,7 +288,7 @@ public sealed class BanList : IFailureTracker
 
         if (suppressed > 0)
         {
-            _logger.LogWarning("Banned {Count} more addresses in the last minute", suppressed);
+            _logger.LogDebug("Banned {Count} more addresses in the last minute", suppressed);
         }
 
         if (log)
@@ -426,7 +426,7 @@ public sealed class BanList : IFailureTracker
         catch (Exception ex) when (ex is SqliteException or System.IO.IOException or InvalidOperationException)
         {
             // Retried each minute, so this warns once until it works.
-            _load.Failed(level => _logger.Log(level, "Could not read the saved bans: {Message}", ex.Message));
+            _load.Failed(level => _logger.Log(level, ex, "Could not read the saved bans"));
         }
     }
 
@@ -440,7 +440,7 @@ public sealed class BanList : IFailureTracker
         }
         catch (Exception ex) when (ex is SqliteException or System.IO.IOException or InvalidOperationException)
         {
-            _save.Failed(level => _logger.Log(level, "Could not save a ban: {Message}", ex.Message));
+            _save.Failed(level => _logger.Log(level, ex, "Could not save a ban"));
         }
     }
 }

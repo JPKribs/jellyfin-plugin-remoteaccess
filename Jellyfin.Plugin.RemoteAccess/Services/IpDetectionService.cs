@@ -194,7 +194,7 @@ public sealed class IPDetectionService
         if (responders >= 2)
         {
             var disagree = ServerText.Format(TranslationKeys.DetectionDisagreed, family);
-            problem.Failed(level => _logger.Log(level, "Public {Family} detection endpoints disagreed across {Count} endpoint(s).", family, endpoints.Count));
+            problem.Failed(level => _logger.Log(level, "Public {Family} detection endpoints disagreed across {Count} endpoints", family, endpoints.Count));
             return (null, disagree);
         }
 
@@ -203,12 +203,12 @@ public sealed class IPDetectionService
             // Detection reached an endpoint and got an answer, but it was a private or reserved address.
             // The server most likely has no public address of this family, so nothing can be published.
             var note = ServerText.Format(TranslationKeys.DetectionInternal, family);
-            problem.Failed(level => _logger.Log(level, "Public {Family} detection saw only internal addresses across {Count} endpoint(s).", family, endpoints.Count));
+            problem.Failed(level => _logger.Log(level, "Public {Family} detection saw only internal addresses across {Count} endpoints", family, endpoints.Count));
             return (null, note);
         }
 
         var failure = ServerText.Format(TranslationKeys.DetectionFailed, family);
-        problem.Failed(level => _logger.Log(level, "Public {Family} detection failed across {Count} endpoint(s).", family, endpoints.Count));
+        problem.Failed(level => _logger.Log(level, "Public {Family} detection failed across {Count} endpoints", family, endpoints.Count));
         return (null, failure);
     }
 

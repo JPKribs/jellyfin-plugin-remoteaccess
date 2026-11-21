@@ -665,7 +665,8 @@ public class RouterAndReachabilityTests
 
         // The opening is one entry, not one per renewal.
         var opened = Assert.Single(entries);
-        Assert.Equal("Ports 80 and 443 opened on router", opened.Name);
+        Assert.Equal("Router ports opened", opened.Name);
+        Assert.Contains("forwards ports 80 and 443 to 192.168.1.20", opened.ShortOverview, StringComparison.Ordinal);
         Assert.Equal("RemoteAccess.RouterPortsOpened", opened.Type);
         Assert.Equal(LogLevel.Information, opened.LogSeverity);
     }
@@ -723,7 +724,7 @@ public class RouterAndReachabilityTests
         Assert.Equal("UPnP", status.Method);
         Assert.Equal(0, other.Discovers);
         Assert.Contains(entries, e => e.Type == "RemoteAccess.RouterPortsFailed" && e.ShortOverview == ActivityText.Sentence(status.Error));
-        Assert.Contains(entries, e => e.Name == "Port 80 opened on router");
+        Assert.Contains(entries, e => e.Name == "Router port opened" && (e.ShortOverview ?? string.Empty).Contains("forwards port 80 to", StringComparison.Ordinal));
 
         router.Results[80] = PortMapResult.Taken(80);
         await Sync(mapper, _both, force: true);

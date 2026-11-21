@@ -716,7 +716,7 @@ public sealed class ProxyManager : IAsyncDisposable
             }
             catch (Exception ex) when (ex is IOException or InvalidOperationException)
             {
-                _logger.LogWarning("Applying a changed certificate failed: {Message}", ex.Message);
+                _logger.LogWarning(ex, "Applying a changed certificate failed");
             }
         });
 
@@ -737,8 +737,7 @@ public sealed class ProxyManager : IAsyncDisposable
 
     private void ReportEveryoneLooksLocal()
     {
-        const string Why = "Something in front of the proxy, such as rootless Docker, a tunnel or another proxy, may be hiding visitors' addresses. Bans, the block list and country rules cannot apply until it passes them on.";
-        _logger.LogWarning("Most visitors in the last hour came from one local address. {Why}", Why);
+        _logger.LogWarning("Most visitors in the last hour came from one local address, so something in front of the proxy, such as rootless Docker, a tunnel or another proxy, may be hiding their addresses and bans, the block list and country rules cannot apply");
         _activity?.Log(
             ServerText.Get(TranslationKeys.ActivityEveryoneLocal),
             "RemoteAccess.EveryoneLooksLocal",

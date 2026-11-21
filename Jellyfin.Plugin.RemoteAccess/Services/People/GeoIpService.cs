@@ -243,7 +243,7 @@ public sealed class GeoIpService : IDisposable
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidDatabaseException)
         {
             _error = ServerText.Get(TranslationKeys.ErrorLocationUnsaved) + " " + ex.Message;
-            _logger.LogWarning("Location database update failed: {Message}", ex.Message);
+            _logger.LogWarning(ex, "Location database update failed");
             return false;
         }
         finally
@@ -255,7 +255,7 @@ public sealed class GeoIpService : IDisposable
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                _logger.LogDebug("Could not delete the partial location download: {Message}", ex.Message);
+                _logger.LogDebug(ex, "Could not delete the partial location download");
             }
 
             _downloading = false;
@@ -373,7 +373,7 @@ public sealed class GeoIpService : IDisposable
         }
         catch (Exception ex) when (ex is IOException or InvalidDatabaseException or UnauthorizedAccessException)
         {
-            _logger.LogWarning("Location database {Path} could not be opened: {Message}", path, ex.Message);
+            _logger.LogWarning(ex, "Location database {Path} could not be opened", path);
             reader = null!;
             return false;
         }
@@ -407,7 +407,7 @@ public sealed class GeoIpService : IDisposable
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             // The damaged file cannot be replaced while something holds it, so the previous one is used in place.
-            _logger.LogWarning("The previous location database could not be put back, so it is used where it is: {Message}", ex.Message);
+            _logger.LogWarning(ex, "The previous location database could not be put back, so it is used where it is");
             if (!TryOpen(previous, out reader))
             {
                 return false;

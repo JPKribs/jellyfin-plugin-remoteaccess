@@ -521,8 +521,9 @@ public sealed class DNSUpdateService : IDisposable
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             // Logged without the exception itself: its message and stack can quote the request, credentials and all.
+            // The run reports the failed update, so this keeps only the exception type for diagnosis.
             var detail = CredentialRedactor.Redact(ex.Message, new[] { login, password });
-            _logger.LogError("Unexpected error updating {Host}: {Error}: {Message}", record.Hostname, ex.GetType().Name, detail);
+            _logger.LogDebug("Unexpected error updating {Host}: {Error}: {Message}", record.Hostname, ex.GetType().Name, detail);
             return (DNSUpdateResult.Fail(ServerText.Format(TranslationKeys.ErrorUnexpected, detail)), false, attempt.IPv4Held, attempt.IPv6Held);
         }
     }

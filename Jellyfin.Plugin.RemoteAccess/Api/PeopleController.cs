@@ -175,7 +175,7 @@ public class PeopleController : ControllerBase
             return Done();
         }
 
-        _activity.Log(ServerText.Format(TranslationKeys.ActivityAddressBlocked, text), "RemoteAccess.AddressBlocked", ServerText.Get(TranslationKeys.ActivityAddedToBlockList), userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Get(TranslationKeys.ActivityAddressBlocked), "RemoteAccess.AddressBlocked", ServerText.Format(TranslationKeys.ActivityAddressBlockedOverview, ActivityUser.NameOf(User), text), userId: ActivityUser.Of(User));
         await _proxy.ApplyAsync(CancellationToken.None).ConfigureAwait(false);
         return Done();
     }
@@ -208,7 +208,7 @@ public class PeopleController : ControllerBase
             return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorNotListed));
         }
 
-        _activity.Log(ServerText.Format(TranslationKeys.ActivityUnblocked, address), "RemoteAccess.AddressUnblocked", ServerText.Get(TranslationKeys.ActivityRemovedFromBlockList), userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Get(TranslationKeys.ActivityAddressUnblocked), "RemoteAccess.AddressUnblocked", ServerText.Format(TranslationKeys.ActivityAddressUnblockedOverview, ActivityUser.NameOf(User), address), userId: ActivityUser.Of(User));
         await _proxy.ApplyAsync(CancellationToken.None).ConfigureAwait(false);
         return Done();
     }
@@ -246,8 +246,8 @@ public class PeopleController : ControllerBase
         if (before is null || before.Enabled != incoming.Enabled || before.HistoryDays != incoming.HistoryDays || before.Location != incoming.Location)
         {
             var overview = incoming.Enabled
-                ? ServerText.Format(TranslationKeys.ActivityHistoryOn, incoming.HistoryDays, incoming.Location)
-                : ServerText.Get(TranslationKeys.ActivityHistoryOff);
+                ? ServerText.Format(TranslationKeys.ActivityHistoryOn, ActivityUser.NameOf(User), incoming.HistoryDays, incoming.Location)
+                : ServerText.Format(TranslationKeys.ActivityHistoryOff, ActivityUser.NameOf(User));
             _activity.Log(ServerText.Get(TranslationKeys.ActivityHistorySettingsChanged), "RemoteAccess.HistorySettingsChanged", overview, userId: ActivityUser.Of(User));
         }
 
@@ -308,7 +308,11 @@ public class PeopleController : ControllerBase
             return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorNotBanned));
         }
 
-        _activity.Log(ServerText.Format(TranslationKeys.ActivityBanLifted, string.Join(", ", lifted)), "RemoteAccess.BanLifted", ServerText.Get(TranslationKeys.ActivityLiftedFromPage), userId: ActivityUser.Of(User));
+        _activity.Log(
+            ServerText.Get(lifted.Count == 1 ? TranslationKeys.ActivityBanLifted : TranslationKeys.ActivityBansLifted),
+            "RemoteAccess.BanLifted",
+            ServerText.Format(TranslationKeys.ActivityBanLiftedOverview, ActivityUser.NameOf(User), ServerText.List(lifted)),
+            userId: ActivityUser.Of(User));
         return Done();
     }
 
@@ -357,7 +361,7 @@ public class PeopleController : ControllerBase
             return Refuse(ServerText.Reply(Request, TranslationKeys.ErrorCountryNotBlocked));
         }
 
-        _activity.Log(ServerText.Format(TranslationKeys.ActivityUnblocked, CountryName(country)), "RemoteAccess.CountryUnblocked", ServerText.Get(TranslationKeys.ActivityCountryLetIn), userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Get(TranslationKeys.ActivityCountryUnblocked), "RemoteAccess.CountryUnblocked", ServerText.Format(TranslationKeys.ActivityCountryUnblockedOverview, ActivityUser.NameOf(User), CountryName(country)), userId: ActivityUser.Of(User));
         await _proxy.ApplyAsync(CancellationToken.None).ConfigureAwait(false);
         return Done();
     }
@@ -393,7 +397,7 @@ public class PeopleController : ControllerBase
         _access.ClearBuffered();
         _blocks.Drain();
         _store.DeleteAll();
-        _activity.Log(ServerText.Get(TranslationKeys.ActivityHistoryCleared), "RemoteAccess.HistoryCleared", ServerText.Get(TranslationKeys.ActivityHistoryClearedOverview), userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Get(TranslationKeys.ActivityHistoryCleared), "RemoteAccess.HistoryCleared", ServerText.Format(TranslationKeys.ActivityHistoryClearedOverview, ActivityUser.NameOf(User)), userId: ActivityUser.Of(User));
         return Done();
     }
 }

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Jellyfin.Plugin.RemoteAccess.Services.People;
 using JPKribs.Jellyfin.Base;
 using Microsoft.Extensions.Logging;
@@ -7,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 
 /// <summary>
-/// The summed activity entries the plugin writes: one entry per outcome, such as "3 DNS records updated",
+/// The summed activity entries the plugin writes: one entry per outcome, such as "DNS records updated",
 /// instead of one per record, ban or connection, in the server's display language. Each outcome's source is what the
 /// count is listed by.
 /// </summary>
@@ -18,7 +20,9 @@ public static class ActivityEntries
         "RemoteAccess.AddressBanned",
         TranslationKeys.ActivityClientsBannedOne,
         TranslationKeys.ActivityClientsBannedMany,
-        (t, language) => BaseTranslations.Format(TranslationKeys.ActivityClientsBannedOverview, language, ActivityText.CountedList(t.Sources)),
+        (t, language) => t.Total == 1
+            ? BaseTranslations.Format(TranslationKeys.ActivityClientsBannedOverviewOne, language, ListCounts(t.Sources))
+            : BaseTranslations.Format(TranslationKeys.ActivityClientsBannedOverviewMany, language, t.Total, ListCounts(t.Sources)),
         LogLevel.Warning);
 
     /// <summary>Gets the DNS records a run pushed a new address to, listed by hostname and address.</summary>
@@ -59,38 +63,44 @@ public static class ActivityEntries
         (t, language) => Overview(t, language, TranslationKeys.ActivityRecordsPausedOverview, TranslationKeys.ActivityRecordsPausedAfterOverview),
         LogLevel.Warning);
 
-    /// <summary>Gets the DNS records a save added, listed by hostname and provider.</summary>
-    public static ActivityOutcome RecordsAdded { get; } = new(
+    /// <summary>The DNS records a save added, listed by hostname and provider.</summary>
+    /// <param name="user">The name of the administrator who saved.</param>
+    /// <returns>The outcome.</returns>
+    public static ActivityOutcome RecordsAdded(string user) => new(
         "RemoteAccess.RecordAdded",
         TranslationKeys.ActivityRecordsAddedOne,
         TranslationKeys.ActivityRecordsAddedMany,
-        (t, language) => Overview(t, language, TranslationKeys.ActivityRecordsAddedOverview, TranslationKeys.ActivityRecordsAddedWithOverview));
+        (t, language) => UserOverview(t, language, user, TranslationKeys.ActivityRecordsAddedOverview, TranslationKeys.ActivityRecordsAddedWithOverview));
 
-    /// <summary>Gets the DNS records a save changed, listed by hostname and whether each is on.</summary>
-    public static ActivityOutcome RecordsChanged { get; } = new(
+    /// <summary>The DNS records a save changed, listed by hostname and whether each is on.</summary>
+    /// <param name="user">The name of the administrator who saved.</param>
+    /// <returns>The outcome.</returns>
+    public static ActivityOutcome RecordsChanged(string user) => new(
         "RemoteAccess.RecordChanged",
         TranslationKeys.ActivityRecordsChangedOne,
         TranslationKeys.ActivityRecordsChangedMany,
-        (t, language) => Overview(t, language, TranslationKeys.ActivityRecordsChangedOverview, TranslationKeys.ActivityRecordsChangedToOverview));
+        (t, language) => UserOverview(t, language, user, TranslationKeys.ActivityRecordsChangedOverview, TranslationKeys.ActivityRecordsChangedToOverview));
 
-    /// <summary>Gets the DNS records a save removed, listed by hostname and provider.</summary>
-    public static ActivityOutcome RecordsRemoved { get; } = new(
+    /// <summary>The DNS records a save removed, listed by hostname and provider.</summary>
+    /// <param name="user">The name of the administrator who saved.</param>
+    /// <returns>The outcome.</returns>
+    public static ActivityOutcome RecordsRemoved(string user) => new(
         "RemoteAccess.RecordRemoved",
         TranslationKeys.ActivityRecordsRemovedOne,
         TranslationKeys.ActivityRecordsRemovedMany,
-        (t, language) => Overview(t, language, TranslationKeys.ActivityRecordsRemovedOverview, TranslationKeys.ActivityRecordsRemovedWithOverview));
+        (t, language) => UserOverview(t, language, user, TranslationKeys.ActivityRecordsRemovedOverview, TranslationKeys.ActivityRecordsRemovedWithOverview));
 
     /// <summary>Gets the Let's Encrypt TXT records a cleanup gave up removing, listed by name.</summary>
     public static ActivityOutcome TxtRecordsLeftOver { get; } = new(
         "RemoteAccess.AcmeTxtLeftOver",
         TranslationKeys.ActivityTxtRecordsLeftOverOne,
         TranslationKeys.ActivityTxtRecordsLeftOverMany,
-        (t, language) => BaseTranslations.Format(TranslationKeys.ActivityTxtRecordsLeftOverOverview, language, ActivityText.CountedList(t.Sources)),
+        (t, language) => BaseTranslations.Format(TranslationKeys.ActivityTxtRecordsLeftOverOverview, language, ListCounts(t.Sources)),
         LogLevel.Warning);
 
     /// <summary>
-    /// The hourly entry for refused internet connections, in the server's display language, as "12 connections
-    /// refused" over "Refused in the last hour by the country rules (9), bans (3)".
+    /// The hourly entry for refused internet connections, in the server's display language, as "Connections
+    /// refused" over "Refused 12 internet connections in the last hour by the country rules (9), bans (3)".
     /// </summary>
     /// <param name="totals">The hour's refusals.</param>
     /// <returns>The name and overview.</returns>
@@ -105,8 +115,10 @@ public static class ActivityEntries
             [BaseTranslations.Get(TranslationKeys.ActivityRefusedByLimits, language)] = Clamp(totals.Limit)
         };
         var total = Clamp(totals.Total);
-        var name = BaseTranslations.Format(total == 1 ? TranslationKeys.ActivityConnectionsRefusedOne : TranslationKeys.ActivityConnectionsRefusedMany, language, total);
-        var overview = BaseTranslations.Format(TranslationKeys.ActivityConnectionsRefusedOverview, language, ActivityText.CountedList(reasons));
+        var name = BaseTranslations.Get(total == 1 ? TranslationKeys.ActivityConnectionsRefusedOne : TranslationKeys.ActivityConnectionsRefusedMany, language);
+        var overview = total == 1
+            ? BaseTranslations.Format(TranslationKeys.ActivityConnectionsRefusedOverviewOne, language, ListCounts(reasons))
+            : BaseTranslations.Format(TranslationKeys.ActivityConnectionsRefusedOverviewMany, language, total, ListCounts(reasons));
         return (name, ActivityText.Sentence(overview)!);
     }
 
@@ -123,11 +135,33 @@ public static class ActivityEntries
     /// <returns>The phrase.</returns>
     public static string Phrase(string? text) => (text ?? string.Empty).Trim().TrimEnd('.');
 
+    /// <summary>
+    /// Lists names with their counts, the largest first, such as "a.example.com, b.example.com (3)". Unlike Base's
+    /// <see cref="ActivityText.CountedList"/> it leaves out a count of 1, as the activity log writes it.
+    /// </summary>
+    /// <param name="counts">The counts by name. A count of zero or less is left out.</param>
+    /// <returns>The list, or an empty string when there is nothing to list.</returns>
+    public static string ListCounts(IReadOnlyDictionary<string, int> counts)
+    {
+        ArgumentNullException.ThrowIfNull(counts);
+        return string.Join(", ", counts
+            .Where(p => p.Value > 0)
+            .OrderByDescending(p => p.Value)
+            .ThenBy(p => p.Key, StringComparer.Ordinal)
+            .Select(p => p.Value == 1 ? p.Key : string.Create(CultureInfo.InvariantCulture, $"{p.Key} ({p.Value})")));
+    }
+
     // The overview that lists the sources, with the reasons when any were given.
     private static string Overview(ActivityTally tally, string language, string plain, string withReasons)
         => tally.Reasons.Count == 0
-            ? BaseTranslations.Format(plain, language, ActivityText.CountedList(tally.Sources))
-            : BaseTranslations.Format(withReasons, language, ActivityText.CountedList(tally.Sources), ActivityText.CountedList(tally.Reasons));
+            ? BaseTranslations.Format(plain, language, ListCounts(tally.Sources))
+            : BaseTranslations.Format(withReasons, language, ListCounts(tally.Sources), ListCounts(tally.Reasons));
+
+    // The same overview, led by the administrator who made the change.
+    private static string UserOverview(ActivityTally tally, string language, string user, string plain, string withReasons)
+        => tally.Reasons.Count == 0
+            ? BaseTranslations.Format(plain, language, user, ListCounts(tally.Sources))
+            : BaseTranslations.Format(withReasons, language, user, ListCounts(tally.Sources), ListCounts(tally.Reasons));
 
     private static int Clamp(long value) => (int)Math.Clamp(value, 0, int.MaxValue);
 }

@@ -22,7 +22,8 @@ public static class ConfigurationAudit
     /// <param name="before">The records as stored before the save, or null when no configuration existed.</param>
     /// <param name="after">The records as they are being persisted.</param>
     /// <param name="userId">The administrator who made the change, empty when not known.</param>
-    public static void LogRecordChanges(ActivityLogger? activity, IReadOnlyList<DNSRecord>? before, IReadOnlyList<DNSRecord>? after, Guid userId = default)
+    /// <param name="userName">The administrator's name, or null for "An administrator".</param>
+    public static void LogRecordChanges(ActivityLogger? activity, IReadOnlyList<DNSRecord>? before, IReadOnlyList<DNSRecord>? after, Guid userId = default, string? userName = null)
     {
         if (activity is null || after is null)
         {
@@ -36,36 +37,40 @@ public static class ConfigurationAudit
 
         // Additions, changes and removals are summed into one entry each per save. A credential change is
         // security relevant, so each gets its own entry.
+        var user = string.IsNullOrWhiteSpace(userName) ? ServerText.Get(TranslationKeys.ActivityAnAdministrator) : userName;
+        var added = ActivityEntries.RecordsAdded(user);
+        var changed = ActivityEntries.RecordsChanged(user);
+        var removed = ActivityEntries.RecordsRemoved(user);
         var batch = new ActivityBatch();
         var kept = new HashSet<string>(StringComparer.Ordinal);
         foreach (var record in after)
         {
             if (!prior.TryGetValue(record.Id, out var old))
             {
-                batch.Add(ActivityEntries.RecordsAdded, Label(record), record.Provider.ToString());
+                batch.Add(added, Label(record), record.Provider.ToString());
                 continue;
             }
 
             kept.Add(record.Id);
             if (SettingsDiffer(old, record))
             {
-                batch.Add(ActivityEntries.RecordsChanged, Label(record), ServerText.Get(record.Enabled ? TranslationKeys.ValueOn : TranslationKeys.ValueOff));
+                batch.Add(changed, Label(record), ServerText.Get(record.Enabled ? TranslationKeys.ValueOn : TranslationKeys.ValueOff));
             }
 
             if (!string.Equals(record.Login, old.Login, StringComparison.Ordinal)
                 || !string.Equals(record.Password, old.Password, StringComparison.Ordinal))
             {
                 activity.Log(
-                    ServerText.Format(TranslationKeys.ActivityCredentialsChanged, record.DisplayName()),
+                    ServerText.Get(TranslationKeys.ActivityCredentialsChanged),
                     "RemoteAccess.RecordCredentialsChanged",
-                    ServerText.Format(TranslationKeys.ActivityCredentialsChangedOverview, record.Provider, record.Hostname),
+                    ServerText.Format(TranslationKeys.ActivityCredentialsChangedOverview, user, record.Provider, Label(record)),
                     userId: userId);
             }
         }
 
         foreach (var old in prior.Values.Where(r => !kept.Contains(r.Id)))
         {
-            batch.Add(ActivityEntries.RecordsRemoved, Label(old), old.Provider.ToString());
+            batch.Add(removed, Label(old), old.Provider.ToString());
         }
 
         batch.Write(activity, userId);

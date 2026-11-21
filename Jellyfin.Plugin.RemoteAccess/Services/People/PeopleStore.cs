@@ -486,7 +486,7 @@ public sealed class PeopleStore
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                _logger.LogWarning("Could not delete the old history copy {File}: {Message}", copy, ex.Message);
+                _logger.LogWarning(ex, "Could not delete the old history copy {File}", copy);
             }
         }
     }
@@ -776,7 +776,7 @@ public sealed class PeopleStore
             {
                 // Not a database at all, or damaged: treated like a failed migration. Any other error, such as
                 // a locked or unreadable file, is passed on: the history in it is fine and must not be set aside.
-                _logger.LogWarning("People history database is damaged: {Message}", ex.Message);
+                _logger.LogWarning(ex, "People history database is damaged");
                 action = SchemaAction.MigrationFailed;
             }
 

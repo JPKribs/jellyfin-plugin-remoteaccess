@@ -111,10 +111,10 @@ Each entry has a level:
 A problem is written once when it starts, and once more when it clears, not on every run. A run where every
 record is already current writes nothing.
 
-Every entry has the same shape: a short name such as **Certificate renewed** or **203.0.113.7 banned**, over one
-sentence saying what happened. Where many of one thing happen together, they are summed into one entry per outcome,
-named with the count, such as **3 DNS records updated**, whose sentence lists each one with its count, such as
-"Updated for a.example.com (1), b.example.com (1), c.example.com (1) to 203.0.113.5 (3)".
+Every entry has the same shape: a short name such as **Certificate renewed** or **Address banned**, over one
+sentence saying what happened, to what, and who did it. Where many of one thing happen together, they are summed into
+one entry per outcome, such as **DNS records updated**, whose sentence lists each one, with a count when it is more
+than one, such as "Updated for a.example.com, b.example.com, c.example.com to 203.0.113.5 (3)".
 
 #### Dynamic DNS Entries
 
@@ -127,10 +127,10 @@ Each update run writes one entry per outcome, listing the records by hostname.
   failed refresh.
 * **DNS records recovered**: records that were failing updated again.
 * **DNS records paused**: records were paused after repeated failures, once per streak, with when the next try is.
-* **Public IP detection failing**: no public IP was found for about an hour, with **Public IP detection recovered**
+* **Public IP detection failed**: no public IP was found for about an hour, with **Public IP detection recovered**
   when it is found again.
-* **DNS records added**, **changed** or **removed**: one entry each per save. **Credentials changed for** a record
-  is always its own entry. **Dynamic DNS settings changed**: the settings under **Advanced > Dynamic DNS** changed.
+* **DNS records added**, **changed** or **removed**: one entry each per save, naming who saved. **Credentials changed**
+  is always its own entry for each record. **Dynamic DNS settings changed**: the settings under **Advanced > Dynamic DNS** changed.
 * **Credential encryption unavailable**: an error when the plugin could not set up its encryption keys, once per
   outage. No credential can be saved until it can. Reinstall the plugin, then check the permissions on its folders.
 * **File access failed**: an error when Jellyfin runs as an account that cannot open the plugin's folders, naming
@@ -145,7 +145,7 @@ Each update run writes one entry per outcome, listing the records by hostname.
 * **Trust the proxy**: **Proxy trust turned on** when Jellyfin was set to trust the proxy, **Proxy trust confirmed**
   or **Proxy check failed** after the restart, and **Network settings restored** when **Undo** put its settings back.
 * **Router ports**: written once when something changes, not on every hourly renewal.
-    * **Ports 80 and 443 opened on router**: names the device that answered, the address the
+    * **Router ports opened**: names the ports, the device that answered, the address the
       ports go to and whether UPnP or NAT-PMP was used, and says when that device is not this server's default
       gateway. Before a certificate is ready, only port 80 is opened. See
       [Checking the forward](RemoteAccess.md#checking-the-forward).
@@ -162,13 +162,13 @@ Each update run writes one entry per outcome, listing the records by hostname.
   that should trust the self-signed certificate needs it installed, in place of any earlier one. See [Self-signed certificates](RemoteAccess.md#self-signed-certificates).
 * **TXT records left over**: Let's Encrypt TXT records could not be removed from the provider, one entry per
   cleanup. It is a warning. The records do no harm, but you can delete them there.
-* **Bans**: each ban is its own entry, such as **203.0.113.7 banned**, with the failed sign-ins and the country.
-  Past five bans in a minute, the rest are summed into one entry listing the countries, such as **3 clients banned**.
-  **Ban lifted for** an address is logged too.
-* **Blocks**: an address was blocked or unblocked, or a country unblocked, from the Dashboard, such as
-  **203.0.113.7 blocked**.
+* **Bans**: each ban is its own **Address banned** entry, with the address, the failed sign-ins and the country.
+  Past five bans in a minute, the rest are summed into one **Clients banned** entry listing the countries.
+  **Ban lifted** is logged too, naming who lifted it.
+* **Blocks**: **Address blocked**, **Address unblocked** or **Country unblocked**, from the Dashboard, naming who did
+  it.
 * **Connections refused**: an hourly summary of what the block list, bans, country rules and connection limits
-  turned away, such as "Internet connections were refused in the last hour by the country rules (9), bans (3)".
+  turned away, such as "Refused 12 internet connections in the last hour by the country rules (9), bans (3)".
 * **Most visitors seen as local**: see [When every visitor looks local](RemoteAccess.md#when-every-visitor-looks-local).
   Logged once.
 * **Location database update failed**: downloading it failed, once per reason, with **Location database updated**

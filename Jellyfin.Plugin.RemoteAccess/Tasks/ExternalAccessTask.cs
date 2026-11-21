@@ -63,16 +63,22 @@ public sealed class ExternalAccessTask : PluginScheduledTask
         var result = await _proxy.CheckReachabilityAsync(cancellationToken).ConfigureAwait(false);
         if (result.Reachable is null)
         {
-            _logger.LogInformation("External access could not be verified: {Error}", result.Error);
+            _logger.LogDebug("External access could not be verified: {Error}", result.Error);
         }
         else if (result.Reachable == false)
         {
             var tried = string.Join("; ", result.Nodes.Select(n => (n.Location.Length > 0 ? n.Location : ServerText.Get(TranslationKeys.Unknown)) + ": " + n.Error));
             var message = tried.Length > 0 ? result.Error + " " + tried : result.Error;
-            _logger.LogError("External access failed: {Message}", message);
-            if (!_failing)
+
+            // One error when access is lost. Each later run that still fails is detail for diagnosis.
+            if (_failing)
+            {
+                _logger.LogDebug("External access still fails: {Message}", message);
+            }
+            else
             {
                 _failing = true;
+                _logger.LogError("External access failed: {Message}", message);
                 _activity.Log(ServerText.Get(TranslationKeys.ActivityExternalAccessFailed), "RemoteAccess.ExternalAccessFailed", ActivityEntries.Plain(message), LogLevel.Error);
             }
         }

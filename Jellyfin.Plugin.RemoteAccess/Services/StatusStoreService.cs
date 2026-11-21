@@ -53,7 +53,7 @@ public sealed class StatusStoreService
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            _logger.LogWarning(ex, "Could not write the status store.");
+            _logger.LogWarning(ex, "Could not write the status store");
         }
     }
 
@@ -72,7 +72,7 @@ public sealed class StatusStoreService
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            _logger.LogWarning(ex, "Could not write the status store.");
+            _logger.LogWarning(ex, "Could not write the status store");
         }
     }
 
@@ -106,7 +106,7 @@ public sealed class StatusStoreService
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            _logger.LogWarning(ex, "Could not write the status store.");
+            _logger.LogWarning(ex, "Could not write the status store");
         }
     }
 }

@@ -259,7 +259,7 @@ public abstract class DNSProviderBase : IDNSProvider
         }
 
         Logger.LogWarning(
-            "{Provider} is updating {Hostname} over plain http; credentials sent with this request are not encrypted in transit.",
+            "{Provider} is updating {Hostname} over plain http; credentials sent with this request are not encrypted in transit",
             Kind,
             record.Hostname);
     }
@@ -292,7 +292,8 @@ public abstract class DNSProviderBase : IDNSProvider
         {
             // The failure text can quote the request. Every credential it was sent with is masked, whatever form.
             var secrets = (headers ?? Enumerable.Empty<KeyValuePair<string, string>>()).Select(h => (string?)h.Value).Append(login).Append(password);
-            Logger.LogWarning("{Provider} request failed: {Detail}", Kind, CredentialRedactor.Redact(result.Body, secrets));
+            // The caller reports the failed update, so this is detail for diagnosis.
+            Logger.LogDebug("{Provider} request failed: {Detail}", Kind, CredentialRedactor.Redact(result.Body, secrets));
         }
 
         return result;

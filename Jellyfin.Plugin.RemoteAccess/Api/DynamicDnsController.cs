@@ -203,10 +203,11 @@ public class DynamicDNSController : ControllerBase
         });
 
         var userId = ActivityUser.Of(User);
-        ConfigurationAudit.LogRecordChanges(_activity, before, after, userId);
+        var userName = ActivityUser.NameOf(User);
+        ConfigurationAudit.LogRecordChanges(_activity, before, after, userId, userName);
         if (settingsChanged)
         {
-            _activity.Log(ServerText.Get(TranslationKeys.ActivityDynamicDnsSettingsChanged), "RemoteAccess.SettingsChanged", ServerText.Get(TranslationKeys.ActivityDynamicDnsSettingsChangedOverview), userId: userId);
+            _activity.Log(ServerText.Get(TranslationKeys.ActivityDynamicDnsSettingsChanged), "RemoteAccess.SettingsChanged", ServerText.Format(TranslationKeys.ActivityDynamicDnsSettingsChangedOverview, userName), userId: userId);
         }
 
         // Runtime status is keyed by record id, so a record edited to point somewhere else (another

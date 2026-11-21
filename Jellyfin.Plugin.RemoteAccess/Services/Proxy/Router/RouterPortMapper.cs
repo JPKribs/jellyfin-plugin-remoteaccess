@@ -460,12 +460,13 @@ public sealed class RouterPortMapper : IAsyncDisposable
         }
 
         _activity?.Log(
-            ServerText.Format(status.Ports.Count == 1 ? TranslationKeys.ActivityPortOpened : TranslationKeys.ActivityPortsOpened, ports),
+            ServerText.Get(status.Ports.Count == 1 ? TranslationKeys.ActivityRouterPortOpened : TranslationKeys.ActivityRouterPortsOpened),
             "RemoteAccess.RouterPortsOpened",
             ServerText.Format(
                 status.Device.Length > 0 && !status.DeviceIsGateway ? TranslationKeys.ActivityPortsOpenedNotGateway : TranslationKeys.ActivityPortsOpenedOverview,
                 device,
                 status.Method,
+                ServerText.Format(status.Ports.Count == 1 ? TranslationKeys.ActivityPortOne : TranslationKeys.RouterPortList, ports),
                 status.LanAddress));
     }
 

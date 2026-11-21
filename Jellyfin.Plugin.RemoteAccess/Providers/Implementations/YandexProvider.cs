@@ -120,7 +120,7 @@ public sealed class YandexProvider : DNSProviderBase
         }
         catch (JsonException ex)
         {
-            Logger.LogWarning(ex, "{Provider} could not parse the record list response", Kind);
+            Logger.LogDebug(ex, "{Provider} could not parse the record list response", Kind);
             return (false, "could not parse the list response");
         }
 
@@ -161,7 +161,7 @@ public sealed class YandexProvider : DNSProviderBase
         }
         catch (JsonException ex)
         {
-            Logger.LogWarning(ex, "{Provider} could not parse the edit response", Kind);
+            Logger.LogDebug(ex, "{Provider} could not parse the edit response", Kind);
             return (false, "could not parse the edit response");
         }
 

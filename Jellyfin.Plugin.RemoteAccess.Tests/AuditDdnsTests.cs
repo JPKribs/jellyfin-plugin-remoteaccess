@@ -96,10 +96,10 @@ public class AuditDdnsTests
         Assert.Equal("Backing off", Assert.Single(outcome.Records).Action);
 
         // The record was left on an old IPv6 address, so each failure is an error, then one pause warning.
-        var failures = h.Activity.Where(e => e.Name == "1 DNS record failed").ToList();
+        var failures = h.Activity.Where(e => e.Name == "DNS record failed").ToList();
         Assert.Equal(3, failures.Count);
         Assert.All(failures, e => Assert.Equal(LogLevel.Error, e.LogSeverity));
-        Assert.Single(h.Activity, e => e.Name == "1 DNS record paused");
+        Assert.Single(h.Activity, e => e.Name == "DNS record paused");
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class AuditDdnsTests
         // A forced refresh of a record DNS already serves, where one family is refused.
         await h.RunAsync();
 
-        var entry = Assert.Single(h.Activity, e => e.Name == "1 DNS record failed");
+        var entry = Assert.Single(h.Activity, e => e.Name == "DNS record failed");
         Assert.Equal(LogLevel.Warning, entry.LogSeverity);
         Assert.EndsWith("though DNS already serves the current address so nothing is cut off yet", entry.ShortOverview, StringComparison.Ordinal);
     }
@@ -440,11 +440,11 @@ public class AuditDdnsTests
         var paused = Assert.Single(outcome.Records);
         Assert.Equal("Backing off", paused.Action);
         Assert.DoesNotContain('(', paused.Message);
-        // The overview lists the record and why as counted lists, so the only parentheses are their counts.
-        var entry = Assert.Single(h.Activity, e => e.Name == "1 DNS record paused");
-        Assert.StartsWith("Updates were paused for home.example.com (1) after 3 consecutive timeouts, network errors or provider server errors until ", entry.ShortOverview, StringComparison.Ordinal);
-        Assert.EndsWith(" (1), or until the public IP changes", entry.ShortOverview, StringComparison.Ordinal);
-        Assert.Equal(2, Text(entry).Count(c => c == '('));
+        // The overview lists the record and why with a count of 1 left out, so it has no parentheses.
+        var entry = Assert.Single(h.Activity, e => e.Name == "DNS record paused");
+        Assert.StartsWith("Updates were paused for home.example.com after 3 consecutive timeouts, network errors or provider server errors until ", entry.ShortOverview, StringComparison.Ordinal);
+        Assert.EndsWith("Z, or until the public IP changes", entry.ShortOverview, StringComparison.Ordinal);
+        Assert.Equal(0, Text(entry).Count(c => c == '('));
         Assert.DoesNotContain(';', Text(entry));
     }
 

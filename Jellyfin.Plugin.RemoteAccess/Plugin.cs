@@ -97,7 +97,7 @@ public class Plugin : PluginBase<Plugin, PluginConfiguration>
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or PlatformNotSupportedException or InvalidOperationException or System.Security.SecurityException)
             {
-                logger.LogWarning("Could not restrict access to {Folder}: {Message}", folder, ex.Message);
+                logger.LogWarning(ex, "Could not restrict access to {Folder}", folder);
             }
         }
     }

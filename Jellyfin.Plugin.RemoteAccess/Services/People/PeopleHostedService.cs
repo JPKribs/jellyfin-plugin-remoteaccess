@@ -87,14 +87,14 @@ public sealed class PeopleHostedService : BackgroundService
                 var seen = _access.DrainSeen();
                 _bans.FlushActivity();
 
-                // Refusals are routine once rules are on, so both logs get one summary an hour, not one entry per
-                // connection; the per-minute count is at debug level.
+                // Refusals are routine once rules are on, so the activity log gets one summary an hour, not one entry
+                // per connection, and the server log keeps it at debug level.
                 refused += _blocks.TakeTotals();
                 if (DateTime.UtcNow - refusedSince >= TimeSpan.FromHours(1))
                 {
                     if (refused.Total > 0)
                     {
-                        _logger.LogInformation("Refused {Count} internet connections in the last hour: {Detail}", refused.Total, refused.Describe());
+                        _logger.LogDebug("Refused {Count} internet connections in the last hour: {Detail}", refused.Total, refused.Describe());
                         var (name, overview) = ActivityEntries.Refused(refused);
                         _activity.Log(name, "RemoteAccess.ConnectionsRefused", overview);
                     }

@@ -7,7 +7,8 @@ namespace Jellyfin.Plugin.RemoteAccess.Utilities;
 /// <summary>
 /// Counts one run's events, such as a DNS update run or a configuration save, and writes one summary entry
 /// per outcome when the run ends, in the server's display language, worded as Base's <see cref="ActivitySummary"/>
-/// words them. Unlike that summary it writes at once and can name the administrator who made the change.
+/// words them. Unlike that summary it writes at once and can name the administrator who made the change, so it
+/// leaves the first letter as it is rather than capitalizing a user's name.
 /// </summary>
 public sealed class ActivityBatch
 {
@@ -56,7 +57,7 @@ public sealed class ActivityBatch
                     ? BaseTranslations.Format(tally.Total == 1 ? outcome.NameOne! : outcome.NameMany!, language, tally.Total)
                     : ActivityText.SummaryName(tally.Total, outcome.Outcome, outcome.Noun),
                 outcome.Type,
-                ActivityText.Sentence(keyed ? outcome.LanguageOverview!(counted, language) : outcome.Overview(counted)),
+                ActivityEntries.Phrase(keyed ? outcome.LanguageOverview!(counted, language) : outcome.Overview(counted)),
                 outcome.Severity,
                 userId);
         }

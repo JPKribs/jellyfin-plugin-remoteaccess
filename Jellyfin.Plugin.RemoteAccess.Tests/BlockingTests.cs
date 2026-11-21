@@ -151,9 +151,9 @@ public sealed class BlockingTests : IDisposable
         bans.RecordFailure(IPAddress.Parse("203.0.113.70"), options);
 
         var entry = Assert.Single(entries);
-        Assert.Equal("203.0.113.70 banned", entry.Name);
+        Assert.Equal("Address banned", entry.Name);
         Assert.Equal("RemoteAccess.AddressBanned", entry.Type);
-        Assert.Equal("2 failed sign-ins from an unknown country, banned for 30 minutes", entry.ShortOverview);
+        Assert.Equal("203.0.113.70 banned for 30 minutes after 2 failed sign-ins from an unknown country", entry.ShortOverview);
     }
 
     [Fact]
@@ -177,17 +177,17 @@ public sealed class BlockingTests : IDisposable
         summary.Dispose();
         lock (entries)
         {
-            var summed = entries.Where(e => e.Name.EndsWith(" banned", StringComparison.OrdinalIgnoreCase) && e.Name.Contains("client", StringComparison.OrdinalIgnoreCase)).ToList();
-            var single = entries.Where(e => e.Name.EndsWith(" banned", StringComparison.OrdinalIgnoreCase) && !e.Name.Contains("client", StringComparison.OrdinalIgnoreCase)).ToList();
+            var summed = entries.Where(e => e.Name.StartsWith("Client", StringComparison.Ordinal)).ToList();
+            var single = entries.Where(e => e.Name == "Address banned").ToList();
             Assert.True(single.Count >= 5);
-            Assert.Equal(8, single.Count + summed.Sum(e => int.Parse(e.Name.Split(' ')[0], System.Globalization.CultureInfo.InvariantCulture)));
+            Assert.Equal(8, single.Count + summed.Sum(e => int.Parse(e.ShortOverview!.Split(' ')[1], System.Globalization.CultureInfo.InvariantCulture)));
             if (single.Count == 5)
             {
                 var entry = Assert.Single(summed);
-                Assert.Equal("3 clients banned", entry.Name);
+                Assert.Equal("Clients banned", entry.Name);
                 Assert.Equal("RemoteAccess.AddressBanned", entry.Type);
                 Assert.Equal(LogLevel.Warning, entry.LogSeverity);
-                Assert.Equal("Banned after failed sign-ins, too many to list one by one, from an unknown country (3)", entry.ShortOverview);
+                Assert.Equal("Banned 3 clients after failed sign-ins from an unknown country (3)", entry.ShortOverview);
             }
         }
     }

@@ -240,7 +240,7 @@ public sealed class PeopleService
         catch (Exception ex) when (ex is SqliteException or System.IO.IOException or InvalidOperationException)
         {
             // Every request writes, so a broken database warns once rather than on each one.
-            _writes.Failed(level => _logger.Log(level, "Could not record People history: {Message}", ex.Message));
+            _writes.Failed(level => _logger.Log(level, ex, "Could not record People history"));
         }
     }
 }

@@ -389,7 +389,7 @@ public sealed class AcmeCertificateService : IDisposable
             }
             else
             {
-                _logger.LogWarning("Could not remove the TXT record {Name}; it is tried again on the next certificate check", txtName);
+                _logger.LogDebug("Could not remove the TXT record {Name}, it is tried again on the next certificate check", txtName);
             }
         }
     }
@@ -423,7 +423,7 @@ public sealed class AcmeCertificateService : IDisposable
                 && await TryRemoveAsync(provider, live, item).ConfigureAwait(false);
             if (removed)
             {
-                _logger.LogInformation("Removed the leftover TXT record {Name}", item.Name);
+                _logger.LogDebug("Removed the leftover TXT record {Name}", item.Name);
             }
             else if (DateTime.UtcNow - item.PublishedUtc < _txtGiveUp && record is not null)
             {
@@ -431,7 +431,7 @@ public sealed class AcmeCertificateService : IDisposable
             }
             else
             {
-                _logger.LogWarning("Gave up removing the TXT record {Name}; remove it at your DNS provider", item.Name);
+                _logger.LogWarning("Gave up removing the TXT record {Name}, remove it at your DNS provider", item.Name);
                 leftOver.Add(ActivityEntries.TxtRecordsLeftOver, item.Name);
             }
 
@@ -526,7 +526,7 @@ public sealed class AcmeCertificateService : IDisposable
             }
         }
 
-        _logger.LogInformation("The TXT record {Name} did not show up in public DNS in time; asking Let's Encrypt anyway", name);
+        _logger.LogDebug("The TXT record {Name} did not show up in public DNS in time, asking Let's Encrypt anyway", name);
     }
 
     /// <summary>
@@ -596,7 +596,7 @@ public sealed class AcmeCertificateService : IDisposable
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                _logger.LogWarning("The Let's Encrypt account key could not be read: {Message}", ex.Message);
+                _logger.LogWarning(ex, "The Let's Encrypt account key could not be read");
                 throw new IOException(ServerText.Get(TranslationKeys.ErrorAcmeAccountKey), ex);
             }
 
@@ -608,7 +608,7 @@ public sealed class AcmeCertificateService : IDisposable
             {
                 // The file was read, so this is its content, not a passing read error: the key parser reports bad
                 // PEM as an IOException too. Kept beside, in case it is wanted, rather than overwritten.
-                _logger.LogWarning("The Let's Encrypt account key is damaged and is being replaced: {Message}", ex.Message);
+                _logger.LogWarning(ex, "The Let's Encrypt account key is damaged and is being replaced");
                 File.Move(path, path + ".damaged-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture), overwrite: true);
             }
         }

@@ -22,7 +22,7 @@ How this plugin shows its text in the viewer's language. Base builds the strings
 * Text the server writes for everyone is in the server's display language, through `ServerText` in `Utilities/`. That covers the activity log, the scheduled tasks, and the states the pages show.
 * A controller's own reply follows the page's language. Use `ServerText.Reply(Request, key, ...)`, or `ServerText.LanguageOf(Request)` to pass the language on, as the provider hints and field labels and `ProxySettingsValidator.Validate` take it. Base's `apiRequest` sends the page's language, and `BaseTranslations.RequestLanguage` reads it.
 * A provider's `Hint` and its `Fields` labels are keys. The Providers endpoint turns them into text.
-* A summed activity entry is an `ActivityOutcome` built from keys, a `...One` and a `...Many` name with `{0}` for the count and an overview built in the language it is given, per Base's [Activity Log](https://jpkribs.github.io/jellyfin-plugin-base/components/csharp/activity-log/) page. `ActivityBatch` and the `ActivitySummary` write them in the server's display language.
+* A summed activity entry is an `ActivityOutcome` built from keys, a `...One` and a `...Many` name with no count and an overview built in the language it is given, per Base's [Activity Log](https://jpkribs.github.io/jellyfin-plugin-base/components/csharp/activity-log/) page. `ActivityBatch` and the `ActivitySummary` write them in the server's display language.
 * The replies a DNS provider sends stay as the provider wrote them.
 
 ## Add a String

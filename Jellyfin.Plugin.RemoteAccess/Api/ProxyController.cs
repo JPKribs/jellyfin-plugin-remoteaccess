@@ -197,7 +197,7 @@ public class ProxyController : ControllerBase
             _activity.Log(
                 ServerText.Get(TranslationKeys.ActivityProxySettingsChanged),
                 "RemoteAccess.ProxySettingsChanged",
-                ServerText.Format(incoming.Enabled ? TranslationKeys.ActivityChangedProxyOn : TranslationKeys.ActivityChangedProxyOff, string.Join(", ", changed)),
+                ServerText.Format(incoming.Enabled ? TranslationKeys.ActivityChangedProxyOn : TranslationKeys.ActivityChangedProxyOff, ActivityUser.NameOf(User), string.Join(", ", changed)),
                 userId: user);
         }
 
@@ -294,7 +294,7 @@ public class ProxyController : ControllerBase
     [HttpPost("Restore")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<TakeoverResult> Restore()
-        => Ok(_orchestrator.Restore(ServerText.Get(TranslationKeys.ActivityUndoneFromPage), restart: true, ActivityUser.Of(User)));
+        => Ok(_orchestrator.Restore(ServerText.Format(TranslationKeys.ActivityUndoneBy, ActivityUser.NameOf(User)), restart: true, ActivityUser.Of(User)));
 
     /// <summary>
     /// Returns the root the self-signed certificate is issued from, for installing on devices. It is public: it
@@ -315,7 +315,7 @@ public class ProxyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> RequestCertificate()
     {
-        _activity.Log(ServerText.Get(TranslationKeys.ActivityCertificateRequested), "RemoteAccess.CertificateRequested", ServerText.Get(TranslationKeys.ActivityCertificateRequestedOverview), userId: ActivityUser.Of(User));
+        _activity.Log(ServerText.Get(TranslationKeys.ActivityCertificateRequested), "RemoteAccess.CertificateRequested", ServerText.Format(TranslationKeys.ActivityCertificateRequestedOverview, ActivityUser.NameOf(User)), userId: ActivityUser.Of(User));
         var (ok, message) = await _proxy.RequestCertificateAsync(CancellationToken.None).ConfigureAwait(false);
         return Ok(new { Ok = ok, Message = message, Status = _proxy.GetStatus(_orchestrator.State) });
     }

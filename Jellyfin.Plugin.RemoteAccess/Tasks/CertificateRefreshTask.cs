@@ -77,8 +77,7 @@ public sealed class CertificateRefreshTask : PluginScheduledTask
         }
         else if (status.Loaded && status.NotAfterUtc is { } expires && expires - DateTime.UtcNow < _warnBefore)
         {
-            var message = $"The certificate for {string.Join(", ", status.Names)} expires {expires:yyyy-MM-dd}. Renew it so remote access keeps working.";
-            _logger.LogWarning("{Message}", message);
+            _logger.LogWarning("The certificate for {Names} expires {Expires:yyyy-MM-dd}, renew it so remote access keeps working", string.Join(", ", status.Names), expires);
             _activity.Log(
                 ServerText.Get(TranslationKeys.ActivityCertificateExpiring),
                 "RemoteAccess.CertificateExpiring",

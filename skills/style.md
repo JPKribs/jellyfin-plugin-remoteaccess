@@ -46,7 +46,7 @@ Every label, heading, button, tab, column header, option, title, badge, and acti
 | Dialog title | Remove record |
 | Badge and status chip | Home only |
 | Column header | Last seen |
-| Activity log name | 3 DNS records updated |
+| Activity log name | DNS records updated |
 | Description, message, placeholder sentence | Starts the proxy when you save. |
 
 * Names, services, formats, and acronyms keep their own casing, such as "Let's Encrypt", "Cloudflare", "DDNS", "IPv6", and "TTL". Each one this plugin writes is in `Localization/casing.json`, per [translations.md](translations.md#casing).
@@ -178,8 +178,9 @@ Give a Data Table its `emptyText`. Use `shared.emptySection(text)` for any other
 
 Use `ActivitySummary` and `ActivityText` from Base.
 
-* The name is short and in sentence case, built from keys in the server's display language. "3 DNS records updated".
+* The name is short and in sentence case, built from keys in the server's display language, with no count, such as "DNS records updated".
 * The overview is one sentence with no closing period, as Base writes it.
+* Follow [logging.md](logging.md) for what goes in the name and the overview.
 * Use the same verb the UI uses for the action.
 
 ### Messages From C#

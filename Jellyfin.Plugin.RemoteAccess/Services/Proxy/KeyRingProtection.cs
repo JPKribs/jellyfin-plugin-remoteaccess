@@ -57,7 +57,7 @@ internal static class KeyRingProtection
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or XmlException or CryptographicException or InvalidOperationException)
             {
                 // The key stays as it was and keeps working; only its protection is missing.
-                logger.LogWarning("Could not encrypt the credential key {File}: {Message}", Path.GetFileName(file), ex.Message);
+                logger.LogWarning(ex, "Could not encrypt the credential key {File}", Path.GetFileName(file));
             }
         }
 
