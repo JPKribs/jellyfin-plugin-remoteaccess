@@ -9,6 +9,14 @@
     "category": "Administration",
     "versions": [
       {
+        "version": "12.4.5.2",
+        "changelog": "\n## Fixed\n- The Types and Countries filters on the Activity table offered All Types and All Countries. They read All types and All countries\n\n## Developer\n- Uses JPKribs.Jellyfin.Base 12.4.3, which writes the labels it fills into its own text in sentence case, such as All types on a filter\n- Sync Branches also runs when the release draft or publish workflow finishes, so the commits they push to master reach unstable at once",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://github.com/JPKribs/jellyfin-plugin-remoteaccess/releases/download/v12.4.5.2/jellyfin-plugin-remoteaccess-12.4.5.2.zip",
+        "checksum": "d47ef512c572fa9494347d43240def37",
+        "timestamp": "2026-11-21T02:15:24Z"
+      },
+      {
         "version": "12.4.5.0",
         "changelog": "\n## Added\n- The pages, messages, scheduled tasks and activity log are translated. Jellyfin's own words come in every language Jellyfin has, and the plugin's own words are ready for translation\n\n## Changed\n- Labels, buttons, headings, options and activity log names are in sentence case, as Jellyfin writes them, such as Update now and Trust the proxy\n- The activity log is written in the server's display language, summed entries such as 3 DNS records updated included\n- Problems a save reports, such as a port out of range, follow the page's language, and so do the provider hints and field labels\n- The Save bar, tables, QR code, country picker and setup checklist use Base's own words, translated\n\n## Fixed\n- A record that recovered after one failed attempt was logged as 1 failed attempts. It reads 1 failed attempt\n\n## Developer\n- Uses JPKribs.Jellyfin.Base 12.4.1, which translates its own components, reads the page's language with BaseTranslations.RequestLanguage and builds activity summaries from keys. Base 12.4.0 came first, for the translations build\n- The project is organized into Api, Configuration, Web, Assets, Models, Services, Tasks and Utilities, with the pages under Web\n- Strings live in Localization/en-us.json, Jellyfin strings are declared in the project file, and Localization/casing.json lists the names and acronyms kept as written\n- A test checks that every key the pages use is built in",
         "targetAbi": "12.4.0.0",
